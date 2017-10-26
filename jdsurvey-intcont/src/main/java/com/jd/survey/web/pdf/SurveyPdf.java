@@ -15,38 +15,26 @@
   */
 package com.jd.survey.web.pdf;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.Map;
+  import com.jd.survey.domain.settings.*;
+  import com.jd.survey.domain.survey.QuestionAnswer;
+  import com.jd.survey.domain.survey.SurveyEntry;
+  import com.jd.survey.domain.survey.SurveyPage;
+  import com.lowagie.text.*;
+  import com.lowagie.text.Font;
+  import com.lowagie.text.pdf.PdfWriter;
+  import org.apache.commons.validator.routines.DateValidator;
+  import org.owasp.validator.html.AntiSamy;
+  import org.owasp.validator.html.CleanResults;
+  import org.owasp.validator.html.Policy;
+  import org.springframework.stereotype.Component;
+  import org.springframework.web.servlet.view.document.AbstractPdfView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.validator.routines.DateValidator;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
-import org.owasp.validator.html.Policy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.view.document.AbstractPdfView;
-
-import com.jd.survey.domain.settings.DataSetItem;
-import com.jd.survey.domain.settings.Question;
-import com.jd.survey.domain.settings.QuestionColumnLabel;
-import com.jd.survey.domain.settings.QuestionOption;
-import com.jd.survey.domain.settings.QuestionRowLabel;
-import com.jd.survey.domain.survey.QuestionAnswer;
-import com.jd.survey.domain.survey.SurveyEntry;
-import com.jd.survey.domain.survey.SurveyPage;
-import com.lowagie.text.Cell;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Table;
-import com.lowagie.text.pdf.PdfWriter;
+  import javax.servlet.http.HttpServletRequest;
+  import javax.servlet.http.HttpServletResponse;
+  import java.awt.*;
+  import java.util.List;
+  import java.util.Map;
+  import java.util.List;
 
 @Component
 public class SurveyPdf  extends AbstractPdfView{
@@ -67,7 +55,8 @@ public class SurveyPdf  extends AbstractPdfView{
 		Paragraph titleParagraph;
 		
 		SurveyEntry surveyEntry= (SurveyEntry) model.get("surveyEntry");
-		List<SurveyPage> surveyPages = (List<SurveyPage>) model.get("surveyPages");
+
+        List<SurveyPage> surveyPages = (List<SurveyPage>) model.get("surveyPages");
 
 		String falseMessage = (String)  model.get("falseMessage");
 		String trueMessage = (String)  model.get("trueMessage");

@@ -36,7 +36,7 @@ public enum QuestionType {
 	INTEGER_INPUT_MATRIX("INM"),
 	CURRENCY_INPUT_MATRIX("CRM"),
 	DECIMAL_INPUT_MATRIX("NMM"),
-	DATE_INPUT_MATRIX("DTM"),	
+	DATE_INPUT_MATRIX("DTM"),
 	
 	IMAGE_DISPLAY("IMG"),
 	VIDEO_DISPLAY("VID"),
@@ -47,101 +47,63 @@ public enum QuestionType {
 	SMILEY_FACES_RATING("SFR");
 	
 	private String code;
-	 
-	private QuestionType(String c) {
+
+	QuestionType(String c) {
 	   code = c;
 	}
-	 
+
+	public static QuestionType fromCode(String code) {
+		if (code != null) {
+			for (QuestionType b : QuestionType.values()) {
+				if (code.equalsIgnoreCase(b.code)) {
+					return b;
+				}
+			}
+		}
+		return null;
+	}
+ 
 	public String getCode() {
 	  return code;
 	}
- 
+
 	public Boolean getIsDataSet() {
-		if (this == QuestionType.DATASET_DROP_DOWN ) {
-			return true;
-		}
-		else{
-			return false;
-		}
+		return this == QuestionType.DATASET_DROP_DOWN;
 	}
 	
-	
 	public Boolean getIsRating() {
-		if (this == QuestionType.STAR_RATING || 
-			this == QuestionType.SMILEY_FACES_RATING ) {
-			return true;
-		}
-		else{
-			return false;
-		}
+		return this == QuestionType.STAR_RATING ||
+				this == QuestionType.SMILEY_FACES_RATING;
 	}
 	
 	public Boolean getIsMatrix() {
-		if (this == QuestionType.YES_NO_DROPDOWN_MATRIX || 
-			this == QuestionType.SHORT_TEXT_INPUT_MATRIX ||
-			this == QuestionType.INTEGER_INPUT_MATRIX ||
-			this== QuestionType.CURRENCY_INPUT_MATRIX ||
-			this == QuestionType.DECIMAL_INPUT_MATRIX ||
-			this== QuestionType.DATE_INPUT_MATRIX) {
-			
-			return true;
-		}
-		else{
-			return false;
-		}
+		return this == QuestionType.YES_NO_DROPDOWN_MATRIX ||
+				this == QuestionType.SHORT_TEXT_INPUT_MATRIX ||
+				this == QuestionType.INTEGER_INPUT_MATRIX ||
+				this == QuestionType.CURRENCY_INPUT_MATRIX ||
+				this == QuestionType.DECIMAL_INPUT_MATRIX ||
+				this == QuestionType.DATE_INPUT_MATRIX;
 	}
-	
 	
 	public Boolean getRequiresOptions() {
-		if (this== QuestionType.MULTIPLE_CHOICE_CHECKBOXES || 
-			this == QuestionType.SINGLE_CHOICE_DROP_DOWN ||
-			this == QuestionType.SINGLE_CHOICE_RADIO_BUTTONS ||
-			this == QuestionType.STAR_RATING ||
-			this == QuestionType.SMILEY_FACES_RATING||
-			this == QuestionType.DATASET_DROP_DOWN) {
-			return true;
-		}
-		else{
-			return false;
-		}
+		return this == QuestionType.MULTIPLE_CHOICE_CHECKBOXES ||
+				this == QuestionType.SINGLE_CHOICE_DROP_DOWN ||
+				this == QuestionType.SINGLE_CHOICE_RADIO_BUTTONS ||
+				this == QuestionType.STAR_RATING ||
+				this == QuestionType.SMILEY_FACES_RATING ||
+				this == QuestionType.DATASET_DROP_DOWN;
 	}
 	
-	
 	public Boolean getIsMultipleValue() {
-		if (this== QuestionType.MULTIPLE_CHOICE_CHECKBOXES ) {
-			return true;
-		}
-		else{
-			return false;
-		}
+		return this == QuestionType.MULTIPLE_CHOICE_CHECKBOXES;
 	}
 	
 	public Boolean getIsTextInput(){
-		if (this == QuestionType.HUGE_TEXT_INPUT  ||
-			this == QuestionType.LONG_TEXT_INPUT  ||
-			this == QuestionType.SHORT_TEXT_INPUT
-			){
-			
-			return true;
-		}
-		else {
-
-			return false;
-		}
+		return this == QuestionType.HUGE_TEXT_INPUT ||
+				this == QuestionType.LONG_TEXT_INPUT ||
+				this == QuestionType.SHORT_TEXT_INPUT;
 
 	}
-	
-	
-	public static QuestionType fromCode(String code) {
-	    if (code != null) {
-	      for (QuestionType b : QuestionType.values()) {
-	        if (code.equalsIgnoreCase(b.code)) {
-	          return b;
-	        }
-	      }
-	    }
-	    return null;
-	  }
 	
 	
 	

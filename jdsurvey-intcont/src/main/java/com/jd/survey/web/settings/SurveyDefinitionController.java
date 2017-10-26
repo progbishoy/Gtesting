@@ -16,58 +16,47 @@
 package com.jd.survey.web.settings;
 
 
+  import com.google.zxing.BarcodeFormat;
+  import com.google.zxing.WriterException;
+  import com.google.zxing.client.j2se.MatrixToImageWriter;
+  import com.google.zxing.common.BitMatrix;
+  import com.google.zxing.qrcode.QRCodeWriter;
+  import com.jd.survey.GlobalSettings;
+  import com.jd.survey.domain.security.User;
+  import com.jd.survey.domain.settings.*;
+  import com.jd.survey.service.security.SecurityService;
+  import com.jd.survey.service.security.UserService;
+  import com.jd.survey.service.settings.ApplicationSettingsService;
+  import com.jd.survey.service.settings.SurveySettingsService;
+  import com.jd.survey.service.util.JsonHelperService;
+  import org.apache.commons.logging.Log;
+  import org.apache.commons.logging.LogFactory;
+  import org.apache.velocity.app.VelocityEngine;
+  import org.owasp.validator.html.AntiSamy;
+  import org.owasp.validator.html.CleanResults;
+  import org.owasp.validator.html.Policy;
+  import org.springframework.beans.factory.annotation.Autowired;
+  import org.springframework.beans.factory.annotation.Value;
+  import org.springframework.context.MessageSource;
+  import org.springframework.security.access.annotation.Secured;
+  import org.springframework.stereotype.Controller;
+  import org.springframework.ui.Model;
+  import org.springframework.validation.BindingResult;
+  import org.springframework.web.bind.annotation.*;
+  import org.springframework.web.multipart.MultipartFile;
+  import org.springframework.web.util.UriUtils;
+  import org.springframework.web.util.WebUtils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
-import java.util.Set;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.app.VelocityEngine;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
-import org.owasp.validator.html.Policy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriUtils;
-import org.springframework.web.util.WebUtils;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.jd.survey.GlobalSettings;
-import com.jd.survey.domain.security.User;
-import com.jd.survey.domain.settings.Department;
-import com.jd.survey.domain.settings.Sector;
-import com.jd.survey.domain.settings.SurveyTemplate;
-import com.jd.survey.domain.settings.Question;
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.settings.SurveyDefinitionPage;
-import com.jd.survey.domain.settings.SurveyDefinitionStatus;
-import com.jd.survey.service.security.SecurityService;
-import com.jd.survey.service.security.UserService;
-import com.jd.survey.service.settings.ApplicationSettingsService;
-import com.jd.survey.service.settings.SurveySettingsService;
-import com.jd.survey.service.util.JsonHelperService;
+  import javax.servlet.ServletOutputStream;
+  import javax.servlet.http.HttpServletRequest;
+  import javax.servlet.http.HttpServletResponse;
+  import javax.validation.Valid;
+  import java.io.IOException;
+  import java.io.UnsupportedEncodingException;
+  import java.security.Principal;
+  import java.util.ArrayList;
+  import java.util.List;
+  import java.util.Set;
 
 
 
@@ -80,20 +69,16 @@ public class SurveyDefinitionController {
 	//private static final String EXTERNAL_SITE_BASE_URL="external_site_base_url";
 	private static final long SURVEY_INVITATION_EMAIL_TEMPLATE_ID = 4;
 	private static final long SURVEY_COMPLETED_PAGE_CONTENT_TEMPLATE_ID = 5;
-	private static final String  POLICY_FILE_LOCATION="/antisamy-tinymce-1-4-4.xml"; 
-	
-	@Autowired	private ApplicationSettingsService applicationSettingsService;
+	private static final String  POLICY_FILE_LOCATION="/antisamy-tinymce-1-4-4.xml";
+    @Value("${external.base.url}")
+    String externalBaseUrl;
+    @Autowired	private ApplicationSettingsService applicationSettingsService;
 	@Autowired  private VelocityEngine velocityEngine;
 	@Autowired	private SecurityService securityService;
 	@Autowired	private UserService userService;
 	@Autowired	private SurveySettingsService surveySettingsService;
 	@Autowired	private JsonHelperService jsonHelperService;
 	@Autowired	private MessageSource messageSource;
-	
-	@Value("${external.base.url}") String externalBaseUrl;
-	
-	  
-	        	
 	
 	/**
 	 * Returns the survey logo image binary  
@@ -809,7 +794,16 @@ public class SurveyDefinitionController {
 															surveySettingsService.velocityTemplate_findById(SURVEY_COMPLETED_PAGE_CONTENT_TEMPLATE_ID).getDefinition());
 					
 				}
-				
+
+                uiModel.addAttribute("surveyTagsList", surveySettingsService.tags_findAll());
+                List<SurveyTags> tt0 = new ArrayList<SurveyTags>();
+                SurveyTags tagone = new SurveyTags();
+
+                tagone.setSurveyDefinition(surveyDefinition);
+                tagone.setTag(surveySettingsService.tags_findById(3l));
+                tt0.add(tagone);
+                surveyDefinition.setSurveyTags(tt0);
+
 				populateEditForm(uiModel, surveyDefinition,user);
 				
 				
@@ -840,11 +834,12 @@ public class SurveyDefinitionController {
 	@Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
 	public String createPost (@RequestParam(value = "_proceed", required = false) String proceed,
-							  @Valid SurveyDefinition surveyDefinition, 
-							  BindingResult bindingResult, 
-							  Principal principal,
-							  Model uiModel, 
-							  HttpServletRequest httpServletRequest){
+                              @RequestParam(value = "mainCategory", required = false) String mainCategory,
+                              @Valid SurveyDefinition surveyDefinition,
+                              BindingResult bindingResult,
+                              Principal principal,
+                              Model uiModel,
+                              HttpServletRequest httpServletRequest){
 		try {
 			String login = principal.getName();
 			User user = userService.user_findByLogin(login);
@@ -881,12 +876,11 @@ public class SurveyDefinitionController {
 				AntiSamy completedSurveyAs = new AntiSamy();
 				CleanResults crCompletedSurvey = completedSurveyAs.scan(surveyDefinition.getCompletedSurveyTemplate(), completedSurveyPolicy);
 				surveyDefinition.setCompletedSurveyTemplate(crCompletedSurvey.getCleanHTML());
-				
-			
-				
+
 				uiModel.asMap().clear();
 				surveyDefinition = surveySettingsService.surveyDefinition_merge(surveyDefinition);
-				return "redirect:/settings/surveyDefinitions/" + encodeUrlPathSegment(surveyDefinition.getId().toString(), httpServletRequest );
+                surveySettingsService.generateQuestionsFromTags(surveyDefinition);
+                return "redirect:/settings/surveyDefinitions/" + encodeUrlPathSegment(surveyDefinition.getId().toString(), httpServletRequest );
 			}
 			else{
 				return "redirect:/settings/surveyDefinitions";
@@ -934,8 +928,10 @@ public class SurveyDefinitionController {
 			
 			for (SurveyDefinitionPage page: surveyDefinition.getPages()) {
 				for (Question question: page.getQuestions()) {
-					//if (question.getType()== QuestionType.DATASET_DROP_DOWN){
-						//DataSet dataset = surveySettingsService.dataset_findByName(question.getDataSetCode());
+                    System.out.println("Glgnh0f " + question.getQuestionText());
+                    System.out.println("Glgnh0f " + question.getQuestionAnswer());
+                    //if (question.getType()== QuestionType.DATASET_DROP_DOWN){
+                    //DataSet dataset = surveySettingsService.dataset_findByName(question.getDataSetCode());
 						//.addAttribute("datasetItems" + "p"+ page.getOrder() + "q"+ question.getOrder(),surveySettingsService.datasetItem_findByDataSetId(dataset.getId(), 0, 10));
 
 					//}
@@ -1196,7 +1192,8 @@ public class SurveyDefinitionController {
 	*/ 
 	@ExceptionHandler(RuntimeException.class)
 	public String handleRuntimeException(RuntimeException ex, HttpServletRequest request) {
-		log.error(ex);
+        ex.printStackTrace();
+        log.error(ex);
 		log.error("redirect to /uncaughtException");
 		return "redirect:/uncaughtException";
 	}

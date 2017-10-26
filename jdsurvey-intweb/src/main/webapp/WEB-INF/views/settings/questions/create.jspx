@@ -754,10 +754,10 @@
 							<option value="VERTICAL" selected="true"><spring:message code="vertical_label" /></option>
 							<option value="HORIZONTAL"><spring:message code="horizontal_label"  /></option>
 					</springform:select>
-				</div>	
-				
-				
-				<div id="datasets">
+                </div>
+
+
+            <div id="datasets">
 					<spring:message code="dataset_question_tip" var="ddQTip" />
 					<label for="dataset" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.dataset_label"/>:<a class="hastip" title="${ddQTip}">?</a></label>
 					<select cssclass="grid-4-12" name="dataSetId">
@@ -779,6 +779,12 @@
 				
 				<spring:message code="question_text_tip" var="qTxtTip" htmlEscape="false"/>
 				<field:textarea field="questionText" id="c_com.jd.survey.domain.settings.Question.questionText" cssclass="grid-8-12" required="true" tip="${qTxtTip}"/>
+
+            <field:textarea field="questionAnswer" id="c_com.jd.survey.domain.settings.Question.questionAnswer"
+                            cssclass="grid-8-12" required="true" tip="${qTxtTip}"/>
+
+            <field:input field="questionGrade" id="c_com.jd.survey.domain.settings.Question.questionGrade"
+                         cssclass="grid-2-12" maxlength="10"/>
 				<div id="multimedia">
 					<field:input field="width" id="c_com.jd.survey.domain.settings.Question.width" cssclass="grid-2-12"/>
 					<field:input field="height" id="c_com.jd.survey.domain.settings.Question.height" cssclass="grid-2-12"/>

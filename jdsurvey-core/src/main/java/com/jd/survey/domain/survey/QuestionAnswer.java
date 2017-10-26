@@ -15,15 +15,13 @@
   */
 package com.jd.survey.domain.survey;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+  import com.jd.survey.domain.settings.Question;
+  import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+  import org.apache.commons.lang3.builder.ToStringStyle;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import com.jd.survey.domain.settings.Question;
+  import java.io.Serializable;
+  import java.math.BigDecimal;
+  import java.util.Date;
 
 
 
@@ -36,6 +34,7 @@ public class QuestionAnswer implements Comparable <QuestionAnswer>,  Serializabl
 	
 	
     private Question question;
+    private String answerGrade;
     private Long longAnswerValue;
 	private String stringAnswerValue;
 	private String otherStringAnswerValue;
@@ -69,6 +68,11 @@ public class QuestionAnswer implements Comparable <QuestionAnswer>,  Serializabl
 	public Long getLongAnswerValue() {
 		return longAnswerValue;
 	}
+
+    public void setLongAnswerValue(Long longAnswerValue) {
+        this.longAnswerValue = longAnswerValue;
+    }
+
 	public Question getQuestion() {
 		return question;
 	}
@@ -77,9 +81,6 @@ public class QuestionAnswer implements Comparable <QuestionAnswer>,  Serializabl
 		this.question = question;
 	}
 
-	public void setLongAnswerValue(Long longAnswerValue) {
-		this.longAnswerValue = longAnswerValue;
-	}
 	public String getStringAnswerValue() {
 		return stringAnswerValue;
 	}
@@ -193,12 +194,14 @@ public class QuestionAnswer implements Comparable <QuestionAnswer>,  Serializabl
 	public Short getOrder() {
 		return question.getOrder();
 	}
-	
-	
-	
-	
-	
-	
+
+    public String getAnswerGrade() {
+        return answerGrade;
+    }
+
+    public void setAnswerGrade(String answerGrade) {
+        this.answerGrade = answerGrade;
+    }
 
 	@Override
 	public int compareTo(QuestionAnswer that) {

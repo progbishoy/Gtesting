@@ -1,10 +1,10 @@
-<div class="left-column" 
-	xmlns:c="http://java.sun.com/jsp/jstl/core" 
-	xmlns:jsp="http://java.sun.com/JSP/Page" 
-	xmlns:sec="http://www.springframework.org/security/tags" 
-	xmlns:tiles="http://tiles.apache.org/tags-tiles"
-	xmlns:spring="http://www.springframework.org/tags"
-	xmlns:menu="urn:jsptagdir:/WEB-INF/tags/menu" version="2.0">
+<div class="left-column"
+     xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:sec="http://www.springframework.org/security/tags"
+     xmlns:tiles="http://tiles.apache.org/tags-tiles"
+     xmlns:spring="http://www.springframework.org/tags"
+     version="2.0">
 
 <jsp:directive.page contentType="text/html;charset=UTF-8" />
 <jsp:output omit-xml-declaration="yes" />
@@ -28,7 +28,8 @@
 					<i class="icon-plus"> &#160;</i>
 					<spring:message code="leftmenu_add" arguments="${objectname}" htmlEscape="false"/></a></li>
 
-					<sec:authorize ifAnyGranted="ROLE_ADMIN">						
+
+                    <sec:authorize ifAnyGranted="ROLE_ADMIN">
 						<c:url value="/settings/surveyDefinitions/upload" var="url"/>
 						<spring:message code="com.jd.survey.domain.settings.surveydefinition_label_short" var="objectname" htmlEscape="false"  />
 						<li class="topmenu"><a href="${url}" >

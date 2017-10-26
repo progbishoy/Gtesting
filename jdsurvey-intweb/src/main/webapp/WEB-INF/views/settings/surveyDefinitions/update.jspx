@@ -198,8 +198,52 @@
 						</noscript>
 					
 					</div>
-			
-			 	
+
+            <div>
+                <label for="mainCategory" class="grid-3-12"><spring:message
+                        code="com.jd.survey.domain.settings.surveydefinition.mainCategory_label"/><em
+                        class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                <springform:select path="mainCategory" cssClass="grid-4-12">
+                    <springform:options>
+                    </springform:options>
+                </springform:select>
+            </div>
+            <div>
+                <label for="technology" class="grid-3-12"><spring:message
+                        code="com.jd.survey.domain.settings.surveydefinition.technology_label"/><em
+                        class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                <springform:select path="technology" cssClass="grid-4-12">
+                    <springform:options>
+                    </springform:options>
+                </springform:select>
+            </div>
+            <div>
+                <label for="level" class="grid-3-12"><spring:message
+                        code="com.jd.survey.domain.settings.surveydefinition.level_label"/><em class="formee-req">*</em><a
+                        class="hastip" title="${qTypeTip}">?</a></label>
+                <springform:select path="level" cssClass="grid-4-12">
+                    <springform:options>
+                    </springform:options>
+                </springform:select>
+            </div>
+            <div>
+                <label for="difficultyLevel" class="grid-3-12"><spring:message
+                        code="com.jd.survey.domain.settings.surveydefinition.difficultyLevel_label"/><em
+                        class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                <springform:select path="difficultyLevel" cssClass="grid-4-12">
+                    <springform:options>
+                    </springform:options>
+                </springform:select>
+            </div>
+            <div>
+                <label for="numericalDegree" class="grid-3-12"><spring:message
+                        code="com.jd.survey.domain.settings.surveydefinition.numericalDegree_label"/><em
+                        class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                <springform:select path="numericalDegree" cssClass="grid-4-12">
+                    <springform:options>
+                    </springform:options>
+                </springform:select>
+            </div>
 			<c:if test="${surveyDefinition.statusAsString eq 'I'}">
 			<spring:message code="isPublic_tip" var="tip"/>
 			<field:checkbox field="isPublic" id="c_com.jd.survey.domain.settings.SurveyDefinition.isPublic" tip="${tip}"/>

@@ -15,46 +15,36 @@
   */
 package com.jd.survey.web.settings;
 
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+  import com.jd.survey.domain.security.User;
+  import com.jd.survey.domain.settings.Question;
+  import com.jd.survey.domain.settings.QuestionOption;
+  import com.jd.survey.domain.settings.SurveyDefinitionPage;
+  import com.jd.survey.service.security.SecurityService;
+  import com.jd.survey.service.security.UserService;
+  import com.jd.survey.service.settings.SurveySettingsService;
+  import org.apache.commons.logging.Log;
+  import org.apache.commons.logging.LogFactory;
+  import org.owasp.validator.html.AntiSamy;
+  import org.owasp.validator.html.CleanResults;
+  import org.owasp.validator.html.Policy;
+  import org.springframework.beans.factory.annotation.Autowired;
+  import org.springframework.context.MessageSource;
+  import org.springframework.context.i18n.LocaleContextHolder;
+  import org.springframework.security.access.annotation.Secured;
+  import org.springframework.stereotype.Controller;
+  import org.springframework.ui.Model;
+  import org.springframework.validation.BindingResult;
+  import org.springframework.web.bind.annotation.*;
+  import org.springframework.web.util.UriUtils;
+  import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
-import org.owasp.validator.html.Policy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.util.UriUtils;
-import org.springframework.web.util.WebUtils;
-import com.jd.survey.domain.security.User;
-import com.jd.survey.domain.settings.QuestionOption;
-import com.jd.survey.domain.settings.QuestionType;
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.settings.SurveyDefinitionPage;
-import com.jd.survey.domain.settings.Question;
-import com.jd.survey.domain.settings.SurveyDefinitionStatus;
-import com.jd.survey.service.security.SecurityService;
-import com.jd.survey.service.security.UserService;
-import com.jd.survey.service.settings.SurveySettingsService;
+  import javax.servlet.http.HttpServletRequest;
+  import javax.validation.Valid;
+  import java.io.UnsupportedEncodingException;
+  import java.security.Principal;
+  import java.util.Set;
+  import java.util.SortedSet;
+  import java.util.TreeSet;
 
 
 @RequestMapping("/settings/questions")
@@ -173,6 +163,9 @@ public class QuestionController {
 					AntiSamy emailAs = new AntiSamy();
 					CleanResults crQuestionText = emailAs.scan(question.getQuestionText(), questionTextPolicy);
 					question.setQuestionText(crQuestionText.getCleanHTML());
+
+					CleanResults crQuestionAnswer = emailAs.scan(question.getQuestionAnswer(), questionTextPolicy);
+					question.setQuestionAnswer(crQuestionAnswer.getCleanHTML());
 					
 					Policy questionTipPolicy = Policy.getInstance(this.getClass().getResource(POLICY_FILE_LOCATION));
 					AntiSamy completedSurveyAs = new AntiSamy();
@@ -304,7 +297,8 @@ public class QuestionController {
 						AntiSamy emailAs = new AntiSamy();
 						CleanResults crQuestionText = emailAs.scan(question.getQuestionText(), questionTextPolicy);
 						question.setQuestionText(crQuestionText.getCleanHTML());
-						
+						CleanResults crQuestionAnswer = emailAs.scan(question.getQuestionAnswer(), questionTextPolicy);
+						question.setQuestionAnswer(crQuestionAnswer.getCleanHTML());
 						Policy questionTipPolicy = Policy.getInstance(this.getClass().getResource(POLICY_FILE_LOCATION));
 						AntiSamy completedSurveyAs = new AntiSamy();
 						CleanResults crQuestionTip = completedSurveyAs.scan(question.getTip(), questionTipPolicy);
@@ -359,11 +353,6 @@ public class QuestionController {
 			User user = userService.user_findByLogin(login);
 			//SurveyDefinitionPage surveyDefinitionPage = surveySettingsService.surveyDefinitionPage_findById(surveyDefinitionPageId); 
 			//Check if the user is authorized
-			if(!securityService.userIsAuthorizedToManageSurvey(question.getPage().getSurveyDefinition().getId(), user) &&
-			   !securityService.userBelongsToDepartment(question.getPage().getSurveyDefinition().getDepartment().getId(), user)		) {
-				log.warn("Unauthorized access to url path " + httpServletRequest.getPathInfo() + " attempted by user login:" + principal.getName() + "from IP:" + httpServletRequest.getLocalAddr());
-				return "accessDenied";	
-			}
 			
 			surveySettingsService.question_remove(id);
 			uiModel.asMap().clear();

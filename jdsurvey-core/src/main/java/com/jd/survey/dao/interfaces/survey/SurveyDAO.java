@@ -15,36 +15,51 @@
   */
 package  com.jd.survey.dao.interfaces.survey;
 
-import java.util.List;
-import java.util.Set;
+  import com.jd.survey.domain.settings.SurveyDefinition;
+  import com.jd.survey.domain.settings.SurveyDefinitionPage;
+  import com.jd.survey.domain.survey.Survey;
+  import com.jd.survey.domain.survey.SurveyPage;
+  import org.skyway.spring.util.dao.JpaDao;
+  import org.springframework.dao.DataAccessException;
 
-import org.skyway.spring.util.dao.JpaDao;
-import org.springframework.dao.DataAccessException;
-
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.settings.SurveyDefinitionPage;
-import com.jd.survey.domain.survey.Survey;
-import com.jd.survey.domain.survey.SurveyPage;
+  import java.util.List;
+  import java.util.Set;
 
 /**
  */
 public interface SurveyDAO extends JpaDao<Survey> {
-	public Set<Survey> findAll() throws DataAccessException;
-	public Set<Survey> findAll(int startResult, int maxRows) throws DataAccessException;
-	public Survey findById(Long id) throws DataAccessException;
-	public Long getCount() throws DataAccessException;
-	public Set<Survey> findAllByTypeId(Long surveyDefinitionId) throws DataAccessException;
-	public Set<Survey> findAllIncompleteByTypeId(Long surveyDefinitionId) throws DataAccessException;
-	public Set<Survey> findAllSubmittedByTypeId(Long surveyDefinitionId) throws DataAccessException;
-	public Set<Survey> findAllDeletedByTypeId(Long surveyDefinitionId) throws DataAccessException;
-	public Set<Survey> findUserEntriesByTypeIdAndLogin(Long surveyDefinitionId, String login) throws DataAccessException;
-	public Set<Survey> findUserEntriesByTypeIdAndIpAddress(Long surveyDefinitionId, String ipAddress) throws DataAccessException;
-	
-	
-	public void publish(SurveyDefinition surveyDefinition);
-	public void initialize(Survey survey,SurveyDefinition surveyDefinition);
-	public SurveyPage getPage(Survey survey, SurveyDefinitionPage surveyDefinitionPage, final String dateFormat);
-	public List<SurveyPage> getPages(final Survey survey,final SurveyDefinition surveyDefinition, final String dateFormat);
-	public void updatePage(SurveyPage surveyPage);
-	public void updatePageVisibility(Long surveyDefinitionId, Long surveyId, Short pageOrder, Boolean visibility); 
+    Set<Survey> findAll() throws DataAccessException;
+
+    Set<Survey> findAll(int startResult, int maxRows) throws DataAccessException;
+
+    Survey findById(Long id) throws DataAccessException;
+
+    Long getCount() throws DataAccessException;
+
+    Set<Survey> findAllByTypeId(Long surveyDefinitionId) throws DataAccessException;
+
+    Set<Survey> findAllIncompleteByTypeId(Long surveyDefinitionId) throws DataAccessException;
+
+    Set<Survey> findAllSubmittedByTypeId(Long surveyDefinitionId) throws DataAccessException;
+
+    Set<Survey> findAllDeletedByTypeId(Long surveyDefinitionId) throws DataAccessException;
+
+    Set<Survey> findUserEntriesByTypeIdAndLogin(Long surveyDefinitionId, String login) throws DataAccessException;
+
+    Set<Survey> findUserEntriesByTypeIdAndIpAddress(Long surveyDefinitionId, String ipAddress) throws DataAccessException;
+
+
+    void publish(SurveyDefinition surveyDefinition);
+
+    void initialize(Survey survey, SurveyDefinition surveyDefinition);
+
+    SurveyPage getPage(Survey survey, SurveyDefinitionPage surveyDefinitionPage, final String dateFormat);
+
+    List<SurveyPage> getPages(final Survey survey, final SurveyDefinition surveyDefinition, final String dateFormat);
+
+    void updatePage(SurveyPage surveyPage);
+
+    void updatePageVisibility(Long surveyDefinitionId, Long surveyId, Short pageOrder, Boolean visibility);
+
+    void updateQuestionGrade(Long surveyDifinitionId, Long surveyId, Long page_id, Long questionId, Long grade);
 }

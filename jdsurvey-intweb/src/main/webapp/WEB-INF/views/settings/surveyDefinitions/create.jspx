@@ -137,8 +137,9 @@
 
     <div class="right-column">	
 		<div class="block">
- 		 hello two<form:create id="fc_com.jd.survey.domain.settings.SurveyDefinition" modelAttribute="surveyDefinition" path="/settings/surveyDefinitions" render="${empty dependencies}" >
-					<c:if test="${!empty surveyDefinition.department}">
+            <form:create id="fc_com.jd.survey.domain.settings.SurveyDefinition" modelAttribute="surveyDefinition"
+                         path="/settings/surveyDefinitions" render="${empty dependencies}">
+                <c:if test="${!empty surveyDefinition.department}">
 					<field:hidden path="department.id"/>
 					<field:link  field="department.name" id="c_com.jd.survey.domain.settings.Department"  path="/security/departments/${surveyDefinition.department.id}" object="${surveyDefinition}" cssclass="grid-8-12"/>
 				</c:if>
@@ -207,7 +208,128 @@
 						</noscript>
 					
 					</div>
-					
+
+                <div>
+                    <label for="mainCategory" class="grid-3-12"><spring:message
+                            code="com.jd.survey.domain.settings.surveydefinition.mainCategory_label"/><em
+                            class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                    <springform:select path="mainCategory" cssClass="grid-4-12">
+                        <springform:options>
+                        </springform:options>
+                    </springform:select>
+                </div>
+                <div>
+                    <label for="technology" class="grid-3-12"><spring:message
+                            code="com.jd.survey.domain.settings.surveydefinition.technology_label"/><em
+                            class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                    <springform:select path="technology" cssClass="grid-4-12">
+                        <springform:options>
+                        </springform:options>
+                    </springform:select>
+                </div>
+                <div>
+                    <label for="level" class="grid-3-12"><spring:message
+                            code="com.jd.survey.domain.settings.surveydefinition.level_label"/><em
+                            class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                    <springform:select path="level" cssClass="grid-4-12">
+                        <springform:options>
+                        </springform:options>
+                    </springform:select>
+                </div>
+                <div>
+                    <label for="difficultyLevel" class="grid-3-12"><spring:message
+                            code="com.jd.survey.domain.settings.surveydefinition.difficultyLevel_label"/><em
+                            class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                    <springform:select path="difficultyLevel" cssClass="grid-4-12">
+                        <springform:options>
+                        </springform:options>
+                    </springform:select>
+                </div>
+                <div>
+                    <label for="numericalDegree" class="grid-3-12"><spring:message
+                            code="com.jd.survey.domain.settings.surveydefinition.numericalDegree_label"/><em
+                            class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+                    <springform:select path="numericalDegree" cssClass="grid-4-12">
+                        <springform:options>
+                        </springform:options>
+                    </springform:select>
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        $("#link1").click(function (e) {
+
+                            var divLength = $(".rawww").length;
+
+                            var lastDivId = divLength - 1;
+
+
+                            //var newId =  parseInt(lastDivId) + 1 ;
+
+                            //$("#tagss").append('&lt;input id="surveyTags2.tagName" name="surveyTags[2].tagName" type="text"  />');
+                            //$("#tagss").append('&lt;input id="surveyTags2.tagName" name="surveyTags[2].tagName" type="text"  />');
+
+                            //$("#tagss").append('&lt;div id="'+newId+'" class="rawww">' +
+                            //        '&lt;input id="surveyTags'+lastDivId+'.tagName" name="surveyTags['+lastDivId+'].tagName" type="text"/>' +
+                            //        '&lt;br/>'+
+                            //        '&lt;div/>');
+                            var content = $("#tagsDiv" + lastDivId).clone();
+                            var divid = "tagsDiv" + divLength;
+                            var id = "surveyTags" + divLength + ".tag.id";
+                            var name = "surveyTags[" + divLength + "].tag.id";
+
+                            var easyid = "surveyTags" + divLength + ".easy";
+                            var easyname = "surveyTags[" + divLength + "].easy";
+
+                            var mediumid = "surveyTags" + divLength + ".medium";
+                            var mediumname = "surveyTags[" + divLength + "].medium";
+
+                            var hardid = "surveyTags" + divLength + ".hard";
+                            var hardname = "surveyTags[" + divLength + "].hard";
+                            content[0].id = divid;
+                            content[0].children[0].id = id;
+                            content[0].children[0].name = name;
+
+                            content[0].children[1].id = easyid;
+                            content[0].children[1].name = easyname;
+                            content[0].children[2].id = mediumid;
+                            content[0].children[2].name = mediumname;
+                            content[0].children[3].id = hardid;
+                            content[0].children[3].name = hardname;
+
+                            $("#tagss").append(content);
+                        });
+
+                    });
+                </script>
+                <br/>
+                <div id="tagssTitle">
+                    <label class="grid-3-12">Tag</label>
+                    <label class="grid-3-12">Number of Easy Questions</label>
+                    <label class="grid-3-12">Number of Medium Questions</label>
+                    <label class="grid-3-12">Number of Hard Questions</label>
+                </div>
+                <div id="tagss">
+                    <c:forEach items="${surveyDefinition.surveyTags}" var="surveyTagsloop" varStatus="loop">
+                        <div id="tagsDiv${loop.index}" class="rawww">
+                            <springform:select path="surveyTags[${loop.index}].tag.id" class="grid-3-12">
+                                <springform:options items="${surveyTagsList}" itemValue="id" itemLabel="tagName"/>
+                            </springform:select>
+                            <springform:input path="surveyTags[${loop.index}].easy" class="grid-3-12"/>
+                            <springform:input path="surveyTags[${loop.index}].medium" class="grid-3-12"/>
+                            <springform:input path="surveyTags[${loop.index}].hard" class="grid-3-12"/>
+                            <br/>
+                        </div>
+                    </c:forEach>
+
+                </div>
+                <div>
+                    <spring:url value="/resources/images/add.png" var="create_img_url"/>
+                    <a id="link1" class="formee left fancyboxLink fancybox.iframe" target="_blank">
+                        <img alt="add" src="${create_img_url}" title="add"/>
+                    </a>
+                    <br/>
+                </div>
 				<!-- Survey Settings -->
 				<spring:message code="isPublic_tip" var="tip"/>
 				<field:checkbox field="isPublic" id="c_com.jd.survey.domain.settings.SurveyDefinition.isPublic"  tip="${tip}" />

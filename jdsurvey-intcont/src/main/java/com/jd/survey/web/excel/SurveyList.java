@@ -15,30 +15,22 @@
   */
 package com.jd.survey.web.excel;
 
-import java.util.List;
-import java.util.Map;
+  import com.jd.survey.domain.settings.*;
+  import com.jd.survey.web.AbstractJExcelView2;
+  import jxl.format.CellFormat;
+  import jxl.write.Label;
+  import jxl.write.WritableSheet;
+  import jxl.write.WritableWorkbook;
+  import org.apache.commons.logging.Log;
+  import org.apache.commons.logging.LogFactory;
+  import org.owasp.validator.html.AntiSamy;
+  import org.owasp.validator.html.CleanResults;
+  import org.owasp.validator.html.Policy;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import jxl.format.CellFormat;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
-import org.owasp.validator.html.Policy;
-
-import com.jd.survey.domain.settings.Question;
-import com.jd.survey.domain.settings.QuestionColumnLabel;
-import com.jd.survey.domain.settings.QuestionOption;
-import com.jd.survey.domain.settings.QuestionRowLabel;
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.settings.SurveyDefinitionPage;
-import com.jd.survey.web.AbstractJExcelView2;
+  import javax.servlet.http.HttpServletRequest;
+  import javax.servlet.http.HttpServletResponse;
+  import java.util.List;
+  import java.util.Map;
 
 
 public class SurveyList extends AbstractJExcelView2 {
@@ -69,9 +61,12 @@ public class SurveyList extends AbstractJExcelView2 {
 				for(Question question :page.getQuestions()) {
 					
 					CleanResults cr = as.scan(question.getQuestionText(), policy);
+                    CleanResults crA = as.scan(question.getQuestionAnswer(), policy);
+
 					question.setQuestionText(cr.getCleanHTML());
-					
-					if (question.getType().getIsMatrix() ){
+                    question.setQuestionAnswer(crA.getCleanHTML());
+
+                    if (question.getType().getIsMatrix() ){
 						for (QuestionRowLabel questionRowLabel : question.getRowLabels() ){
 							for (QuestionColumnLabel questionColumnLabel : question.getColumnLabels()){
 								columnName = "p" + page.getOrder()+"q" +question.getOrder() + "r" + questionRowLabel.getOrder() + "c" +	questionColumnLabel.getOrder()	;

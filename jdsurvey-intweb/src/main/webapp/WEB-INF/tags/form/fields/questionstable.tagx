@@ -1,14 +1,12 @@
-<jsp:root 	xmlns:c="http://java.sun.com/jsp/jstl/core" 
-			xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
-			xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" 
-			xmlns:spring="http://www.springframework.org/tags" 
-			xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" 
-			xmlns:jsp="http://java.sun.com/JSP/Page" 
-			xmlns:form="http://www.springframework.org/tags/form" 
-			version="2.0">
-		
-  <jsp:directive.tag import="java.util.ArrayList" />
-  <jsp:output omit-xml-declaration="yes" />
+<jsp:root xmlns:c="http://java.sun.com/jsp/jstl/core"
+		  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+		  xmlns:spring="http://www.springframework.org/tags"
+		  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+		  xmlns:jsp="http://java.sun.com/JSP/Page"
+		  xmlns:form="http://www.springframework.org/tags/form"
+		  version="2.0">
+
+	<jsp:output omit-xml-declaration="yes"/>
   <jsp:directive.attribute name="questions" type="java.util.Collection" required="true" rtexprvalue="true" description="The collection to be displayed in the table" />
   <jsp:directive.attribute name="pageid" type="java.lang.Long" required="true" rtexprvalue="true" description="The identifier of the question page" />
   <jsp:directive.attribute name="pageorder" type="java.lang.Short" required="true" rtexprvalue="true" description="The identifier of the question page" />
@@ -714,12 +712,21 @@
 								</div>				
 							</c:when>
 					</c:choose>
-					
-					<div class="questionLinks" style="text-align:right;">
-				
-				
-					
-					
+							<label class="questionText">
+								<spring:message code="com.jd.survey.domain.settings.question.questionanswer_label"/>:
+							</label>
+							<label>
+								<c:out value="${question.questionAnswer}" escapeXml="false"/>
+							</label>
+
+							<label class="questionText">
+								<spring:message code="com.jd.survey.domain.settings.question.questiongrade_label"/>:
+							</label>
+							<label>
+								<c:out value="${question.questionGrade}" escapeXml="false"/>
+							</label>
+
+							<div class="questionLinks" style="text-align:right;">
 						      <!-- Update link Allow only when survey status is equal to 'I' Incomplete -->
 						      <c:if test="${surveyStatus eq 'I' || surveyStatus eq 'P'}" >	
 					              <spring:url value="/settings/questions/${question.id}" var="update_form_url">
@@ -802,8 +809,8 @@
 									  <c:if test="${not empty param.size}">
 									    <input name="size" type="hidden" value="${fn:escapeXml(param.size)}" />
 									  </c:if>
-									</form:form>	
-								</c:if>  
+									</form:form>
+								</c:if>
 						</div>
 					</div>
 					

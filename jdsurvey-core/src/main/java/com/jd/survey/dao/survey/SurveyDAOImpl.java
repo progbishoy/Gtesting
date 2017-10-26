@@ -15,50 +15,35 @@
   */
 package com.jd.survey.dao.survey;
 
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+  import com.jd.survey.dao.interfaces.survey.SurveyDAO;
+  import com.jd.survey.domain.settings.*;
+  import com.jd.survey.domain.survey.QuestionAnswer;
+  import com.jd.survey.domain.survey.Survey;
+  import com.jd.survey.domain.survey.SurveyPage;
+  import org.apache.commons.logging.Log;
+  import org.apache.commons.logging.LogFactory;
+  import org.apache.commons.validator.routines.BigDecimalValidator;
+  import org.apache.commons.validator.routines.CurrencyValidator;
+  import org.apache.commons.validator.routines.DateValidator;
+  import org.skyway.spring.util.dao.AbstractJpaDao;
+  import org.springframework.beans.factory.annotation.Autowired;
+  import org.springframework.context.i18n.LocaleContextHolder;
+  import org.springframework.dao.DataAccessException;
+  import org.springframework.jdbc.core.JdbcTemplate;
+  import org.springframework.jdbc.core.RowMapper;
+  import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+  import org.springframework.stereotype.Repository;
+  import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.sql.DataSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.validator.routines.BigDecimalValidator;
-import org.apache.commons.validator.routines.CurrencyValidator;
-import org.apache.commons.validator.routines.DateValidator;
-import org.skyway.spring.util.dao.AbstractJpaDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.jd.survey.dao.interfaces.survey.SurveyDAO;
-import com.jd.survey.domain.settings.Question;
-import com.jd.survey.domain.settings.QuestionColumnLabel;
-import com.jd.survey.domain.settings.QuestionOption;
-import com.jd.survey.domain.settings.QuestionRowLabel;
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.settings.SurveyDefinitionPage;
-import com.jd.survey.domain.survey.QuestionAnswer;
-import com.jd.survey.domain.survey.Survey;
-import com.jd.survey.domain.survey.SurveyPage;
+  import javax.persistence.EntityManager;
+  import javax.persistence.NoResultException;
+  import javax.persistence.PersistenceContext;
+  import javax.persistence.Query;
+  import javax.sql.DataSource;
+  import java.math.BigDecimal;
+  import java.sql.ResultSet;
+  import java.sql.SQLException;
+  import java.util.*;
 
 
 /** 
@@ -72,21 +57,19 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 	private final static Set<Class<?>> dataTypes = new HashSet<Class<?>>(Arrays.asList(new Class<?>[] { Survey.class }));
 
 	private JdbcTemplate jdbcTemplate;
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate; 
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	@PersistenceContext(unitName = "persistenceUnit")
+	private EntityManager entityManager;
 
+
+	public SurveyDAOImpl() {
+		super();
+	}
 
 	@Autowired
 	public void setBasicDataSource(DataSource basicDataSource) {
 		this.jdbcTemplate = new JdbcTemplate(basicDataSource);
-		this.namedParameterJdbcTemplate = new 	NamedParameterJdbcTemplate(basicDataSource);	
-	}
-
-
-	@PersistenceContext(unitName = "persistenceUnit")
-	private EntityManager entityManager;
-
-	public SurveyDAOImpl() {
-		super();
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(basicDataSource);
 	}
 
 	public EntityManager getEntityManager() {
@@ -200,6 +183,7 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 			for(SurveyDefinitionPage page :surveyDefinition.getPages()) {
 				stringBuilder.append(" p" + page.getOrder()+"v BIT,");
 				for(Question question :page.getQuestions()) {
+					stringBuilder.append(" p" + page.getOrder() + "q" + question.getOrder() + "a varchar(75),");
 					switch (question.getType()) {
 					case YES_NO_DROPDOWN: //Yes No DropDown
 						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " BIT,");
@@ -362,6 +346,7 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 				int optionsCount = question.getOptions().size();
 				int rowCount = question.getRowLabels().size();
 				int columnCount = question.getColumnLabels().size();
+				stringBuilder.append(" p" + surveyDefinitionPage.getOrder() + "q" + question.getOrder() + "a ,");
 				switch (question.getType()) {
 				case YES_NO_DROPDOWN: //Yes No DropDown
 					stringBuilder.append(" p" + surveyDefinitionPage.getOrder()+"q" +question.getOrder() + ",");
@@ -506,7 +491,7 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 						optionsCount = question.getOptions().size();
 						rowCount = question.getRowLabels().size();
 						columnCount = question.getColumnLabels().size();
-
+						questionAnswer.setAnswerGrade((rs.getString("p" + surveyDefinitionPage.getOrder() + "q" + question.getOrder() + "a")));
 						switch (question.getType()) {
 						case YES_NO_DROPDOWN: //Yes No DropDown
 							questionAnswer.setBooleanAnswerValue((rs.getBoolean("p" + surveyDefinitionPage.getOrder()+"q" +question.getOrder())));
@@ -695,7 +680,9 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 						QuestionAnswer questionAnswer;
 						List<QuestionAnswer> questionAnswers = new ArrayList<QuestionAnswer>();
 						for(Question question :surveyDefinitionPage.getQuestions()) {
+
 							questionAnswer = new QuestionAnswer(question);
+							questionAnswer.setAnswerGrade((rs.getString("p" + surveyDefinitionPage.getOrder() + "q" + question.getOrder() + "a")));
 							optionsCount = question.getOptions().size();
 							rowCount = question.getRowLabels().size();
 							columnCount = question.getColumnLabels().size();
@@ -902,7 +889,13 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 			for(QuestionAnswer questionAnswer :surveyPage.getQuestionAnswers()) {
 				optionsCount = questionAnswer.getQuestion().getOptions().size();
 				rowCount = questionAnswer.getQuestion().getRowLabels().size();
-				columnCount = questionAnswer.getQuestion().getColumnLabels().size();	
+				columnCount = questionAnswer.getQuestion().getColumnLabels().size();
+
+				columnName = "p" + surveyPage.getOrder() + "q" + questionAnswer.getOrder() + "a";
+				stringBuilder.append(" " + columnName + "=:" + columnName + ",");
+				namedParameters.put(columnName, "");
+
+
 				switch (questionAnswer.getQuestion().getType()) {
 				case YES_NO_DROPDOWN: //Yes No DropDown
 					hasDatabaseQuestions = true;
@@ -1088,40 +1081,32 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 	}
 
 
+	/**
+	 * Updates a survey page visibility in the database
+	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	@Override
+	public void updateQuestionGrade(Long surveyDifinitionId, Long surveyId, Long page_id, Long questionId, Long grade) {
 
 
+		try {
+			String columnName = "p" + page_id + "q" + questionId + "a";
+			Map namedParameters = new HashMap();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("update survey_data_" + surveyDifinitionId);
+			stringBuilder.append(" set ");
+			stringBuilder.append(columnName + "=:grade ");
+			stringBuilder.append(" where survey_id =:survey_id");
+			String sqlStatement = stringBuilder.toString();
+			namedParameters.put("survey_id", surveyId);
+			namedParameters.put("grade", grade);
+			namedParameterJdbcTemplate.update(sqlStatement, namedParameters);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw (new RuntimeException(e));
+		}
+	}
 
 
 

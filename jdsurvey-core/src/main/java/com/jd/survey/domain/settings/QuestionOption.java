@@ -15,24 +15,13 @@
   */
 package com.jd.survey.domain.settings;
 
-import java.io.Serializable;
+  import com.jd.survey.util.SortedSetUpdater;
+  import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-
-import com.jd.survey.util.SortedSetUpdater;
+  import javax.persistence.*;
+  import javax.validation.constraints.NotNull;
+  import javax.validation.constraints.Size;
+  import java.io.Serializable;
 
 @Entity
 @NamedQueries({
@@ -80,12 +69,12 @@ public class QuestionOption implements Comparable <QuestionOption>,  Serializabl
     @ManyToOne
     @JoinColumn(name = "QUESTION_ID")
     private Question question;
-    
-    
-    
-    
-    
-    
+
+
+	@Column(name = "RIGHT_OR_WRONG")
+	private boolean right;
+
+
 	public QuestionOption() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -183,8 +172,11 @@ public class QuestionOption implements Comparable <QuestionOption>,  Serializabl
 	}
 
 
-	
-    
-   
-	
+	public boolean isRight() {
+		return right;
+	}
+
+	public void setRight(boolean right) {
+		this.right = right;
+	}
 }

@@ -1187,6 +1187,14 @@ div .odd {
     display: block;
 }
 
+.block label.rightAnswer {
+    background-color: #6FC764;
+}
+
+.block label.wrongAnswer {
+    background-color: #b01717;
+}
+
 .block label.questionText p{
     display: inline;
     color:#2b2b2b;
@@ -1258,7 +1266,13 @@ div.star-rating-readonly a{cursor:default !important}
 /* Partial Star CSS */
 div.star-rating{background:transparent!important;overflow:hidden!important}
 /* END jQuery.Rating Plugin CSS */
+.rightAnswer {
+    background-color: #6FC764;
+}
 
+.wrongAnswer {
+    background-color: #b01717;
+}
 .smileyDiv{
 	display:inline-block; 
 	vertical-align:top;

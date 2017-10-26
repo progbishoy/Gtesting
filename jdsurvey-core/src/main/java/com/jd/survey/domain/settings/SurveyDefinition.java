@@ -15,38 +15,17 @@
   */
 package com.jd.survey.domain.settings;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.SortedSet;
-import java.util.TreeSet;
+  import com.jd.survey.domain.security.User;
+  import com.jd.survey.util.SortedSetUpdater;
+  import org.hibernate.annotations.Sort;
+  import org.hibernate.annotations.SortType;
+  import org.hibernate.validator.constraints.NotEmpty;
 
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-import org.hibernate.validator.constraints.NotEmpty;
-import com.jd.survey.domain.security.User;
-import com.jd.survey.util.SortedSetUpdater;
+  import javax.persistence.*;
+  import javax.validation.constraints.NotNull;
+  import javax.validation.constraints.Size;
+  import java.io.Serializable;
+  import java.util.*;
 
 
 @Entity
@@ -170,29 +149,42 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
 	
 	@Column()
 	private Date  autoReminderLastSentDate;
-	
-	
-	
-	
-	@Lob
+
+    @Enumerated(EnumType.STRING)
+    private QuestionMainCategory mainCategory = QuestionMainCategory.ENGLISH;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionTechnology technology = QuestionTechnology.JAVA;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionLevel level = QuestionLevel.JUNIOR;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionDifficultyLevel difficultyLevel = QuestionDifficultyLevel.EASY;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionNumericalDegree numericalDegree = QuestionNumericalDegree.ONE;
+    @Lob
 	private byte[]  logo;
-	 
-	
-	
-	
+    @Transient
+
+
+    @NotNull
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyDefinition")
+    @JoinTable(name = "survey_tags", joinColumns = {@JoinColumn(name = "survey_Definition_id", referencedColumnName = "id")})
+    private List<SurveyTags> surveyTags = new ArrayList<SurveyTags>();
 
 	public SurveyDefinition(){
 		super();
 
-		
-		
-		this.sendAutoReminders = false;
+
+        this.sendAutoReminders = false;
 		this.autoRemindersFrequency = Frequency.WEEKLY;
 		this.autoRemindersWeeklyOccurrence =1;
 		this.autoRemindersMonthlyOccurrence =1;
 		this.autoRemindersDayOfMonth = 1;
 	}
-	
+
 	public SurveyDefinition(String emailInvitationTemplate , String completedSurveyTemplate) {
 		super();
 		this.isPublic=false;
@@ -200,16 +192,15 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
 		this.completedSurveyTemplate = completedSurveyTemplate;
 		// TODO Auto-generated constructor stub
 
-		
+
 		this.sendAutoReminders = false;
 		this.autoRemindersFrequency = Frequency.WEEKLY;
 		this.autoRemindersWeeklyOccurrence =1;
 		this.autoRemindersMonthlyOccurrence =1;
 		this.autoRemindersDayOfMonth = 1;
-		
-		
-	}
-	
+
+
+    }
 
 	public SurveyDefinition(Department department , String emailInvitationTemplate , String completedSurveyTemplate) {
 		super();
@@ -217,32 +208,71 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
 		this.completedSurveyTemplate = completedSurveyTemplate;
 		this.department = department;
 		this.isPublic = false;
-		
-	
-		
-		this.sendAutoReminders = false;
+
+
+        this.sendAutoReminders = false;
 		this.autoRemindersFrequency = Frequency.WEEKLY;
 		this.autoRemindersWeeklyOccurrence =1;
 		this.autoRemindersMonthlyOccurrence =1;
 		this.autoRemindersDayOfMonth = 1;
-		
-		
-	}
+
+
+    }
 
 	public SurveyDefinition(Department department , String name) {
 		super();
 		this.department = department;
 		this.name=name;
 		this.isPublic = false;
-		
-		
-		this.sendAutoReminders = false;
+
+
+        this.sendAutoReminders = false;
 		this.autoRemindersFrequency = Frequency.WEEKLY;
 		this.autoRemindersWeeklyOccurrence =1;
 		this.autoRemindersMonthlyOccurrence =1;
 		this.autoRemindersDayOfMonth = 1;
-		
+
 	}
+
+    public QuestionMainCategory getMainCategory() {
+        return mainCategory;
+    }
+
+    public void setMainCategory(QuestionMainCategory mainCategory) {
+        this.mainCategory = mainCategory;
+    }
+
+    public QuestionTechnology getTechnology() {
+        return technology;
+    }
+
+    public void setTechnology(QuestionTechnology technology) {
+        this.technology = technology;
+    }
+
+    public QuestionLevel getLevel() {
+        return level;
+    }
+
+    public void setLevel(QuestionLevel level) {
+        this.level = level;
+    }
+
+    public QuestionDifficultyLevel getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public void setDifficultyLevel(QuestionDifficultyLevel difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
+    }
+
+    public QuestionNumericalDegree getNumericalDegree() {
+        return numericalDegree;
+    }
+
+    public void setNumericalDegree(QuestionNumericalDegree numericalDegree) {
+        this.numericalDegree = numericalDegree;
+    }
 
 	public Long getId() {
 		return id;
@@ -272,12 +302,13 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
 		return status;
 	}
 
-	public String getStatusAsString() {
-		return status.name();
-	}
 	public void setStatus(SurveyDefinitionStatus status) {
 		this.status = status;
 	}
+
+    public String getStatusAsString() {
+        return status.name();
+    }
 
 	public Department getDepartment() {
 		return department;
@@ -374,8 +405,8 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
 	}
 
 	public Boolean getHasLogo() {
-		if (this.logo != null && this.logo.length > 0) {return true;} else {return false;} 
-	}
+        return this.logo != null && this.logo.length > 0;
+    }
 
 		
 
@@ -467,7 +498,11 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
 		this.autoReminderLastSentDate = autoReminderLastSentDate;
 	}
 
-	
+    public List<SurveyTags> getSurveyTags() {
+        return surveyTags;
+    }
 
-    
+    public void setSurveyTags(List<SurveyTags> surveyTags) {
+        this.surveyTags = surveyTags;
+    }
 }

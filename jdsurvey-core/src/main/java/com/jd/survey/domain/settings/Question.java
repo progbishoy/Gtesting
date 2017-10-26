@@ -16,45 +16,19 @@
 package com.jd.survey.domain.settings;
 
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+  import com.jd.survey.util.SortedSetUpdater;
+  import org.hibernate.annotations.Sort;
+  import org.hibernate.annotations.SortType;
+  import org.hibernate.validator.constraints.NotEmpty;
+  import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import com.jd.survey.util.SortedSetUpdater;
-
-
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.format.annotation.DateTimeFormat;
+  import javax.persistence.*;
+  import javax.validation.Valid;
+  import javax.validation.constraints.NotNull;
+  import javax.validation.constraints.Size;
+  import java.io.Serializable;
+  import java.math.BigDecimal;
+  import java.util.*;
 
 @Entity
 @NamedQueries({
@@ -91,8 +65,17 @@ implements Comparable <Question>,  Serializable, SortedSetUpdater.InrementableCo
 	@Size(max = 2000)
 	@Column(length = 2000, nullable= false)
 	private String questionText;
-	
-	// Used to stored question text piped content 
+
+
+    @NotNull
+    @NotEmpty
+    @Size(max = 2000)
+    @Column(length = 2000, nullable = false)
+    private String questionAnswer;
+
+
+    private Integer questionGrade;
+    // Used to stored question text piped content
 	@Transient
 	private String questionLabel;
 
@@ -133,11 +116,11 @@ implements Comparable <Question>,  Serializable, SortedSetUpdater.InrementableCo
 	@Size(max = 250)
 	@Column(length = 250, nullable= true)
 	private String regularExpression;
-	
 
-	private Long dataSetId;	
-	
-	
+
+    private Long dataSetId;
+
+
 	@Enumerated(EnumType.STRING)
     private QuestionType type = QuestionType.SHORT_TEXT_INPUT;
 	
@@ -217,6 +200,34 @@ implements Comparable <Question>,  Serializable, SortedSetUpdater.InrementableCo
 		this.order = (short) (page.getQuestions().size() + 1);
 		
 	}
+
+    public Question(QuestionBank question) {
+        super();
+        this.visible = true;
+        this.questionText = question.getQuestionText();
+        this.questionAnswer = question.getQuestionAnswer();
+        this.questionGrade = question.getQuestionGrade();
+        this.questionLabel = question.getQuestionLabel();
+        this.multimediaLink = question.getMultimediaLink();
+        this.height = question.getHeight();
+        this.width = question.getWidth();
+        this.allowOtherTextBox = question.getAllowOtherTextBox();
+        this.required = question.getRequired();
+        this.type = question.getType();
+        this.integerMinimum = question.getIntegerMinimum();
+        this.integerMaximum = question.getIntegerMaximum();
+        this.decimalMinimum = question.getDecimalMinimum();
+        this.decimalMaximum = question.getDecimalMaximum();
+        this.randomizeOptions = question.getRandomizeOptions();
+        this.dateMinimum = question.getDateMinimum();
+        this.dateMaximum = question.getDateMaximum();
+        this.tip = question.getTip();
+        this.regularExpression = question.getRegularExpression();
+        this.dataSetId = question.getDataSetId();
+        this.direction = question.getDirection();
+
+
+    }
 
 
 	public Long getId() {
@@ -543,17 +554,12 @@ implements Comparable <Question>,  Serializable, SortedSetUpdater.InrementableCo
 
 
 	public boolean getSuportsOptions() {
-		if (this.type == QuestionType.SINGLE_CHOICE_DROP_DOWN || 
-			this.type == QuestionType.MULTIPLE_CHOICE_CHECKBOXES ||
-			this.type == QuestionType.STAR_RATING ||
-			this.type == QuestionType.SMILEY_FACES_RATING ||
-			this.type == QuestionType.SINGLE_CHOICE_RADIO_BUTTONS){
-			return true;
-		}
-		else{ 
-			return false;
-		}
-	}
+        return this.type == QuestionType.SINGLE_CHOICE_DROP_DOWN ||
+                this.type == QuestionType.MULTIPLE_CHOICE_CHECKBOXES ||
+                this.type == QuestionType.STAR_RATING ||
+                this.type == QuestionType.SMILEY_FACES_RATING ||
+                this.type == QuestionType.SINGLE_CHOICE_RADIO_BUTTONS;
+    }
 
 
 	public String toString() {
@@ -622,5 +628,27 @@ implements Comparable <Question>,  Serializable, SortedSetUpdater.InrementableCo
 		this.optionsList2 = optionsList2;
 	}
 
+    public String getQuestionAnswer() {
+        if (questionAnswer == null) {
+            return null;
+        } else {
+            return questionAnswer.trim();
+        }
+    }
 
+    public void setQuestionAnswer(String questionAnswer) {
+        if (questionAnswer == null) {
+            this.questionAnswer = null;
+        } else {
+            this.questionAnswer = questionAnswer.trim();
+        }
+    }
+
+    public Integer getQuestionGrade() {
+        return questionGrade;
+    }
+
+    public void setQuestionGrade(Integer questionGrade) {
+        this.questionGrade = questionGrade;
+    }
 }

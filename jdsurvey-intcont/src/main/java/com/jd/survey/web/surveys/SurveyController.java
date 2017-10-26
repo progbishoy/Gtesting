@@ -15,45 +15,37 @@
   */
 package com.jd.survey.web.surveys;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+  import com.jd.survey.dao.interfaces.survey.SurveyDAO;
+  import com.jd.survey.domain.security.User;
+  import com.jd.survey.domain.settings.SurveyDefinition;
+  import com.jd.survey.domain.survey.*;
+  import com.jd.survey.service.security.SecurityService;
+  import com.jd.survey.service.security.UserService;
+  import com.jd.survey.service.settings.SurveySettingsService;
+  import com.jd.survey.service.survey.SurveyService;
+  import org.apache.commons.logging.Log;
+  import org.apache.commons.logging.LogFactory;
+  import org.springframework.beans.factory.annotation.Autowired;
+  import org.springframework.context.MessageSource;
+  import org.springframework.context.i18n.LocaleContextHolder;
+  import org.springframework.security.access.annotation.Secured;
+  import org.springframework.stereotype.Controller;
+  import org.springframework.ui.Model;
+  import org.springframework.web.bind.annotation.PathVariable;
+  import org.springframework.web.bind.annotation.RequestMapping;
+  import org.springframework.web.bind.annotation.RequestMethod;
+  import org.springframework.web.bind.annotation.RequestParam;
+  import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
-import com.jd.survey.domain.security.User;
-import com.jd.survey.domain.settings.DataSet;
-import com.jd.survey.domain.settings.QuestionType;
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.survey.QuestionAnswer;
-import com.jd.survey.domain.survey.Survey;
-import com.jd.survey.domain.survey.SurveyDocument;
-import com.jd.survey.domain.survey.SurveyEntry;
-import com.jd.survey.domain.survey.SurveyPage;
-import com.jd.survey.domain.survey.SurveyStatistic;
-import com.jd.survey.service.security.SecurityService;
-import com.jd.survey.service.security.UserService;
-import com.jd.survey.service.settings.SurveySettingsService;
-import com.jd.survey.service.survey.SurveyService;
+  import javax.servlet.ServletOutputStream;
+  import javax.servlet.http.HttpServletRequest;
+  import javax.servlet.http.HttpServletResponse;
+  import javax.validation.Valid;
+  import java.security.Principal;
+  import java.util.HashMap;
+  import java.util.List;
+  import java.util.Map;
+  import java.util.Set;
 
 
 @RequestMapping("/surveys")
@@ -68,9 +60,10 @@ public class SurveyController {
 	@Autowired	private SurveySettingsService surveySettingsService;
 	@Autowired	private SecurityService securityService;
 
-	
-	
-	
+    @Autowired
+    private SurveyDAO surveyDAO;
+
+
 	/**
 	 * Shows a list of Survey Definitions 
 	 * @param surveyId
@@ -91,12 +84,39 @@ public class SurveyController {
 			log.error(e.getMessage(),e);
 			throw (new RuntimeException(e));
 		}
-	}	
-	
-	
-	
-	
-	/**
+    }
+
+    /**
+     * Shows a list of Survey Definitions
+     *
+     * @param surveyId
+     * @param principal
+     * @param uiModel
+     * @param httpServletRequest
+     * @return
+     */
+    @Secured({"ROLE_ADMIN", "ROLE_SURVEY_ADMIN"})
+    @RequestMapping(value = "{surveyDifinitionId}/{surveyId}/{page_id}/{questionId}/{grade}", params = "addGrade", produces = "text/html")
+    public String updateSurveysGrade(@PathVariable("surveyDifinitionId") Long surveyDifinitionId,
+                                     @PathVariable("surveyId") Long surveyId,
+                                     @PathVariable("page_id") Long page_id,
+                                     @PathVariable("questionId") Long questionId,
+                                     @PathVariable("grade") Long grade,
+                                     Model uiModel,
+                                     Principal principal,
+                                     HttpServletRequest httpServletRequest,
+                                     @Valid QuestionAnswer questionanswer) {
+
+
+        surveyDAO.updateQuestionGrade(surveyDifinitionId, surveyId, page_id, questionId, grade);
+
+        return showSurvey(surveyId, principal, uiModel, httpServletRequest);
+        //return "surveys/"+surveyId+"?show";
+
+    }
+
+
+    /**
 	 * Shows a list of Survey Entries for a Survey Definition, Supports Paging 
 	 * @param surveyId
 	 * @param principal

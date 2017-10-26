@@ -15,17 +15,13 @@
   */
 package com.jd.survey.service.email;
 
-import java.util.Set;
+  import org.springframework.beans.factory.annotation.Autowired;
+  import org.springframework.mail.javamail.JavaMailSender;
+  import org.springframework.mail.javamail.MimeMessageHelper;
+  import org.springframework.mail.javamail.MimeMessagePreparator;
+  import org.springframework.stereotype.Service;
 
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Service;
-
-import com.jd.survey.domain.settings.SurveyDefinition;
+  import javax.mail.internet.MimeMessage;
 
 @Service("MailService")
 public class MailService {
@@ -85,8 +81,9 @@ public class MailService {
 
 			MimeMessagePreparator preparator = new MimeMessagePreparator() {
 				public void prepare(MimeMessage mimeMessage) throws Exception {
-				MimeMessageHelper message = new MimeMessageHelper(mimeMessage);			
-				message.setTo(toEmailAddress);				
+                    MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+                    message.setFrom("ags@crossworkers.com");
+                    message.setTo(toEmailAddress);
 				message.setSubject(emailSubject);
 				message.setText(emailHtmlBodyText, true);
 			  }

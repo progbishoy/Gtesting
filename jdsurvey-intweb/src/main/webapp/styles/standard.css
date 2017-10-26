@@ -1179,12 +1179,28 @@ div .odd {
     margin: 0 0 30px !important;
     padding: 2px 0;
 }
+
+.rightAnswer {
+    background-color: #6FC764;
+}
 .questionAnswer {
     padding-left: 28px;
     padding-top: 4px;
 }
+
+.questionAnswer label.rightAnswer {
+    background-color: #6FC764;
+}
 .block label.questionText {
     display: block;
+}
+
+.block label.rightAnswer {
+    background-color: #6FC764;
+}
+
+.block label.wrongAnswer {
+    background-color: #b01717;
 }
 
 .block label.questionText p{

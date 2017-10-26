@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div class="page-body" 
-	xmlns:jsp="http://java.sun.com/JSP/Page" 
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:spring="http://www.springframework.org/tags" 
-	xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
-	xmlns:section="urn:jsptagdir:/WEB-INF/tags/form"
-	xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" 
-	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" 
-	xmlns:form="http://www.springframework.org/tags/form"
-	xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" 
-	xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields"
-	xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" 	
-	version="2.0">
+<div class="page-body"
+     xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:spring="http://www.springframework.org/tags"
+     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+     xmlns:section="urn:jsptagdir:/WEB-INF/tags/form"
+     xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields"
+     xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields"
+     version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     
@@ -63,11 +59,22 @@
 						</c:otherwise>
 					</c:choose>	
 		        </div>
-				
-				
-        		<field:display field="description" id="s_com.jd.survey.domain.settings.surveydefinitionpage.surveydefinition.description" object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
-        		
-        		
+
+
+                <field:display field="mainCategory" id="s_com.jd.survey.domain.settings.surveydefinition.mainCategory"
+                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
+                <field:display field="technology" id="s_com.jd.survey.domain.settings.surveydefinition.technology"
+                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
+                <field:display field="level" id="s_com.jd.survey.domain.settings.surveydefinition.level"
+                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
+                <field:display field="difficultyLevel"
+                               id="s_com.jd.survey.domain.settings.surveydefinition.difficultyLevel"
+                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
+                <field:display field="numericalDegree"
+                               id="s_com.jd.survey.domain.settings.surveydefinition.numericalDegree"
+                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
+                <field:display field="description" id="s_com.jd.survey.domain.settings.surveyDefinition.description"
+                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
         		<field:display field="isPublic" isBoolean="true" id="s_com.jd.survey.domain.settings.SurveyDefinition.isPublic" object="${surveyDefinition}" />
 				<field:display field="allowMultipleSubmissions"  isBoolean="true" id="s_com.jd.survey.domain.settings.SurveyDefinition.allowMultipleSubmissions" object="${surveyDefinition}" />
 				

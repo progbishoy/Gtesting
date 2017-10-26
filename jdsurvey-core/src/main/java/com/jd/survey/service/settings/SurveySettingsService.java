@@ -15,85 +15,43 @@
   */
 package com.jd.survey.service.settings;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.UUID;
+  import au.com.bytecode.opencsv.CSVReader;
+  import com.jd.survey.dao.interfaces.settings.*;
+  import com.jd.survey.dao.interfaces.survey.ReportDAO;
+  import com.jd.survey.dao.interfaces.survey.SurveyDAO;
+  import com.jd.survey.domain.security.User;
+  import com.jd.survey.domain.settings.*;
+  import com.jd.survey.service.email.MailService;
+  import org.apache.commons.logging.Log;
+  import org.apache.commons.logging.LogFactory;
+  import org.apache.velocity.VelocityContext;
+  import org.apache.velocity.app.Velocity;
+  import org.joda.time.DateTime;
+  import org.joda.time.Months;
+  import org.joda.time.Weeks;
+  import org.springframework.beans.factory.annotation.Autowired;
+  import org.springframework.context.MessageSource;
+  import org.springframework.context.i18n.LocaleContextHolder;
+  import org.springframework.dao.DataAccessException;
+  import org.springframework.stereotype.Service;
+  import org.springframework.transaction.annotation.Transactional;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.joda.time.DateTime;
-import org.joda.time.Months;
-import org.joda.time.Weeks;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
-
-
-import com.jd.survey.dao.interfaces.settings.DataSetDAO;
-import com.jd.survey.dao.interfaces.settings.DataSetItemDAO;
-import com.jd.survey.dao.interfaces.settings.DayDAO;
-import com.jd.survey.dao.interfaces.settings.DepartmentDAO;
-import com.jd.survey.dao.interfaces.settings.InvitationDAO;
-import com.jd.survey.dao.interfaces.settings.SectorDAO;
-import com.jd.survey.dao.interfaces.settings.SurveyTemplateDAO;
-import com.jd.survey.dao.interfaces.settings.QuestionColumnLabelDAO;
-import com.jd.survey.dao.interfaces.settings.QuestionDAO;
-import com.jd.survey.dao.interfaces.settings.QuestionOptionDAO;
-import com.jd.survey.dao.interfaces.settings.QuestionRowLabelDAO;
-import com.jd.survey.dao.interfaces.settings.RegularExpressionDAO;
-import com.jd.survey.dao.interfaces.settings.SurveyDefinitionDAO;
-import com.jd.survey.dao.interfaces.settings.SurveyDefinitionPageDAO;
-import com.jd.survey.dao.interfaces.settings.VelocityTemplateDAO;
-import com.jd.survey.dao.interfaces.survey.ReportDAO;
-import com.jd.survey.dao.interfaces.survey.SurveyDAO;
-import com.jd.survey.domain.security.User;
-import com.jd.survey.domain.settings.DataSet;
-import com.jd.survey.domain.settings.DataSetItem;
-import com.jd.survey.domain.settings.Day;
-import com.jd.survey.domain.settings.Department;
-import com.jd.survey.domain.settings.Invitation;
-import com.jd.survey.domain.settings.Sector;
-import com.jd.survey.domain.settings.SurveyTemplate;
-import com.jd.survey.domain.settings.Question;
-import com.jd.survey.domain.settings.QuestionColumnLabel;
-import com.jd.survey.domain.settings.QuestionOption;
-import com.jd.survey.domain.settings.QuestionRowLabel;
-import com.jd.survey.domain.settings.QuestionType;
-import com.jd.survey.domain.settings.RegularExpression;
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.settings.SurveyDefinitionPage;
-import com.jd.survey.domain.settings.SurveyDefinitionStatus;
-import com.jd.survey.domain.settings.VelocityTemplate;
-import com.jd.survey.service.email.MailService;
+  import java.io.StringWriter;
+  import java.util.*;
 
 
 @Transactional(readOnly = true)
 @Service("SurveySettingsService")
 public class SurveySettingsService {
 
-	private static final Log log = LogFactory.getLog(SurveySettingsService.class);	
-
-	 
+	private static final Log log = LogFactory.getLog(SurveySettingsService.class);
+	private static final String INVITATION_EMAIL_TITLE = "invitation_email_title";
+	private static final String INVITEE_FULLNAME_PARAMETER_NAME = "invitee_fullname_parameter_name";
+	private static final String SURVEY_NAME = "survey_name";
+	private static final String INVITE_FILL_SURVEY_LINK_PARAMETER_NAME = "invite_fill_survey_link_parameter_name";
+	private static final String INVITE_FILL_SURVEY_LINK_LABEL = "invite_fill_survey_link_label";
+	private static final String INTERNAL_SITE_BASE_URL = "internal_site_base_url";
+	private static final String EXTERNAL_SITE_BASE_URL = "external_site_base_url";
 	@Autowired	private MessageSource messageSource;
 	@Autowired	private DepartmentDAO departmentDAO;
 	@Autowired	private SurveyDefinitionDAO surveyDefinitionDAO;
@@ -101,33 +59,29 @@ public class SurveySettingsService {
 	@Autowired	private QuestionOptionDAO questionOptionDAO;
 	@Autowired	private QuestionRowLabelDAO rowLabelDAO;
 	@Autowired	private QuestionColumnLabelDAO columnLabelDAO;
-
 	@Autowired	private QuestionRowLabelDAO questionRowLabelDAO;
 	@Autowired	private QuestionColumnLabelDAO questionColumnLabelDAO;
 	@Autowired	private QuestionDAO questionDAO;
+	@Autowired
+	private QuestionBankDAO questionBankDAO;
 	@Autowired	private DataSetDAO dataSetDAO;
 	@Autowired	private DataSetItemDAO dataSetItemDAO;
 	@Autowired	private VelocityTemplateDAO velocityTemplateDAO;
 	@Autowired  private RegularExpressionDAO regularExpressionDAO;
-
-	@Autowired private SurveyDAO surveyDAO; 
+	@Autowired
+	private SurveyDAO surveyDAO;
 	@Autowired private InvitationDAO invitationDAO;
 	@Autowired private MailService mailService;
 	@Autowired private SectorDAO sectorDAO;
 	@Autowired private SurveyTemplateDAO surveyTemplateDAO;
 	@Autowired private DayDAO dayDAO;
 	@Autowired private ReportDAO reportDAO;
-	
-
-	private static final String INVITATION_EMAIL_TITLE="invitation_email_title";
-	private static final String INVITEE_FULLNAME_PARAMETER_NAME="invitee_fullname_parameter_name";
-	private static final String SURVEY_NAME="survey_name";
-	private static final String INVITE_FILL_SURVEY_LINK_PARAMETER_NAME="invite_fill_survey_link_parameter_name";
-	private static final String INVITE_FILL_SURVEY_LINK_LABEL="invite_fill_survey_link_label";
-	private static final String INTERNAL_SITE_BASE_URL="internal_site_base_url";
-	private static final String EXTERNAL_SITE_BASE_URL="external_site_base_url";
-
-
+	@Autowired
+	private TagsDAO tagsDAO;
+	@Autowired
+	private SurveyTagsDAO surveyTagsDAO;
+	@Autowired
+	private QuestionBankOptionDAO questionBankOptionDAO;
 
 	public Set<Department> department_findAll() throws DataAccessException {
 		return departmentDAO.findAll();
@@ -197,12 +151,42 @@ public class SurveySettingsService {
 
 
 	public boolean question_ValidateDateRange (Question question){
-		if (question.getDateMinimum() != null &&
+		return !(question.getDateMinimum() != null &&
 				question.getDateMaximum() != null &&
-				question.getDateMinimum().after(question.getDateMaximum())){
-			return false;
+				question.getDateMinimum().after(question.getDateMaximum()));
+	}
+
+	public boolean question_ValidateMinMaxDoubleValues(QuestionBank question) {
+		if (question.getType() == QuestionType.CURRENCY_INPUT ||
+				question.getType() == QuestionType.DECIMAL_INPUT) {
+			if (question.getDecimalMinimum() != null &&
+					question.getDecimalMaximum() != null &&
+					question.getDecimalMinimum().doubleValue() >= question.getDecimalMaximum().doubleValue()) {
+				return false;
+			}
 		}
 		return true;
+	}
+
+	public boolean question_ValidateMinMaxValues(QuestionBank question) {
+		if (question.getType() == QuestionType.INTEGER_INPUT ||
+				question.getType() == QuestionType.SHORT_TEXT_INPUT ||
+				question.getType() == QuestionType.LONG_TEXT_INPUT ||
+				question.getType() == QuestionType.HUGE_TEXT_INPUT) {
+			if (question.getIntegerMinimum() != null &&
+					question.getIntegerMaximum() != null &&
+					question.getIntegerMinimum() >= question.getIntegerMaximum()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	public boolean question_ValidateDateRange(QuestionBank question) {
+		return !(question.getDateMinimum() != null &&
+				question.getDateMaximum() != null &&
+				question.getDateMinimum().after(question.getDateMaximum()));
 	}
 
 
@@ -330,32 +314,91 @@ public class SurveySettingsService {
 
 	@Transactional(readOnly = false)
 	public SurveyDefinition surveyDefinition_merge(SurveyDefinition surveyDefinition) {
+
+
 		if (surveyDefinition.getId() == null){
 			surveyDefinition.setDepartment(departmentDAO.findById(surveyDefinition.getDepartment().getId()));
-			return surveyDefinitionDAO.merge(surveyDefinition);}
+			SurveyDefinition dbSurveyDefinition = surveyDefinitionDAO.merge(surveyDefinition);
 
-		else{
-			SurveyDefinition dbSurveyDefinition = surveyDefinitionDAO.findById(surveyDefinition.getId());
-			dbSurveyDefinition.setName(surveyDefinition.getName()); 
-			dbSurveyDefinition.setSurveyTheme(surveyDefinition.getSurveyTheme());
-			dbSurveyDefinition.setDescription(surveyDefinition.getDescription());
-			dbSurveyDefinition.setEmailInvitationTemplate(surveyDefinition.getEmailInvitationTemplate());
-			dbSurveyDefinition.setCompletedSurveyTemplate(surveyDefinition.getCompletedSurveyTemplate());
-			dbSurveyDefinition.setAutoRemindersDayOfMonth(surveyDefinition.getAutoRemindersDayOfMonth());
-			dbSurveyDefinition.setAutoRemindersDays(surveyDefinition.getAutoRemindersDays());
-			dbSurveyDefinition.setAutoRemindersFrequency(surveyDefinition.getAutoRemindersFrequency());
-			dbSurveyDefinition.setAutoRemindersMonthlyOccurrence(surveyDefinition.getAutoRemindersMonthlyOccurrence());
-			dbSurveyDefinition.setAutoRemindersWeeklyOccurrence(surveyDefinition.getAutoRemindersWeeklyOccurrence()); 
-			dbSurveyDefinition.setCompletedSurveyTemplate(surveyDefinition.getCompletedSurveyTemplate());
-			dbSurveyDefinition.setSendAutoReminders(surveyDefinition.getSendAutoReminders());
-			dbSurveyDefinition.setAllowMultipleSubmissions(surveyDefinition.getAllowMultipleSubmissions());
-			dbSurveyDefinition.setIsPublic(surveyDefinition.getIsPublic());
+			for (SurveyTags surveyTag : surveyDefinition.getSurveyTags()) {
+
+
+				Tags Tag = surveyTag.getTag();
+				surveyTag.setSurveyDefinition(dbSurveyDefinition);
+				surveyTag.setTag(Tag);
+
+				surveyTagsDAO.merge(surveyTag);
+
+			}
+			///Glgnhof Added Code
+			dbSurveyDefinition.setMainCategory(surveyDefinition.getMainCategory());
+
+
+			dbSurveyDefinition.setTechnology(surveyDefinition.getTechnology());
+			dbSurveyDefinition.setLevel(surveyDefinition.getLevel());
+			dbSurveyDefinition.setDifficultyLevel(surveyDefinition.getDifficultyLevel());
+			dbSurveyDefinition.setNumericalDegree(surveyDefinition.getNumericalDegree());
 			surveyDefinition.setDepartment(departmentDAO.findById(surveyDefinition.getDepartment().getId()));
 			return surveyDefinitionDAO.merge(dbSurveyDefinition);
 
 
 		}
+		return surveyDefinitionDAO.merge(surveyDefinition);
+
 	}
+
+	@Transactional(readOnly = false)
+	public SurveyDefinition generateQuestionsFromTags(SurveyDefinition surveyDefinition) {
+		//Glgnh0fGen
+		Set<QuestionBank> selectedQuestionsPerTag = new TreeSet<QuestionBank>();
+		Short porder = 1;
+		for (SurveyTags tag : surveyTagsDAO.findBySurveyId(surveyDefinition)) {
+			if (!(tag.getEasy() == 0)) {
+				selectedQuestionsPerTag.addAll(findByTagAndDifficultyAndLimit(tag.getTag(), QuestionDifficultyLevel.EASY, tag.getEasy()));
+			}
+			if (!(tag.getMedium() == 0)) {
+				selectedQuestionsPerTag.addAll(findByTagAndDifficultyAndLimit(tag.getTag(), QuestionDifficultyLevel.MEDIUM, tag.getMedium()));
+			}
+			if (!(tag.getHard() == 0)) {
+				selectedQuestionsPerTag.addAll(findByTagAndDifficultyAndLimit(tag.getTag(), QuestionDifficultyLevel.HIGH, tag.getHard()));
+			}
+
+
+			SurveyDefinitionPage page = new SurveyDefinitionPage();
+			page.setSurveyDefinition(surveyDefinition);
+			page.setTitle(tag.getTag().getTagName());
+			page.setOrder(porder);
+			page.setInstructions("");
+			page = surveyDefinitionPageDAO.merge(page);
+
+			Short qorder = 1;
+			for (QuestionBank qb : selectedQuestionsPerTag) {
+				Question q = new Question(qb);
+				q.setOrder(new Short(qorder));
+				q.setPage(page);
+				q = questionDAO.merge(q);
+				Set<QuestionBankOption> questionOptionsList = questionBankOption_findByQuestionId(qb);
+				Short qoorder = 1;
+				for (QuestionBankOption qol : questionOptionsList) {
+					QuestionOption qo = new QuestionOption();
+					qo.setQuestion(q);
+					qo.setOrder(qoorder);
+					qo.setValue(qol.getValue());
+					qo.setText(qol.getText());
+					qo.setRight(qol.isRight());
+					questionOptionDAO.merge(qo);
+					qoorder = (short) (qoorder + 1);
+				}
+				qorder = (short) (qorder + 1);
+			}
+			porder = (short) (porder + 1);
+			selectedQuestionsPerTag.clear();
+		}
+
+
+		return surveyDefinitionDAO.merge(surveyDefinition);
+	}
+
 
 
 
@@ -366,7 +409,6 @@ public class SurveySettingsService {
 		return surveyDefinitionDAO.merge(surveyDefinition);
 	}
 
-
 	@Transactional(readOnly = false)
 	public SurveyDefinition surveyDefinition_updateLogo(Long id, byte[]  logo) {
 		SurveyDefinition surveyDefinition =surveyDefinitionDAO.findById(id);
@@ -376,7 +418,8 @@ public class SurveySettingsService {
 
 	@Transactional(readOnly = false)
 	public SurveyDefinition surveyDefinition_create(SurveyDefinition surveyDefinition, Long departmentId ) {
-		surveyDefinition.setDepartment(departmentDAO.findById(departmentId));	
+		surveyDefinition.setDepartment(departmentDAO.findById(departmentId));
+
 		SortedSet<SurveyDefinitionPage> pages  = surveyDefinition.getPages();
 		surveyDefinition =  surveyDefinitionDAO.merge(surveyDefinition);
 
@@ -922,6 +965,7 @@ public class SurveySettingsService {
 			Question dbQuestion= questionDAO.findById(question.getId());
 			dbQuestion.setTip(question.getTip());
 			dbQuestion.setQuestionText(question.getQuestionText());
+			dbQuestion.setQuestionAnswer(question.getQuestionAnswer());
 			return questionDAO.merge(dbQuestion);
 		}
 
@@ -1257,6 +1301,16 @@ public class SurveySettingsService {
 	}
 
 
+	public Set<Tags> tags_findAll() throws DataAccessException {
+		return tagsDAO.findAll();
+	}
+
+
+	public Tags tags_findById(Long id) throws DataAccessException {
+		return tagsDAO.findById(id);
+	}
+
+
 
 	public Set<RegularExpression> regularExpression_findAll()	throws DataAccessException {
 		return regularExpressionDAO.findAll();
@@ -1392,6 +1446,135 @@ public class SurveySettingsService {
 		return dayDAO.findById(id);
 
 	}
-	
-	
+
+
+	public Set<QuestionBankOption> questionBankOption_findAll() throws DataAccessException {
+		return questionBankOptionDAO.findAll();
+	}
+
+	public Set<QuestionBankOption> questionBankOption_findAll(int startResult, int maxRows) throws DataAccessException {
+		return questionBankOptionDAO.findAll(startResult, maxRows);
+	}
+
+	public Long questionBankOption_getCount() {
+		return questionBankOptionDAO.getCount();
+	}
+
+	public QuestionBankOption questionBankOption_findById(Long id) {
+		return questionBankOptionDAO.findById(id);
+	}
+
+	public Set<QuestionBankOption> questionBankOption_findByQuestionId(QuestionBank qid) throws DataAccessException {
+		return questionBankOptionDAO.findByQuestionId(qid);
+	}
+
+	@Transactional(readOnly = false)
+	public QuestionBankOption questionBankOption_merge(QuestionBankOption questionOption) {
+		SortedSet<QuestionBankOption> updatedQuestionOptions = new TreeSet<QuestionBankOption>();
+		Long questionId = questionOption.getQuestion().getId();
+		QuestionBank question = questionBankDAO.findById(questionId);
+		questionOption.setQuestion(question);
+		//Short order = question.updateSet(question.getOptions(), questionOption).getOrder();
+		for (QuestionBankOption qo : question.getOptions()) {
+			updatedQuestionOptions.add(questionBankOptionDAO.merge(qo));
+		}
+		question.setOptions(updatedQuestionOptions);
+		question = questionBankDAO.merge(question);
+		return question.getElement(question.getOptions(), new Short("2"));
+	}
+
+	@Transactional(readOnly = false)
+	public void questionBankOption_remove(QuestionBankOption questionOption) {
+		QuestionBank question = questionBankDAO.findById(questionOption.getQuestion().getId());
+		questionBankOptionDAO.remove(questionOption);
+		question.removeGaps(question.getOptions());
+	}
+
+	@Transactional(readOnly = true)
+	public void questionBankOption_removeQuestionOptionsByQuestionId(Long id) {
+		questionBankOptionDAO.deleteByQuestionId(id);
+	}
+
+
+	public Set<QuestionBank> questionBank_findAll() throws DataAccessException {
+		return questionBankDAO.findAll();
+	}
+
+	public Set<QuestionBank> questionBank_findAll(int startResult, int maxRows) throws DataAccessException {
+		return questionBankDAO.findAll(startResult, maxRows);
+	}
+
+	public Long questionBank_getCount() {
+		return questionBankDAO.getCount();
+	}
+
+	public QuestionBank questionBank_findById(Long id) {
+		return questionBankDAO.findById(id);
+	}
+
+	public QuestionBank questionBank_findByOrder(Long surveyDefinitionId, Short pageOrder, Short questionOrder) {
+		return questionBankDAO.findByOrder(surveyDefinitionId, pageOrder, questionOrder);
+	}
+
+
+	@Transactional(readOnly = false)
+	public QuestionBank questionBank_merge(QuestionBank question, SortedSet<QuestionBankOption> options) {
+		//Clear data set field for non Dataset questions
+		if (!question.getType().getIsDataSet()) {
+			question.setDataSetId(null);
+		}
+		//Deleting options from question that do not support options
+		if (!question.getSuportsOptions()) {
+			questionBankOptionDAO.deleteByQuestionId(question.getId());
+		}
+
+		SortedSet<QuestionBank> updatedQuestions = new TreeSet<QuestionBank>();
+
+
+		for (QuestionBankOption questionOption : options) {
+			questionOption.setQuestion(question);
+			questionOption = questionBankOptionDAO.merge(questionOption);
+		}
+		question.setOptions(options);
+		return question;
+
+	}
+
+
+	@Transactional(readOnly = false)
+	public QuestionBank questionBank_merge(QuestionBank question) {
+
+		Long dataSetId = null;
+
+		if (question.getType().getIsDataSet()) {
+			dataSetId = question.getDataSetId();
+			question.setType(QuestionType.SINGLE_CHOICE_DROP_DOWN);
+			question.setDataSetId(null);
+		}
+
+		//Deleting options from question that do not support options
+		if (!question.getSuportsOptions()) {
+			questionBankOptionDAO.deleteByQuestionId(question.getId());
+		}
+		question = questionBankDAO.merge(question);
+
+		question.setDataSetId(null);
+
+		if (dataSetId != null) {
+			Short o = 1;
+			for (DataSetItem dataSetItem : dataSetItemDAO.findByDataSetId(dataSetId)) {
+				questionBankOptionDAO.merge(new QuestionBankOption(question, o, dataSetItem.getValue(), dataSetItem.getText()));
+				o++;
+			}
+		}
+		return question;
+
+	}
+
+	@Transactional(readOnly = false)
+	public Set<QuestionBank> findByTagAndDifficultyAndLimit(Tags tag, QuestionDifficultyLevel difficulty, Integer limit) {
+		return questionBankDAO.findByTagAndDifficultyAndLimit(tag, difficulty, limit);
+	}
+
+
 }

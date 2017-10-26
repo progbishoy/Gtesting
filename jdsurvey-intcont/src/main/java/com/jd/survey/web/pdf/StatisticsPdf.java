@@ -15,50 +15,31 @@
   */
 package com.jd.survey.web.pdf;
 
-import java.awt.Color;
-import java.text.NumberFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+  import com.jd.survey.domain.settings.*;
+  import com.jd.survey.domain.survey.QuestionStatistic;
+  import com.jd.survey.domain.survey.SurveyStatistic;
+  import com.lowagie.text.*;
+  import com.lowagie.text.Font;
+  import com.lowagie.text.Image;
+  import com.lowagie.text.pdf.PdfWriter;
+  import org.apache.commons.validator.routines.BigDecimalValidator;
+  import org.apache.commons.validator.routines.CurrencyValidator;
+  import org.apache.commons.validator.routines.DateValidator;
+  import org.owasp.validator.html.AntiSamy;
+  import org.owasp.validator.html.CleanResults;
+  import org.owasp.validator.html.Policy;
+  import org.springframework.context.i18n.LocaleContextHolder;
+  import org.springframework.stereotype.Component;
+  import org.springframework.web.servlet.view.document.AbstractPdfView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import jxl.format.Alignment;
-
-import org.apache.commons.validator.routines.BigDecimalValidator;
-import org.apache.commons.validator.routines.CurrencyValidator;
-import org.apache.commons.validator.routines.DateValidator;
-import org.jfree.util.Log;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
-import org.owasp.validator.html.Policy;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.view.document.AbstractPdfView;
-
-import com.jd.survey.domain.settings.DataSetItem;
-import com.jd.survey.domain.settings.Question;
-import com.jd.survey.domain.settings.QuestionColumnLabel;
-import com.jd.survey.domain.settings.QuestionOption;
-import com.jd.survey.domain.settings.QuestionRowLabel;
-import com.jd.survey.domain.settings.QuestionType;
-import com.jd.survey.domain.settings.SurveyDefinition;
-import com.jd.survey.domain.settings.SurveyDefinitionPage;
-import com.jd.survey.domain.survey.QuestionStatistic;
-import com.jd.survey.domain.survey.SurveyStatistic;
-import com.lowagie.text.Cell;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Table;
-import com.lowagie.text.pdf.BarcodeEAN;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+  import javax.servlet.http.HttpServletRequest;
+  import javax.servlet.http.HttpServletResponse;
+  import java.awt.*;
+  import java.text.NumberFormat;
+  import java.util.Date;
+  import java.util.List;
+  import java.util.Map;
+  import java.util.List;
 
 @Component
 public class StatisticsPdf  extends AbstractPdfView{
@@ -124,11 +105,13 @@ public class StatisticsPdf  extends AbstractPdfView{
 				AntiSamy as = new AntiSamy();
 				CleanResults cr = as.scan(question.getQuestionText(), policy);
 				question.setQuestionText(cr.getCleanHTML());
-				
-				writeSubTitle(document,question.getTwoDigitPageOrder() + "- " +question.getQuestionText());
-				questionStatistics = (List<QuestionStatistic>) allQuestionStatistics.get("q" +question.getId().toString());
-					
-				switch (question.getType())
+                CleanResults crA = as.scan(question.getQuestionAnswer(), policy);
+                question.setQuestionAnswer(crA.getCleanHTML());
+
+                writeSubTitle(document,question.getTwoDigitPageOrder() + "- " +question.getQuestionText());
+                questionStatistics = allQuestionStatistics.get("q" + question.getId().toString());
+
+                switch (question.getType())
 				{
 				case YES_NO_DROPDOWN:
 					writeBooleanQuestionStatistics(document,question,questionStatistics,optionLabel,optionFrequencyLabel,trueLabel,falseLabel);
@@ -302,28 +285,28 @@ public class StatisticsPdf  extends AbstractPdfView{
 		
 		cell =new Cell(new Paragraph("20%",boldedFont));
 		cell.setBorder(Cell.BOTTOM);
-		cell.setHorizontalAlignment(cell.ALIGN_RIGHT);
-		statsTable.addCell(cell);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        statsTable.addCell(cell);
 		
 		cell =new Cell(new Paragraph("40%",boldedFont));
 		cell.setBorder(Cell.BOTTOM);
-		cell.setHorizontalAlignment(cell.ALIGN_RIGHT);
-		statsTable.addCell(cell);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        statsTable.addCell(cell);
 		
 		cell =new Cell(new Paragraph("60%",boldedFont));
 		cell.setBorder(Cell.BOTTOM);
-		cell.setHorizontalAlignment(cell.ALIGN_RIGHT);
-		statsTable.addCell(cell);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        statsTable.addCell(cell);
 		
 		cell =new Cell(new Paragraph("80%",boldedFont));
 		cell.setBorder(Cell.BOTTOM);
-		cell.setHorizontalAlignment(cell.ALIGN_RIGHT);
-		statsTable.addCell(cell);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        statsTable.addCell(cell);
 		
 		cell =new Cell(new Paragraph("100%",boldedFont));
 		cell.setBorder(Cell.BOTTOM);
-		cell.setHorizontalAlignment(cell.ALIGN_RIGHT);
-		statsTable.addCell(cell);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        statsTable.addCell(cell);
 		return statsTable;
 	}
 	private void writeBooleanQuestionStatistics(Document document,

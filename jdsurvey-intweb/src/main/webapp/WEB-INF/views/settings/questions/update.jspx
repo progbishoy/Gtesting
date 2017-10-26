@@ -741,7 +741,7 @@
 					</noscript>
 				
 				</div>
-			
+
 				<div id="direction_id">
 					<spring:message code="direction_tip" var="dirTip" />
 					<label for="direction" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.question.direction_label"/><em class="formee-req">*</em><a class="hastip" title="${dirTip}">?</a></label> 
@@ -804,7 +804,10 @@
 				
 				<spring:message code="question_text_tip" var="qTxtTip" />
 				<field:textarea field="questionText" id="c_com.jd.survey.domain.settings.Question.questionText" cssclass="grid-8-12" tip="${qTxtTip}" required="true"/>
-				
+            <field:textarea field="questionAnswer" id="c_com.jd.survey.domain.settings.Question.questionAnswer"
+                            cssclass="grid-8-12" required="true" tip="${qTxtTip}"/>
+            <field:input field="questionGrade" id="c_com.jd.survey.domain.settings.Question.questionGrade"
+                         cssclass="grid-2-12" maxlength="10"/>
 				<div id="multimedia">
 					<field:input field="width" id="c_com.jd.survey.domain.settings.Question.width" cssclass="grid-2-12"/>
 					<field:input field="height" id="c_com.jd.survey.domain.settings.Question.height" cssclass="grid-2-12"/>
