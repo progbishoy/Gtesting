@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div class="page-body"
+	 xmlns:jsp="http://java.sun.com/JSP/Page"
+	 xmlns:c="http://java.sun.com/jsp/jstl/core"
+	 xmlns:spring="http://www.springframework.org/tags"
+	 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	 xmlns:section="urn:jsptagdir:/WEB-INF/tags/form"
+	 xmlns:util="urn:jsptagdir:/WEB-INF/tags/util"
+	 xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+	 xmlns:form="http://www.springframework.org/tags/form"
+	 xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields"
+	 xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields"
+	 xmlns:page="urn:jsptagdir:/WEB-INF/tags/form"
+	 version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8"/>
+	<jsp:output omit-xml-declaration="yes"/>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			/*
+			 *  This will allow the iframe page to be resized
+			 */
+
+			$('.fancyboxLink').fancybox({
+				width : '80%',
+				height : '80%',
+				fitToView : false,
+				autoSize : false
+			});
+		});
+	</script>
+	<div class="right-column">
+		<table:questionsbanktable questions="${questions}"  />
+	</div>
+</div>
+

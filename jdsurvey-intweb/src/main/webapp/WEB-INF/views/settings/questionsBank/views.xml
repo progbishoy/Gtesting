@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+	<definition extends="preview" name="settings/questionsBank/create">
+		<put-attribute name="body" value="/WEB-INF/views/settings/questionsBank/create.jspx"/>
+    </definition>
+	<definition extends="preview" name="settings/questionsBank/update">
+		<put-attribute name="body" value="/WEB-INF/views/settings/questionsBank/update.jspx"/>
+    </definition>
+    <definition extends="preview" name="settings/questionsBank/saved">
+		<put-attribute name="body" value="/WEB-INF/views/settings/questionsBank/saved.jspx"/>
+    </definition>
+    <definition extends="default" name="settings/questionsBank/lookup">
+		<put-attribute name="body" value="/WEB-INF/views/settings/questionsBank/lookup.jspx"/>
+        <put-attribute name="activeTab" value="settings"  cascade="true"/>
+        <put-attribute name="pagemode" value="show"  cascade="true"/>
+    </definition>
+    <definition extends="preview" name="settings/questionsBank/show">
+        <put-attribute name="body" value="/WEB-INF/views/settings/questionsBank/show.jspx"/>
+    </definition>
+</tiles-definitions>
