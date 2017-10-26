@@ -51,6 +51,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class GlobalSettings {
 
 
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
