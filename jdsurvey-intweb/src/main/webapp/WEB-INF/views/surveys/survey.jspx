@@ -453,24 +453,33 @@
 												<c:forEach items="${questionAnswer.question.options}" var="option" varStatus="loop2">
 														<c:set var="found" value="false" />
 														<c:forEach items="${questionAnswer.integerAnswerValuesArray}" var="answer" varStatus="loop3">
-															<c:set var="userAnswerMark" scope="page"
-																   value="wrongAnswer"/>
-															<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(option.order)}">
-																<c:set var="userAnswerMark" scope="page"
-																	   value="rightAnswer"/>
+
+															<c:if test="${answer eq  option.order and option.right eq 'false' } ">
+																	<c:set var="userAnswerMarkMsg" scope="page" value="(Wrong choice selected)"/>
+																	<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+															</c:if>
+															<c:if test="${answer eq  option.order and option.right eq 'true'}">
+																<c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
+																<c:set var="userAnswerMark" scope="page"  value="rightAnswer"/>
 															</c:if>
 															<c:if test="${answer eq  option.order}">
 																<input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" checked="true" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}">
 																	<label for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"
 																		   class="${userAnswerMark}"><c:out
-																			value="${option.text}"/></label></input>
+																			value="${option.text}"/></label></input>${userAnswerMarkMsg}
 																<br/>
 																<c:set var="found" value="true" />
 															</c:if>
 														</c:forEach>
 														<c:if test="${!found}" >
+																	<c:set var="userAnswerMark" scope="page" value=""/>
+																	<c:set var="userAnswerMarkMsg" scope="page" value=""/>
+																	<c:if test="${option.right eq 'true'}">
+																		<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+																		<c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
+																	</c:if>
 																<input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}">
-																<label for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"><c:out value="${option.text}"/></label></input> <br/>
+																<label  for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}" class="xx ${userAnswerMark}"><c:out value="${option.text}"/></label></input>${userAnswerMarkMsg} <br/>
 														</c:if>
 													<c:set var="otherOptionNumb" value="${loop2.index+1}"/>
 												</c:forEach>
