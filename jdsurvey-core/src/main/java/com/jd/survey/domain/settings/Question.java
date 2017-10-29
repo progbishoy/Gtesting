@@ -67,10 +67,9 @@ implements Comparable <Question>,  Serializable, SortedSetUpdater.InrementableCo
 	private String questionText;
 
 
-    @NotNull
-    @NotEmpty
+
     @Size(max = 2000)
-    @Column(length = 2000, nullable = false)
+    @Column(length = 2000)
     private String questionAnswer;
 
 

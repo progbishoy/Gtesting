@@ -369,22 +369,41 @@
 										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
-								<label class="questionText ${userAnswerMark}"><spring:message
-										code="com.jd.survey.domain.settings.question.questionuseranswer_label"/>:<c:out
-										value="${questionAnswer.stringAnswerValue}"/>
-								</label>
+
 								<div class="questionAnswer">
-									<select name="questionAnswer.stringAnswerValue" style="width:60%;" disabled="true" id="${QuestionAndPageNumb} ${questionNumber}">
+                                    <c:set var="answerState" scope="page" value="wrong"/>
+									<select disabled="disabled" name="questionAnswer.stringAnswerValue" style="width:60%;"  id="${QuestionAndPageNumb} ${questionNumber}">
 										<option value=""><spring:message code="select_option_message"/></option>
 										<c:forEach items="${questionAnswer.question.options}" var="option" varStatus="loop2">
+                                            <c:set var="userAnswerMarkMsg" scope="page" value=""/>
+                                            <c:set var="userAnswerMark" scope="page"  value=""/>
+                                            <c:if test="${option.value eq  questionAnswer.stringAnswerValue and option.right ne 'true'}">
+                                                <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong choice selected)"/>
+                                                <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                            </c:if>
+                                            <c:if test="${option.value eq  questionAnswer.stringAnswerValue and option.right eq 'true'}">
+                                                <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
+                                                <c:set var="userAnswerMark" scope="page"  value="rightAnswer"/>
+                                                <c:set var="answerState" scope="page" value="right"/>
+                                            </c:if>
 											<c:if test="${option.value eq  questionAnswer.stringAnswerValue}">
-			 										<option value="${option.value}" selected="true" disabled="true"><c:out value="${option.text}"/> </option>
+			 										<option disabled="disabled" value="${option.value}" selected="true" ><c:out value="${option.text}"/>${userAnswerMarkMsg}</option>
 			 									</c:if>
 			 									<c:if test="${option.value ne  questionAnswer.stringAnswerValue}">
-			 										<option value="${option.value}" disabled="true"><c:out value="${option.text}"/> </option>
+                                                    <c:if test="${option.right eq 'true'}">
+                                                        <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                        <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
+                                                    </c:if>
+			 										<option disabled="disabled" value="${option.value}"><c:out value="${option.text}"/>${userAnswerMarkMsg} </option>
 												</c:if>
 												</c:forEach>
 									</select>
+                                    <c:if test="${answerState eq 'wrong'}">
+                                    <label class="wrongAnswer"> Wrong Answer</label>
+                                    </c:if>
+                                    <c:if test="${answerState eq 'right'}">
+                                        <label class="rightAnswer">Right Answer </label>
+                                    </c:if>
 									<span class="tipPreviewMsg"><c:out value="${questionAnswer.question.tip}" escapeXml="false" /></span>
 								</div>
 							</div>
@@ -407,54 +426,62 @@
 											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
 											value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 											value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
-									<label class="questionText ${userAnswerMark}"><spring:message
-											code="com.jd.survey.domain.settings.question.questionuseranswer_label"/>:<c:out
-											value="${questionAnswer.stringAnswerValue}"/>
-									</label>
 									<div class="questionAnswer">
 										<span class="validationMsg">
 											<form:errors path="questionAnswers[${loop.index}].stringAnswerValue" cssClass="validation_error"/>
 										</span>
 
 										<c:choose>
-											<c:when test='${questionAnswer.question.direction == "HORIZONTAL"}'>
-												<c:forEach items="${questionAnswer.question.options}" var="option" varStatus="loop2">
-
-													<c:forEach items="${questionAnswer.integerAnswerValuesArray}" var="answer" varStatus="loop3">
-														<c:set var="found" value="false"/>
-														<c:if test="${answer eq  option.order}">
-															<label class="${userAnswerMark}"
-																   for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"
-																   style="margin-right:4em;display: inline-block;">
-																<input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" checked="true" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"/>
-																<c:out value="${option.text}"/>
-															</label>
-															<c:set var="found" value="true" />
-														</c:if>
-													</c:forEach>
-													<c:if test="${!found}" >
-														<label class="${userAnswerMark}"
-															   for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"
-															   style="margin-right:4em;display: inline-block;">
-																<input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"/>
-																<c:out value="${option.text}"/>
-															</label>
-													</c:if>
-													<c:set var="otherOptionNumb" value="${loop2.index+1}" />
-												</c:forEach>
-												<c:if test="${questionAnswer.question.allowOtherTextBox}">
-													<label for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${otherOptionNumb}" class="dontShow"><spring:message code="question_ada_hiden_label" htmlEscape="false"/></label>
-													<input type="text" class="grid-5-12" name="questionAnswers[${loop.index}].otherStringAnswerValue" value="${questionAnswer.otherStringAnswerValue}" maxlength="50" style="width:20%;margin-left:-3em;" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${otherOptionNumb}"/>
-												</c:if>
-											</c:when>
+                                            <c:when test='${questionAnswer.question.direction == "HORIZONTAL"}'>
+                                                <c:forEach items="${questionAnswer.question.options}" var="option" varStatus="loop2">
+                                                    <c:set var="found" value="false" />
+                                                    <c:forEach items="${questionAnswer.integerAnswerValuesArray}" var="answer" varStatus="loop3">
+                                                        <c:set var="userAnswerMarkMsg" scope="page" value=""/>
+                                                        <c:set var="userAnswerMark" scope="page"  value=""/>
+                                                        <c:if test="${answer eq  option.order and option.right ne 'true'}">
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong choice selected)"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                        </c:if>
+                                                        <c:if test="${answer eq  option.order and option.right eq 'true'}">
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
+                                                            <c:set var="userAnswerMark" scope="page"  value="rightAnswer"/>
+                                                        </c:if>
+                                                        <c:if test="${answer eq  option.order}">
+                                                            <label class="${userAnswerMark}" for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}" style="margin-right:4em;display: inline-block;">
+                                                                <input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" checked="true" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"/>
+                                                                <c:out value="${option.text}"/>${userAnswerMarkMsg}
+                                                            </label>
+                                                            <c:set var="found" value="true" />
+                                                        </c:if>
+                                                    </c:forEach>
+                                                    <c:if test="${!found}" >
+                                                        <c:set var="userAnswerMark" scope="page" value=""/>
+                                                        <c:set var="userAnswerMarkMsg" scope="page" value=""/>
+                                                        <c:if test="${option.right eq 'true'}">
+                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
+                                                        </c:if>
+                                                        <label class="${userAnswerMark}" for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}" style="margin-right:4em;display: inline-block;">
+                                                            <input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}"/>
+                                                            <c:out value="${option.text}"/>${userAnswerMarkMsg}
+                                                        </label>
+                                                    </c:if>
+                                                    <c:set var="otherOptionNumb" value="${loop2.index+1}" />
+                                                </c:forEach>
+                                                <c:if test="${questionAnswer.question.allowOtherTextBox}">
+                                                    <label for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${otherOptionNumb}" class="dontShow"><spring:message code="question_ada_hiden_label" htmlEscape="false"/></label>
+                                                    <input type="text" class="grid-5-12" name="questionAnswers[${loop.index}].otherStringAnswerValue" value="${questionAnswer.otherStringAnswerValue}" maxlength="50" style="width:20%;margin-left:-3em;" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${otherOptionNumb}"/>
+                                                </c:if>
+                                            </c:when>
 
 											<!-- Vertical  -->
 											<c:otherwise>
 												<c:forEach items="${questionAnswer.question.options}" var="option" varStatus="loop2">
 														<c:set var="found" value="false" />
 														<c:forEach items="${questionAnswer.integerAnswerValuesArray}" var="answer" varStatus="loop3">
-
-															<c:if test="${answer eq  option.order and option.right eq 'false' } ">
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value=""/>
+                                                            <c:set var="userAnswerMark" scope="page"  value=""/>
+															<c:if test="${answer eq  option.order and option.right ne 'true'}">
 																	<c:set var="userAnswerMarkMsg" scope="page" value="(Wrong choice selected)"/>
 																	<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
 															</c:if>
@@ -479,7 +506,7 @@
 																		<c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
 																	</c:if>
 																<input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}">
-																<label  for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}" class="xx ${userAnswerMark}"><c:out value="${option.text}"/></label></input>${userAnswerMarkMsg} <br/>
+																<label  for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}" class="${userAnswerMark}"><c:out value="${option.text}"/></label></input>${userAnswerMarkMsg} <br/>
 														</c:if>
 													<c:set var="otherOptionNumb" value="${loop2.index+1}"/>
 												</c:forEach>
@@ -536,10 +563,6 @@
 						<!-- SR 'Single Radio Choice'-->
 							<c:when test='${questionAnswer.question.type.code == "SR"}'>
 								<div class="${rowStyle}">
-									<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
-									<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-										<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
-									</c:if>
 									<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" />
 										<c:if test="${questionAnswer.question.required}">
 											<em class="formee-req">*</em>
@@ -553,10 +576,6 @@
 											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
 											value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 											value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
-									<label class="questionText ${userAnswerMark}"><spring:message
-											code="com.jd.survey.domain.settings.question.questionuseranswer_label"/>:<c:out
-											value="${questionAnswer.stringAnswerValue}"/>
-									</label>
 									<div class="questionAnswer">
 										<span class="validationMsg">
 											<form:errors path="questionAnswers[${loop.index}].stringAnswerValue" cssClass="validation_error"/>
@@ -564,16 +583,32 @@
 										<c:choose>
 											<c:when test='${questionAnswer.question.direction == "HORIZONTAL"}'>
 												<c:forEach items="${questionAnswer.question.options}" var="option" varStatus="loop2">
+                                                    <c:set var="userAnswerMark" scope="page" value=""/>
+                                                    <c:set var="userAnswerMarkMsg" scope="page" value=""/>
 													<c:if test="${questionAnswer.stringAnswerValue eq  option.value}">
-														<label style="margin-right:4em;display: inline-block;">
+                                                        <c:if test="${option.right eq 'true'}">
+                                                            <c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
+                                                        </c:if>
+                                                        <c:if test="${option.right ne 'true'}">
+                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong Answer Selected)"/>
+                                                        </c:if>
+														<label class="${userAnswerMark}" style="margin-right:4em;display: inline-block;">
 															<input type="radio" name="questionAnswers[${loop.index}].stringAnswerValue[${loop2}]" value="${option.value}" class="checkbox" checked="true"  disabled="true"/>
 															<c:out value="${option.text}"/>
+                                                            ${userAnswerMarkMsg}
 														</label>
 													</c:if>
 													<c:if test="${questionAnswer.stringAnswerValue ne  option.value}">
-														<label style="margin-right:4em;display: inline-block;">
+                                                        <c:if test="${option.right eq 'true'}">
+                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
+                                                        </c:if>
+														<label class="${userAnswerMark}" style="margin-right:4em;display: inline-block;">
 															<input type="radio" name="questionAnswers[${loop.index}].stringAnswerValue[${loop2}]" value="${option.value}" class="checkbox"  disabled="true"/>
 															<c:out value="${option.text}"/>
+                                                            ${userAnswerMarkMsg}
 														</label>
 													</c:if>
 													<c:set var="otherOptionNumb" value="${loop2.index+1}" />
@@ -586,11 +621,27 @@
 
 											<c:otherwise>
 												<c:forEach items="${questionAnswer.question.options}" var="option" varStatus="loop2">
+                                                    <c:set var="userAnswerMark" scope="page" value=""/>
+                                                    <c:set var="userAnswerMarkMsg" scope="page" value=""/>
+
+
 													<c:if test="${questionAnswer.stringAnswerValue eq  option.value}">
-														<label><input type="radio"  value="${option.value}" class="checkbox" checked="true" disabled="true"></input><c:out value="${option.text}"/></label><br/>
+                                                        <c:if test="${option.right eq 'true'}">
+                                                            <c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
+                                                        </c:if>
+                                                        <c:if test="${option.right ne 'true'}">
+                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong Answer Selected)"/>
+                                                        </c:if>
+														<label class="${userAnswerMark}"><input type="radio"  value="${option.value}" class="checkbox" checked="true" disabled="true"></input><c:out value="${option.text}"/></label>${userAnswerMarkMsg}<br/>
 													</c:if>
 													<c:if test="${questionAnswer.stringAnswerValue ne  option.value}">
-														<label><input type="radio"  value="${option.value}" class="checkbox"  disabled="true"></input><c:out value="${option.text}"/></label><br/>
+                                                        <c:if test="${option.right eq 'true'}">
+                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
+                                                        </c:if>
+														<label class="${userAnswerMark}"><input type="radio"  value="${option.value}" class="checkbox"  disabled="true"></input><c:out value="${option.text}"/></label>${userAnswerMarkMsg}<br/>
 													</c:if>
 													<c:set var="otherOptionNumb" value="${loop2.index+1}" />
 												</c:forEach>
