@@ -602,6 +602,9 @@ package com.jd.survey.service.settings;
       public Set<QuestionBank> question_findAll(int startResult,	int maxRows) throws DataAccessException {
           return questionDAO.findAll(startResult, maxRows);
       }
+      public Set<QuestionBank> question_search(QuestionBank q,int startResult,	int maxRows) throws DataAccessException {
+          return questionDAO.findBySearch( startResult, maxRows, q.getQuestionTag(),  q.getDifficulty(), q.getType(),q.getQuestionText(),q.getStatus());
+      }
       public Long question_getCount() {
           return questionDAO.getCount();
       }

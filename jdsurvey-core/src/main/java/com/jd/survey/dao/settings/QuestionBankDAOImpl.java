@@ -17,21 +17,18 @@ package com.jd.survey.dao.settings;
 
 import com.jd.survey.dao.interfaces.settings.QuestionBankDAO;
 import com.jd.survey.dao.interfaces.settings.QuestionDAO;
-import com.jd.survey.domain.settings.Question;
+import com.jd.survey.domain.settings.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.*;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
-import com.jd.survey.domain.settings.QuestionBank;
-import com.jd.survey.domain.settings.QuestionDifficultyLevel;
-import com.jd.survey.domain.settings.Tags;
 import org.skyway.spring.util.dao.AbstractJpaDao;
 
 import org.springframework.dao.DataAccessException;
@@ -128,5 +125,52 @@ public class QuestionBankDAOImpl extends AbstractJpaDao<QuestionBank> implements
     }
 
 
+    @SuppressWarnings("unchecked")
+    @Transactional
+    //public Set<QuestionBank> findAll(int startResult, int maxRows)	throws DataAccessException {
+    public Set<QuestionBank> findBySearch(int startResult, int maxRows, Tags t, QuestionDifficultyLevel questionDifficultyLevel, QuestionType QType ,String questionText,QuestionBankStatus status)	throws DataAccessException {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<QuestionBank>questionBankCriteriaQuery=cb.createQuery(QuestionBank.class);
+        Root<QuestionBank> rootQBCQ= questionBankCriteriaQuery.from(QuestionBank.class);
+        questionBankCriteriaQuery.select(rootQBCQ);
+        Tags t2=new Tags();
+        t2.setTagName("BASIC JAVA");
+        t2.setId(1L);
+
+        Predicate questionTag=cb.equal(rootQBCQ.get("questionTag"),t2);
+        Predicate difficulty=cb.equal(rootQBCQ.get("difficulty"),QuestionDifficultyLevel.HIGH);
+        Predicate type=cb.equal(rootQBCQ.get("type"),QuestionType.INTEGER_INPUT);
+        Predicate statusP=cb.equal(rootQBCQ.get("status"),QuestionBankStatus.NEW);
+        Predicate questionTextP=cb.like(rootQBCQ.<String>get("questionText"),"%"+""+"%");
+
+        List< Predicate > predicates = new ArrayList < Predicate > ();
+        if(!t.equals(null))
+        {
+            predicates.add(questionTag);
+        }
+        if(!questionDifficultyLevel.equals(null))
+        {
+            predicates.add(difficulty);
+        }
+        if(!type.equals(null))
+        {
+            predicates.add(type);
+        }
+        if(!status.equals(null))
+        {
+            predicates.add(statusP);
+        }
+        if(!questionText.equals(null))
+        {
+            predicates.add(questionTextP);
+        }
+        questionBankCriteriaQuery.where(predicates.toArray(new Predicate[] {}));
+        return new LinkedHashSet<QuestionBank>(entityManager.createQuery(questionBankCriteriaQuery).getResultList());
+
+
+
+        //return new LinkedHashSet<QuestionBank>(query.getResultList());
+    }
 
 }

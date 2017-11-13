@@ -10,6 +10,7 @@
 	xmlns:jsp="http://java.sun.com/JSP/Page" 
 	xmlns:springform="http://www.springframework.org/tags/form"
 	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+	xmlns:sec="http://www.springframework.org/security/tags"
 	version="2.0">
 	
 	
@@ -898,12 +899,13 @@
 				</springform:options>
 			</springform:select>
 			<br/>
-			<label for="status" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/><em class="formee-req">*</em></label>
-			<springform:select  path="status" cssClass="grid-4-12">
-				<springform:options >
-				</springform:options>
-			</springform:select>
-
+			<sec:authorize ifAnyGranted="ROLE_ADMIN">
+				<label for="status" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/><em class="formee-req">*</em></label>
+				<springform:select  path="status" cssClass="grid-4-12">
+					<springform:options >
+					</springform:options>
+				</springform:select>
+			</sec:authorize>
 			<field:input field="duration" id="c_com.jd.survey.domain.settings.Question.duration" cssclass="grid-2-12"/>
 
 			<div id="multimedia">

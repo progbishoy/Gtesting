@@ -17,18 +17,16 @@ package com.jd.survey.dao.interfaces.settings;
 
 import java.util.Set;
 
-import com.jd.survey.domain.settings.QuestionBank;
-import com.jd.survey.domain.settings.QuestionDifficultyLevel;
-import com.jd.survey.domain.settings.Tags;
+import com.jd.survey.domain.settings.*;
 import org.skyway.spring.util.dao.JpaDao;
 import org.springframework.dao.DataAccessException;
-import com.jd.survey.domain.settings.Question;
 
 /**
  */
 public interface QuestionBankDAO extends JpaDao<QuestionBank> {
     public Set<QuestionBank> findAll() throws DataAccessException;
     public Set<QuestionBank> findAll(int startResult, int maxRows) throws DataAccessException;
+    public Set<QuestionBank> findBySearch(int startResult, int maxRows, Tags t, QuestionDifficultyLevel questionDifficultyLevel, QuestionType QType ,String questionText,QuestionBankStatus status)	throws DataAccessException ;
     public QuestionBank findById(Long id) throws DataAccessException;
     public QuestionBank findByOrder(Long surveyDefinitionId, Short pageOrder, Short questionOrder) throws DataAccessException;
     public Long getCount() throws DataAccessException;

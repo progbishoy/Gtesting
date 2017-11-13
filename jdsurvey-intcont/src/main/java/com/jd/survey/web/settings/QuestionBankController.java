@@ -134,6 +134,7 @@ package com.jd.survey.web.settings;
                   //u.setId(user.getId());
                   question.setCreatedBy(user);
                   question.setCreatedDate(new Date());
+                  question.setStatus(QuestionBankStatus.NEW);
                   if(!question.getOtherTag().trim().equals(""))
                   {
                       question.setQuestionTag(surveySettingsService.questionBankAddTag(question.getOtherTag()));
@@ -223,7 +224,7 @@ package com.jd.survey.web.settings;
                             HttpServletRequest httpServletRequest) {
           //Set<QuestionBank> questions=surveySettingsService.question_findAll();
           //uiModel.addAttribute("",questions);
-
+          uiModel.addAttribute("TagsList",surveySettingsService.tags_findAll());
 
 
               int sizeNo = size == null ? 10 : size.intValue();
@@ -231,7 +232,7 @@ package com.jd.survey.web.settings;
 
               uiModel.addAttribute("questions", surveySettingsService.question_findAll(firstResult, sizeNo));
 
-              float nrOfPages = (float) surveySettingsService.question_findAll().size() / sizeNo;
+              float nrOfPages = (float) surveySettingsService.question_findAll(firstResult, sizeNo).size() / sizeNo;
               uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 
 
@@ -239,9 +240,27 @@ package com.jd.survey.web.settings;
           return "settings/questionsBank/lookup";
           
       }
-      
-      
-      
+
+      @RequestMapping( params = "search", produces = "text/html")
+      public String search(Principal principal,
+                           @RequestParam(value = "page", required = false) Integer page,
+                           @RequestParam(value = "size", required = false ) Integer size,
+                           QuestionBank question,
+                           Model uiModel,
+                           HttpServletRequest httpServletRequest) {
+
+          int sizeNo = size == null ? 10 : size.intValue();
+          final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+
+          uiModel.addAttribute("questions", surveySettingsService.question_search(question,firstResult, sizeNo));
+
+          float nrOfPages = (float) surveySettingsService.question_search(question,firstResult, sizeNo).size() / sizeNo;
+          uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+
+
+          return "settings/questionsBank/lookup";
+
+      }
   
       @Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
       @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
