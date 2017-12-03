@@ -1,9 +1,14 @@
 package com.jd.survey.domain.settings;
 
 import com.jd.survey.util.SortedSetUpdater;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 import java.io.Serializable;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by ags on 10/5/2017.
@@ -16,7 +21,7 @@ import javax.persistence.*;
 
 })
 
-public class Tags implements  Serializable	{
+public class Tags implements Comparable <Tags>, Serializable	{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,6 +29,13 @@ public class Tags implements  Serializable	{
     private Long id;
 
     String TagName;
+
+    @NotNull
+    @ManyToMany
+    @Sort(type = SortType.NATURAL)
+    @JoinTable(name="sec_department_tags",joinColumns={@JoinColumn(name="tag_id", referencedColumnName="id")},
+            inverseJoinColumns={@JoinColumn(name="department_id", referencedColumnName="id")})
+    private SortedSet<Department> departments = new TreeSet<Department>();
 
 
     public String getTagName() {
@@ -40,5 +52,39 @@ public class Tags implements  Serializable	{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+
+    public String toString() {
+        return this.TagName;
+    }
+
+    public SortedSet<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(SortedSet<Department> departments) {
+        this.departments = departments;
+    }
+
+    //Comparable interface
+    @Override
+    public int compareTo(Tags that) {
+
+        final int BEFORE = -1;
+        final int AFTER = 1;
+        if (that == null) {
+            return BEFORE;
+        }
+        Comparable<String> thisDepartment = this.getTagName();
+        Comparable<String> thatDepartment = that.getTagName();
+        if(thisDepartment == null) {
+            return AFTER;
+        } else if(thatDepartment == null) {
+            return BEFORE;
+        } else {
+            return thisDepartment.compareTo(that.getTagName());
+        }
+
     }
 }

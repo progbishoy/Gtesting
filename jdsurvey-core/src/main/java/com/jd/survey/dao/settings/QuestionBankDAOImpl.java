@@ -128,45 +128,42 @@ public class QuestionBankDAOImpl extends AbstractJpaDao<QuestionBank> implements
     @SuppressWarnings("unchecked")
     @Transactional
     //public Set<QuestionBank> findAll(int startResult, int maxRows)	throws DataAccessException {
-    public Set<QuestionBank> findBySearch(int startResult, int maxRows, Tags t, QuestionDifficultyLevel questionDifficultyLevel, QuestionType QType ,String questionText,QuestionBankStatus status)	throws DataAccessException {
+    public Set<QuestionBank> findBySearch(int startResult, int maxRows, QuestionBank q)	throws DataAccessException {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<QuestionBank>questionBankCriteriaQuery=cb.createQuery(QuestionBank.class);
         Root<QuestionBank> rootQBCQ= questionBankCriteriaQuery.from(QuestionBank.class);
         questionBankCriteriaQuery.select(rootQBCQ);
-        Tags t2=new Tags();
-        t2.setTagName("BASIC JAVA");
-        t2.setId(1L);
-
-        Predicate questionTag=cb.equal(rootQBCQ.get("questionTag"),t2);
-        Predicate difficulty=cb.equal(rootQBCQ.get("difficulty"),QuestionDifficultyLevel.HIGH);
-        Predicate type=cb.equal(rootQBCQ.get("type"),QuestionType.INTEGER_INPUT);
-        Predicate statusP=cb.equal(rootQBCQ.get("status"),QuestionBankStatus.NEW);
-        Predicate questionTextP=cb.like(rootQBCQ.<String>get("questionText"),"%"+""+"%");
 
         List< Predicate > predicates = new ArrayList < Predicate > ();
-        if(!t.equals(null))
+        if(q.getQuestionTag().getId()!=-1)
         {
+            Predicate questionTag=cb.equal(rootQBCQ.get("questionTag"),q.getQuestionTag());
             predicates.add(questionTag);
         }
-        if(!questionDifficultyLevel.equals(null))
+        if(!q.gettDifficulty().equals("ANY"))
         {
+            Predicate difficulty=cb.equal(rootQBCQ.get("difficulty"),QuestionDifficultyLevel.valueOf(q.gettDifficulty()));
             predicates.add(difficulty);
         }
-        if(!type.equals(null))
+        if(!q.gettType().equals("ANY"))
         {
+            Predicate type=cb.equal(rootQBCQ.get("type"), QuestionType.fromCode(q.gettType()));
             predicates.add(type);
         }
-        if(!status.equals(null))
+        if(!q.gettStatus().equals("ANY"))
         {
+            Predicate statusP=cb.equal(rootQBCQ.get("status"),QuestionBankStatus.valueOf(q.gettStatus()));
             predicates.add(statusP);
         }
-        if(!questionText.equals(null))
+        if(q.getQuestionText()!="")
         {
+            Predicate questionTextP=cb.like(rootQBCQ.<String>get("questionText"),"%"+q.getQuestionText()+"%");
             predicates.add(questionTextP);
         }
         questionBankCriteriaQuery.where(predicates.toArray(new Predicate[] {}));
-        return new LinkedHashSet<QuestionBank>(entityManager.createQuery(questionBankCriteriaQuery).getResultList());
+
+        return new LinkedHashSet<QuestionBank>(entityManager.createQuery(questionBankCriteriaQuery).setFirstResult(startResult).setMaxResults(maxRows).getResultList());
 
 
 

@@ -26,13 +26,20 @@
 		<br/>
 
 	</div>
-					<c:if test="${empty questions}">
-						<br/>
-						<div class="flash flash-notice"><spring:message code="page.noquestion_message"/></div>
-					</c:if>
-	<util:paginationTens maxPages="${maxPages}" page="${param.page}" size="${param.size}" idFieldName="id" idFieldValue="${id}"/>
-			    	
+	<!--<c:if test="${empty questions}">
+        <br/>
+        <div class="flash flash-notice"><spring:message code="page.noquestion_message"/></div>
+    </c:if>
+<util:paginationTens maxPages="${maxPages}" page="${param.page}" size="${param.size}" idFieldName="id" idFieldValue="${id}"/>-->
+			    	<table id="tablesort">
+						<thead>
+						<tr>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
 		    		<c:forEach items="${questions}" var="question" varStatus="loop">
+						<tr><td>
 						<c:choose>
 							<c:when test="${loop.index % 2 == 0}">
 								<c:set var="rowStyle" scope="page" value="odd"/>
@@ -899,9 +906,12 @@
 
 						</div>
 					</div>
-					
-					
+						</td>
+							</tr>
+
 				</c:forEach>
+						</tbody>
+		</table>
 				<div class="questionLinks" style="text-align:right;">
 
 								<spring:url value="/settings/questionsBank/" var="create_url">
@@ -913,11 +923,7 @@
 				              	<a href="${create_url}" class="fancyboxLink fancybox.iframe" target="_blank" >	
 							   		<i class="icon-plus icon-1x">&#160;</i><c:out value="${fn:toLowerCase(add_message)}"/>
 							  	</a>
-					<br/><br/><br/>
-					<c:if test="${not empty maxPages}">
-						<util:paginationTens maxPages="${maxPages}" page="${param.page}" size="${param.size}" idFieldName="id" idFieldValue="${id}"/>
-					</c:if>
-					<br/><br/><br/>
+
 			</div>
   	  
   </jsp:root>

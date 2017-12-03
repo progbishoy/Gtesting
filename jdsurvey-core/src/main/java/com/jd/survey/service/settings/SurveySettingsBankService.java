@@ -524,6 +524,10 @@ package com.jd.survey.service.settings;
           questionOption.setQuestion(question);
           Short order = question.updateSet(question.getOptions(), questionOption).getOrder();
           for (QuestionBankOption qo:  question.getOptions()) {
+              if(qo.isRight())
+              {
+                  qo.setText(" "+qo.getText());
+              }
               updatedQuestionOptions.add(questionOptionDAO.merge(qo));
           }
           question.setOptions(updatedQuestionOptions);
@@ -603,7 +607,7 @@ package com.jd.survey.service.settings;
           return questionDAO.findAll(startResult, maxRows);
       }
       public Set<QuestionBank> question_search(QuestionBank q,int startResult,	int maxRows) throws DataAccessException {
-          return questionDAO.findBySearch( startResult, maxRows, q.getQuestionTag(),  q.getDifficulty(), q.getType(),q.getQuestionText(),q.getStatus());
+          return questionDAO.findBySearch( startResult, maxRows, q);
       }
       public Long question_getCount() {
           return questionDAO.getCount();
@@ -903,6 +907,10 @@ package com.jd.survey.service.settings;
   
       public Set<Tags> tags_findAll()	throws DataAccessException {
           return tagsDAO.findAll();
+      }
+
+      public Set<Tags> tags_findByDepartments(User user)	throws DataAccessException {
+          return tagsDAO.findByDepartments(user.getDepartments());
       }
   
   

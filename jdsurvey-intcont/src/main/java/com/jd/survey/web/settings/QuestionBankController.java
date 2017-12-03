@@ -138,6 +138,12 @@ package com.jd.survey.web.settings;
                   if(!question.getOtherTag().trim().equals(""))
                   {
                       question.setQuestionTag(surveySettingsService.questionBankAddTag(question.getOtherTag()));
+                      if(user.getDepartments().size()==1)
+                      {
+                          Department userDep=user.getDepartments().first();
+                          userDep.getTags().add(question.getQuestionTag());
+                          surveySettingsService.department_merge(userDep);
+                      }
                   }
                   if (question.getType().getIsRating()) {
                       SortedSet<QuestionBankOption> options = new TreeSet<QuestionBankOption>();
@@ -202,7 +208,7 @@ package com.jd.survey.web.settings;
             QuestionBank q =surveySettingsService.question_findById(id);
               List<QuestionBank> questions=new ArrayList<QuestionBank>();
               questions.add(q);
-              uiModel.addAttribute("TagsList",surveySettingsService.tags_findAll());
+              uiModel.addAttribute("TagsList",surveySettingsService.tags_findByDepartments(user));
               uiModel.addAttribute("questions", questions);
               uiModel.addAttribute("question", q);
               uiModel.addAttribute("itemId", id);
@@ -215,7 +221,6 @@ package com.jd.survey.web.settings;
       
       @Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
       @RequestMapping(value = "/lookup", produces = "text/html")
-
       public String lookup(Principal principal,
                            @RequestParam(value = "page", required = false) Integer page,
                            @RequestParam(value = "size", required = false ) Integer size,
@@ -224,16 +229,25 @@ package com.jd.survey.web.settings;
                             HttpServletRequest httpServletRequest) {
           //Set<QuestionBank> questions=surveySettingsService.question_findAll();
           //uiModel.addAttribute("",questions);
-          uiModel.addAttribute("TagsList",surveySettingsService.tags_findAll());
+          String login = principal.getName();
+          User user = userService.user_findByLogin(login);
+          uiModel.addAttribute("TagsList",surveySettingsService.tags_findByDepartments(user));
+          uiModel.addAttribute("DifList",QuestionDifficultyLevel.values());
+          uiModel.addAttribute("StatusList",QuestionBankStatus.values());
+          uiModel.addAttribute("QuestionTypeList",QuestionType.values());
 
 
-              int sizeNo = size == null ? 10 : size.intValue();
-              final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
 
-              uiModel.addAttribute("questions", surveySettingsService.question_findAll(firstResult, sizeNo));
 
-              float nrOfPages = (float) surveySettingsService.question_findAll(firstResult, sizeNo).size() / sizeNo;
-              uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
+
+
+
+              //int sizeNo = size == null ? 10 : size.intValue();
+              //final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+              //Set<QuestionBank> Qall =surveySettingsService.question_findAll();
+              //uiModel.addAttribute("questions", Qall);
+              //float nrOfPages = (float) surveySettingsService.question_findAll().size()/ sizeNo;
+              //uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
 
 
 
@@ -241,7 +255,8 @@ package com.jd.survey.web.settings;
           
       }
 
-      @RequestMapping( params = "search", produces = "text/html")
+      @Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
+      @RequestMapping(value = "/search", produces = "text/html")
       public String search(Principal principal,
                            @RequestParam(value = "page", required = false) Integer page,
                            @RequestParam(value = "size", required = false ) Integer size,
@@ -249,17 +264,22 @@ package com.jd.survey.web.settings;
                            Model uiModel,
                            HttpServletRequest httpServletRequest) {
 
+          String login = principal.getName();
+          User user = userService.user_findByLogin(login);
+          uiModel.addAttribute("TagsList",surveySettingsService.tags_findByDepartments(user));
+          uiModel.addAttribute("DifList",QuestionDifficultyLevel.values());
+          uiModel.addAttribute("StatusList",QuestionBankStatus.values());
+          uiModel.addAttribute("QuestionTypeList",QuestionType.values());
+
           int sizeNo = size == null ? 10 : size.intValue();
           final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+          Set<QuestionBank> Qall=surveySettingsService.question_search(question,0, 0);
+          uiModel.addAttribute("questions",Qall );
 
-          uiModel.addAttribute("questions", surveySettingsService.question_search(question,firstResult, sizeNo));
-
-          float nrOfPages = (float) surveySettingsService.question_search(question,firstResult, sizeNo).size() / sizeNo;
+          float nrOfPages = (float) surveySettingsService.question_search(question,0, 0).size() / sizeNo;
           uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
-
-
+          uiModel.addAttribute("question",question);
           return "settings/questionsBank/lookup";
-
       }
   
       @Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
@@ -371,7 +391,7 @@ package com.jd.survey.web.settings;
           try{
               User user = userService.user_findByLogin(principal.getName());
               populateEditForm(uiModel, surveySettingsService.question_findById(id),user);
-              uiModel.addAttribute("TagsList",surveySettingsService.tags_findAll());
+              uiModel.addAttribute("TagsList",surveySettingsService.tags_findByDepartments(user));
               return "settings/questionsBank/update";
           } catch (Exception e) {
               log.error(e.getMessage(),e);
@@ -410,14 +430,14 @@ package com.jd.survey.web.settings;
       void populateEditForm(Model uiModel, QuestionBank question, User user) {
           log.info("populateEditForm()");
           try{
-              uiModel.addAttribute("TagsList",surveySettingsService.tags_findAll());
+              uiModel.addAttribute("TagsList",surveySettingsService.tags_findByDepartments(user));
               uiModel.addAttribute("question", question);
               uiModel.addAttribute("regularExpressions", surveySettingsService.regularExpression_findAll());
               uiModel.addAttribute("questionOptions", question.getType());
               uiModel.addAttribute("datasets", surveySettingsService.dataSet_findAll());
 
 
-  
+
           } catch (Exception e) {
               log.error(e.getMessage(),e);
               throw (new RuntimeException(e));
@@ -453,6 +473,7 @@ package com.jd.survey.web.settings;
       @ExceptionHandler(RuntimeException.class)
       public String handleRuntimeException(RuntimeException ex, HttpServletRequest request) {
           log.error(ex);
+          ex.printStackTrace();
           log.error("redirect to /uncaughtException");
           return "redirect:/uncaughtException";
       }

@@ -144,9 +144,36 @@ public class QuestionBank extends SortedSetUpdater<QuestionBankOption> implement
     @Enumerated(EnumType.STRING)
     private QuestionDifficultyLevel difficulty = QuestionDifficultyLevel.EASY;
 
+    @Transient
+    private String tDifficulty ;
+    @Transient
+    private String tType ;
+    @Transient
+    private String tStatus ;
 
+    public String gettType() {
+        return tType;
+    }
 
+    public void settType(String tType) {
+        this.tType = tType;
+    }
 
+    public String gettStatus() {
+        return tStatus;
+    }
+
+    public void settStatus(String tStatus) {
+        this.tStatus = tStatus;
+    }
+
+    public String gettDifficulty() {
+        return tDifficulty;
+    }
+
+    public void settDifficulty(String tDifficulty) {
+        this.tDifficulty = tDifficulty;
+    }
 
     @OneToMany(cascade = CascadeType.REMOVE,fetch=FetchType.EAGER, mappedBy="question")
     //@OneToMany(orphanRemoval=true,fetch=FetchType.EAGER, mappedBy="question")

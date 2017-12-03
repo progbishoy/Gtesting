@@ -15,6 +15,12 @@
 			<form:create id="fc_com.jd.survey.domain.settings.Department" modelAttribute="department" path="/security/departments" render="${empty dependencies}" >
 			    <field:input field="name" id="c_com.jd.survey.domain.settings.Department.name" cssclass="grid-8-12" maxlength="75" required="true"/>
 			    <field:textarea field="description" id="c_com.jd.survey.domain.settings.Department.description" cssclass="grid-8-12"/>
+
+
+				<c:if test="${not empty TagsList}">
+					<field:checkboxes parentObjectItems="${department.tags}" pathOnParentObject="tags" items="${TagsList}"  itemLabelFieldName="tagName" itemValueFieldName="id" id="c_com.jd.survey.domain.settings.Tags" />
+				</c:if>
+
 			</form:create>
 			<form:dependency dependencies="${dependencies}" id="d_com.jd.survey.domain.settings.Department" render="${not empty dependencies}"/>
 		</div>

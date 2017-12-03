@@ -1,6 +1,7 @@
 package com.jd.survey.dao.settings;
 
 import com.jd.survey.dao.interfaces.settings.TagsDAO;
+import com.jd.survey.domain.settings.Department;
 import com.jd.survey.domain.settings.Sector;
 import com.jd.survey.domain.settings.Tags;
 import org.skyway.spring.util.dao.AbstractJpaDao;
@@ -11,10 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -54,6 +52,23 @@ public class TagsDAOImpl extends AbstractJpaDao<Tags> implements TagsDAO {
         try {
             Query query = createNamedQuery("Tags.findByTagName", -1, -1, name);
             return (Tags) query.getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+    public Set<Tags> findByDepartments(SortedSet<Department> departments) {
+        try {
+
+
+            Query query = entityManager.createQuery("select o.tags from Department o where o in :d");
+            query.setParameter("d", departments);
+            return new LinkedHashSet<Tags>(query.getResultList());
+
+
+
+
+            //Query query = createNamedQuery("Tags.findByTagName", -1, -1, name);
+            //return (Tags) query.getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

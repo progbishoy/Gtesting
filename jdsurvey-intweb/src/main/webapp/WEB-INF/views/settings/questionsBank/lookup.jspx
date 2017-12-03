@@ -18,6 +18,11 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+
+
+
+			$('#tablesort').DataTable({searching: false,pagingType: 'full_numbers'});
+
 			/*
 			 *  This will allow the iframe page to be resized
 			 */
@@ -31,207 +36,135 @@
 		});
 	</script>
 	<div class="right-column">
-		<spring:url value="/settings/questionsBank/" var="form_url">
-			<spring:param name="search" />
+		<spring:url value="/settings/questionsBank/search" var="form_url">
+
 		</spring:url>
-		<form:form action="${form_url}" method="POST" modelAttribute="questionBank" class="formee">
+		<form:form action="${form_url}" method="Post" modelAttribute="questionBank"  class="formee">
 
 			<div>
-				<field:select path="questionTag.id" field="questionTag.id" id="c_com.jd.survey.domain.settings.Question.questionTag.id" cssclass="grid-2-12" items="${TagsList}" itemValue="id" itemLabel="tagName" required="true"/>
-
-				<label for="difficulty" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.surveydefinition.difficultyLevel_label"/><em class="formee-req">*</em></label>
-				<springform:select  path="difficulty" cssClass="grid-4-12">
-					<springform:options >
+				<label for="questionTag" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.question.questiontag.id_label"/><em class="formee-req">*</em></label>
+                <springform:select path="questionTag.id" cssclass="grid-2-12"  required="true">
+					<springform:option value="-1">All
+					</springform:option>
+					<springform:options items="${TagsList}" itemValue="id" itemLabel="tagName">
 					</springform:options>
+				</springform:select>
+
+				<BR/>
+
+				<label for="tDifficulty" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.surveydefinition.difficultyLevel_label"/><em class="formee-req">*</em></label>
+				<springform:select  path="tDifficulty" cssClass="grid-2-12" >
+					<springform:option value="ANY">ANY
+					</springform:option>
+				<springform:options items="${DifList}">
+				</springform:options>
 				</springform:select>
 				<BR/>
 
 
 
 
-				<label for="type" class="grid-3-12" ><spring:message code="com.jd.survey.domain.settings.question.type_label"/><em class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
+				<label for="tType" class="grid-3-12" ><spring:message code="com.jd.survey.domain.settings.question.type_label"/><em class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
 
-				<springform:select  path="type" cssClass="grid-4-12">
+				<springform:select  path="tType" cssClass="grid-4-12">
+					<option value="ANY" selected="true">ANY</option>
 					<spring:message code="standard_question_types_label" var="optionGroupLabel"/>
 					<optgroup label="${optionGroupLabel}">
 
-						<c:if test="${question.type eq 'YES_NO_DROPDOWN'}">
+						<c:if test="${question.tType eq 'BR'}">
 							<option value="BR" selected="true"><spring:message code="${fn:toLowerCase('YES_NO_DROPDOWN')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'YES_NO_DROPDOWN'}">
+						<c:if test="${question.tType ne 'BR'}">
 							<option value="BR"><spring:message code="${fn:toLowerCase('YES_NO_DROPDOWN')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'SHORT_TEXT_INPUT'}">
+						<c:if test="${question.tType eq 'ST'}">
 							<option value="ST" selected="true"><spring:message code="${fn:toLowerCase('SHORT_TEXT_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'SHORT_TEXT_INPUT'}">
+						<c:if test="${question.tType ne 'ST'}">
 							<option value="ST"><spring:message code="${fn:toLowerCase('SHORT_TEXT_INPUT')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'LONG_TEXT_INPUT'}">
+						<c:if test="${question.tType eq 'LT'}">
 							<option value="LT" selected="true"><spring:message code="${fn:toLowerCase('LONG_TEXT_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'LONG_TEXT_INPUT'}">
+						<c:if test="${question.tType ne 'LT'}">
 							<option value="LT"><spring:message code="${fn:toLowerCase('LONG_TEXT_INPUT')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'HUGE_TEXT_INPUT'}">
+						<c:if test="${question.tType eq 'HT'}">
 							<option value="HT" selected="true"><spring:message code="${fn:toLowerCase('HUGE_TEXT_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'HUGE_TEXT_INPUT'}">
+						<c:if test="${question.tType ne 'HT'}">
 							<option value="HT"><spring:message code="${fn:toLowerCase('HUGE_TEXT_INPUT')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'INTEGER_INPUT'}">
+						<c:if test="${question.tType eq 'IN'}">
 							<option value="IN" selected="true"><spring:message code="${fn:toLowerCase('INTEGER_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'INTEGER_INPUT'}">
+						<c:if test="${question.tType ne 'IN'}">
 							<option value="IN"><spring:message code="${fn:toLowerCase('INTEGER_INPUT')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'CURRENCY_INPUT'}">
+						<c:if test="${question.tType eq 'CR'}">
 							<option value="CR" selected="true"><spring:message code="${fn:toLowerCase('CURRENCY_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'CURRENCY_INPUT'}">
+						<c:if test="${question.tType ne 'CR'}">
 							<option value="CR"><spring:message code="${fn:toLowerCase('CURRENCY_INPUT')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'DECIMAL_INPUT'}">
+						<c:if test="${question.tType eq 'NM'}">
 							<option value="NM" selected="true"><spring:message code="${fn:toLowerCase('DECIMAL_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'DECIMAL_INPUT'}">
+						<c:if test="${question.tType ne 'NM'}">
 							<option value="NM" ><spring:message code="${fn:toLowerCase('DECIMAL_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type eq 'DATE_INPUT'}">
+						<c:if test="${question.tType eq 'DT'}">
 							<option value="DT" selected="true"><spring:message code="${fn:toLowerCase('DATE_INPUT')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'DATE_INPUT'}">
+						<c:if test="${question.tType ne 'DT'}">
 							<option value="DT"><spring:message code="${fn:toLowerCase('DATE_INPUT')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'SINGLE_CHOICE_DROP_DOWN'}">
+						<c:if test="${question.tType eq 'SD'}">
 							<option value="SD" selected="true"><spring:message code="${fn:toLowerCase('SINGLE_CHOICE_DROP_DOWN')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'SINGLE_CHOICE_DROP_DOWN'}">
+						<c:if test="${question.tType ne 'SD'}">
 							<option value="SD"><spring:message code="${fn:toLowerCase('SINGLE_CHOICE_DROP_DOWN')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'MULTIPLE_CHOICE_CHECKBOXES'}">
+						<c:if test="${question.tType eq 'MC'}">
 							<option value="MC" selected="true"><spring:message code="${fn:toLowerCase('MULTIPLE_CHOICE_CHECKBOXES')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'MULTIPLE_CHOICE_CHECKBOXES'}">
+						<c:if test="${question.tType ne 'MC'}">
 							<option value="MC"><spring:message code="${fn:toLowerCase('MULTIPLE_CHOICE_CHECKBOXES')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'DATASET_DROP_DOWN'}">
+						<c:if test="${question.tType eq 'DD'}">
 							<option value="DD" selected="true"><spring:message code="${fn:toLowerCase('DATASET_DROP_DOWN')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'DATASET_DROP_DOWN'}">
+						<c:if test="${question.tType ne 'DD'}">
 							<option value="DD"><spring:message code="${fn:toLowerCase('DATASET_DROP_DOWN')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'SINGLE_CHOICE_RADIO_BUTTONS'}">
+						<c:if test="${question.tType eq 'SR'}">
 							<option value="SR" selected="true"><spring:message code="${fn:toLowerCase('SINGLE_CHOICE_RADIO_BUTTONS')}_label"  /></option>
 						</c:if>
-						<c:if test="${question.type ne 'SINGLE_CHOICE_RADIO_BUTTONS'}">
+						<c:if test="${question.tType ne 'SR'}">
 							<option value="SR"><spring:message code="${fn:toLowerCase('SINGLE_CHOICE_RADIO_BUTTONS')}_label"  /></option>
 						</c:if>
 
-						<c:if test="${question.type eq 'STAR_RATING'}">
-							<option value="STR" selected="true"><spring:message code="${fn:toLowerCase('STAR_RATING')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'STAR_RATING'}">
-							<option value="STR"><spring:message code="${fn:toLowerCase('STAR_RATING')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'SMILEY_FACES_RATING'}">
-							<option value="SFR" selected="true"><spring:message code="${fn:toLowerCase('SMILEY_FACES_RATING')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'SMILEY_FACES_RATING'}">
-							<option value="SFR"><spring:message code="${fn:toLowerCase('SMILEY_FACES_RATING')}_label"  /></option>
-						</c:if>
 
 					</optgroup>
-
-					<spring:message code="matrix_question_types_label" var="optionGroupLabel"/>
-					<optgroup label="${optionGroupLabel}">
-
-						<c:if test="${question.type eq 'YES_NO_DROPDOWN_MATRIX'}">
-							<option value="BRM" selected="true"><spring:message code="${fn:toLowerCase('YES_NO_DROPDOWN_MATRIX')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'YES_NO_DROPDOWN_MATRIX'}">
-							<option value="BRM"><spring:message code="${fn:toLowerCase('YES_NO_DROPDOWN_MATRIX')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'SHORT_TEXT_INPUT_MATRIX'}">
-							<option value="STM" selected="true"><spring:message code="${fn:toLowerCase('SHORT_TEXT_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'SHORT_TEXT_INPUT_MATRIX'}">
-							<option value="STM"><spring:message code="${fn:toLowerCase('SHORT_TEXT_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'INTEGER_INPUT_MATRIX'}">
-							<option value="INM" selected="true"><spring:message code="${fn:toLowerCase('INTEGER_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'INTEGER_INPUT_MATRIX'}">
-							<option value="INM"><spring:message code="${fn:toLowerCase('INTEGER_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'CURRENCY_INPUT_MATRIX'}">
-							<option value="CRM" selected="true"><spring:message code="${fn:toLowerCase('CURRENCY_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'CURRENCY_INPUT_MATRIX'}">
-							<option value="CRM"><spring:message code="${fn:toLowerCase('CURRENCY_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'DECIMAL_INPUT_MATRIX'}">
-							<option value="NMM" selected="true"><spring:message code="${fn:toLowerCase('DECIMAL_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'DECIMAL_INPUT_MATRIX'}">
-							<option value="NMM"><spring:message code="${fn:toLowerCase('DECIMAL_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'DATE_INPUT_MATRIX'}">
-							<option value="DTM" selected="true"><spring:message code="${fn:toLowerCase('DATE_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type ne 'DATE_INPUT_MATRIX'}">
-							<option value="DTM"><spring:message code="${fn:toLowerCase('DATE_INPUT_MATRIX')}_label"  /></option>
-						</c:if>
-					</optgroup>
-
-					<spring:message code="other_question_types_label" var="optionGroupLabel"/>
-					<optgroup label="${optionGroupLabel}">
-						<c:if test="${question.type eq 'IMAGE_DISPLAY'}">
-							<option value="IMG" selected="true"><spring:message code="${fn:toLowerCase('IMAGE_DISPLAY')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'IMAGE_DISPLAY'}">
-							<option value="IMG"><spring:message code="${fn:toLowerCase('IMAGE_DISPLAY')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'VIDEO_DISPLAY'}">
-							<option value="VID" selected="true"><spring:message code="${fn:toLowerCase('VIDEO_DISPLAY')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'VIDEO_DISPLAY'}">
-							<option value="VID"><spring:message code="${fn:toLowerCase('VIDEO_DISPLAY')}_label"  /></option>
-						</c:if>
-
-						<c:if test="${question.type eq 'FILE_UPLOAD'}">
-							<option value="FIL" selected="true"><spring:message code="${fn:toLowerCase('FILE_UPLOAD')}_label"  /></option>
-						</c:if>
-						<c:if test="${question.type ne 'FILE_UPLOAD'}">
-							<option value="FIL"><spring:message code="${fn:toLowerCase('FILE_UPLOAD')}_label"  /></option>
-						</c:if>
-					</optgroup>
-
 				</springform:select>
 				<br/>
 				<field:input field="questionText" id="c_com.jd.survey.domain.settings.Question.questionText" cssclass="grid-8-12" required="true"/>
 				<br/>
-				<label for="status" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/><em class="formee-req">*</em></label>
-				<springform:select  path="status" cssClass="grid-4-12">
-					<springform:options >
+				<label for="tStatus" class="grid-3-12"><spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/><em class="formee-req">*</em></label>
+				<springform:select  path="tStatus" cssClass="grid-4-12">
+					<springform:option value="ANY">ANY
+					</springform:option>
+					<springform:options items="${StatusList}">
 					</springform:options>
 				</springform:select>
 
@@ -239,11 +172,11 @@
 
 			<div class="extDivButtons">
 				<input class="inputButton" value="Search" name="_proceed" type="submit"/>
-				<input class="inputButton" value="Clear" name="_clear" type="submit"/>
 			</div>
 
 		</form:form>
 		<table:questionsbanktable questions="${questions}"  />
+		<br/><br/><br/>
 	</div>
 </div>
 

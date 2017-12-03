@@ -87,7 +87,15 @@ public class Department implements Comparable <Department> ,Serializable {
 	@JoinTable(name="sec_user_department",joinColumns={@JoinColumn(name="department_id", referencedColumnName="id")},
 												inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
 	private SortedSet<User> users= new TreeSet<User>();
-    
+
+
+
+	@NotNull
+	@ManyToMany
+	@Sort(type = SortType.NATURAL)
+	@JoinTable(name="sec_department_tags",joinColumns={@JoinColumn(name="department_id", referencedColumnName="id")},
+			inverseJoinColumns={@JoinColumn(name="tag_id", referencedColumnName="id")})
+	private SortedSet<Tags> tags = new TreeSet<Tags>();
     
 
 	public Long getId() {
@@ -139,6 +147,14 @@ public class Department implements Comparable <Department> ,Serializable {
 
 	public void setUsers(SortedSet<User> users) {
 		this.users = users;
+	}
+
+	public SortedSet<Tags> getTags() {
+		return tags;
+	}
+
+	public void setTags(SortedSet<Tags> tags) {
+		this.tags = tags;
 	}
 
 	public String toString() {

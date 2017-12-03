@@ -174,7 +174,7 @@
 										<a href="${url}"><span><spring:message code="com.jd.survey.domain.settings.surveydefinition_label_plural"/></span></a>
 									</li>
 									<li>
-										<c:url var="url" value="/settings/questionsBank/lookup?page=1&amp;size=${empty param.size ? 10 : param.size}" />
+										<c:url var="url" value="/settings/questionsBank/lookup" />
 										<a href="${url}"><span>List Questions</span></a>
 									</li>
 

@@ -47,6 +47,10 @@ version="2.0">
 	<script type="text/javascript" src="${tiny_mce_js_url}"><!-- required for FF3 and Opera --></script>
 	<script type="text/javascript" src="${tipsy_url}"><!-- required for FF3 and Opera --></script>
 	<script type="text/javascript" src="${jquery_fancybox_js_url}"><!-- required for FF3 and Opera --></script>
+
+	<!--<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"><!-- required for FF3 and Opera --></script>
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
 	
 	<link rel="stylesheet" type="text/css" media="screen" href="${awesome_css_url}" />  
 	<link rel="stylesheet" type="text/css" media="screen" href="${main_css_url}" />
@@ -54,9 +58,11 @@ version="2.0">
 	<link rel="stylesheet" type="text/css" media="screen" href="${fancybox_css_url}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="${jquery_css_url}" />
 	<link rel="stylesheet" type="text/css" media="screen" href="${jquery_rating_url}" />
-	
-	  
-  
+
+
+	<link rel="stylesheet" type="text/css" media="screen" href="${jquery_rating_url}" />
+	<link rel="stylesheet" type="text/css" media="screen" href="${jquery_rating_url}" />
+
   
    <!-- Get the user local from the page context (it was set by Spring MVC's locale resolver) -->
   <c:set var="userLocale">

@@ -58,7 +58,8 @@ public class DepartmentController {
 	public String createGet(Model uiModel,
 							Principal principal) {
 		try {
-			User user = userService.user_findByLogin(principal.getName());	
+			User user = userService.user_findByLogin(principal.getName());
+
 			populateEditForm(uiModel, new Department(),user);
 			return "security/departments/create";
 		} catch (Exception e) {
@@ -251,6 +252,7 @@ public class DepartmentController {
 						 User user) {
 		log.info("populateEditForm()");
 		try{
+			uiModel.addAttribute("TagsList",surveySettingsService.tags_findAll());
 			uiModel.addAttribute("department", department);
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);

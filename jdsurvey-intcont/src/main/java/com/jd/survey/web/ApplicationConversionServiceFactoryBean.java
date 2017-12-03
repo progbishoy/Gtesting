@@ -108,6 +108,31 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
             }
         };
     }
+
+    public Converter<Tags, String> getTagsToStringConverter() {
+        return new Converter<Tags, java.lang.String>() {
+            public String convert(Tags tag) {
+                log.info("converting tagToString");
+                return new StringBuilder().append(tag.getTagName()).toString();
+            }
+        };
+    }
+    public Converter<Long, Tags> getIdToTagsConverter() {
+        return new Converter<java.lang.Long,  Tags>() {
+            public  Tags convert(java.lang.Long id) {
+                log.info("converting Long to Tags id=" + id + " result" + surveySettingsService.tags_findById(id).toString());
+                return surveySettingsService.tags_findById(id);
+            }
+        };
+    }
+    public Converter<String, Tags> getStringToTagsConverter() {
+        return new Converter<java.lang.String, Tags>() {
+            public Tags convert(String id) {
+                log.info("converting String to Department id=" + id);
+                return getObject().convert(getObject().convert(id, Long.class), Tags.class);
+            }
+        };
+    }
 	
 	
 	
@@ -553,7 +578,10 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
     	registry.addConverter(getDepartmentToStringConverter());
         registry.addConverter(getIdToDepartmentConverter());
         registry.addConverter(getStringToDepartmentConverter());
-        
+
+        registry.addConverter(getTagsToStringConverter());
+        registry.addConverter(getIdToTagsConverter());
+        registry.addConverter(getStringToTagsConverter());
         
         registry.addConverter(getSurveyDefinitionToStringConverter());
         registry.addConverter(getIdToSurveyDefinitionConverter());
