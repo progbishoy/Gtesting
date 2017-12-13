@@ -194,7 +194,7 @@ public class QuestionBank extends SortedSetUpdater<QuestionBankOption> implement
 
     @ManyToOne()
     @JoinColumn(name="tag_id")
-    private Tags questionTag = new Tags();
+    private Tags questionTag ;
 
     @ManyToOne()
     @JoinColumn(name="created_user_id" ,updatable = false)

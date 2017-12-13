@@ -273,12 +273,14 @@ package com.jd.survey.web.settings;
 
           int sizeNo = size == null ? 10 : size.intValue();
           final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
+          if(question.getQuestionTag()!=null){
           Set<QuestionBank> Qall=surveySettingsService.question_search(question,0, 0);
           uiModel.addAttribute("questions",Qall );
-
           float nrOfPages = (float) surveySettingsService.question_search(question,0, 0).size() / sizeNo;
           uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
           uiModel.addAttribute("question",question);
+          }
+
           return "settings/questionsBank/lookup";
       }
   

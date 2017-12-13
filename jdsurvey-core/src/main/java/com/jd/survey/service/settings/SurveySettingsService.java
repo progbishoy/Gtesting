@@ -470,10 +470,17 @@ public class SurveySettingsService {
 			log.info("deleting  questions");
 			questionDAO.deleteBySurveyDefinitionPageId(page.getId());
 		}
+		Set<SurveyTags> tags=  surveyTagsDAO.findBySurveyId(surveyDefinition);
+		for (SurveyTags tag : tags) {
+			log.info("deleting  questions");
+			surveyTagsDAO.remove(tag);
+		}
+	
 		log.info("deleting  SurveyDefinitionPages");
 		surveyDefinitionPageDAO.deleteBySurveyDefinitionId(surveyDefinition.getId());
 
 		surveyDefinition.setPages(null);
+		surveyDefinition.setSurveyTags(null);
 		surveyDefinitionDAO.remove(surveyDefinition);
 
 	}

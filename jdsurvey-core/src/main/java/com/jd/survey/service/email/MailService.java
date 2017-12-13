@@ -82,7 +82,7 @@ public class MailService {
 			MimeMessagePreparator preparator = new MimeMessagePreparator() {
 				public void prepare(MimeMessage mimeMessage) throws Exception {
                     MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-                    message.setFrom("ags@crossworkers.com");
+                    message.setFrom("assessment@crossworkers.com");
                     message.setTo(toEmailAddress);
 				message.setSubject(emailSubject);
 				message.setText(emailHtmlBodyText, true);

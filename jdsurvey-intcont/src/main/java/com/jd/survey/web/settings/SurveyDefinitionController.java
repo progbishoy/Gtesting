@@ -795,14 +795,14 @@ public class SurveyDefinitionController {
 					
 				}
 
-                uiModel.addAttribute("surveyTagsList", surveySettingsService.tags_findAll());
-                List<SurveyTags> tt0 = new ArrayList<SurveyTags>();
-                SurveyTags tagone = new SurveyTags();
-
-                tagone.setSurveyDefinition(surveyDefinition);
-                tagone.setTag(surveySettingsService.tags_findById(3l));
-                tt0.add(tagone);
-                surveyDefinition.setSurveyTags(tt0);
+//                uiModel.addAttribute("surveyTagsList", surveySettingsService.tags_findAll());
+//                List<SurveyTags> tt0 = new ArrayList<SurveyTags>();
+//                SurveyTags tagone = new SurveyTags();
+//
+//                tagone.setSurveyDefinition(surveyDefinition);
+//                tagone.setTag(surveySettingsService.tags_findById(3l));
+//                tt0.add(tagone);
+//                surveyDefinition.setSurveyTags(tt0);
 
 				populateEditForm(uiModel, surveyDefinition,user);
 				
@@ -1151,10 +1151,18 @@ public class SurveyDefinitionController {
 			if (surveyDefinition.getDepartment() !=null) {
 				surveyDefinition.setDepartment(surveySettingsService.department_findById(surveyDefinition.getDepartment().getId()));
 			}
+			uiModel.addAttribute("surveyTagsList", surveySettingsService.tags_findAll());
+			List<SurveyTags> tt0 = new ArrayList<SurveyTags>();
+			SurveyTags tagone = new SurveyTags();
+            // @bishoy set general  tag  if n't set as default 
+			tagone.setSurveyDefinition(surveyDefinition);
+			tagone.setTag(surveySettingsService.tags_findById(3l));
+			tt0.add(tagone);
+			surveyDefinition.setSurveyTags(tt0);
 			uiModel.addAttribute("surveyDefinition", surveyDefinition);
 			uiModel.addAttribute("departments", surveySettingsService.department_findAll(user));
 			uiModel.addAttribute("autoRemindersDays", surveySettingsService.day_findAll());
-			uiModel.addAttribute("socrataPublishDays", surveySettingsService.day_findAll()); 
+			uiModel.addAttribute("socrataPublishDays", surveySettingsService.day_findAll());
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
 			throw (new RuntimeException(e));
