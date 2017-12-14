@@ -966,7 +966,7 @@
 							</c:otherwise>
 
 					</c:choose>
-					<c:forEach var="i" begin="1" end="${questionAnswer.question.questionGrade}">
+					<c:forEach var="i" begin="0" end="${questionAnswer.question.questionGrade}">
 						<spring:url
 								value="/surveys/${surveyEntry.surveyDefinitionId}/${surveyEntry.surveyId}/${questionAnswer.question.page.order}/${questionAnswer.order}/${i}?addGrade"
 								var="form_url"/>
@@ -974,8 +974,8 @@
 						<spring:message code="com.jd.survey.domain.survey_label" var="typeName" htmlEscape="false"/>
 						<spring:message arguments="${typeName}" code="entity_show" var="action_label"
 										htmlEscape="false"/>
-						<a href="${form_url}">
-							${i}
+						<a href="${form_url}">					
+							${i}						
 						</a>
 					</c:forEach>
 					<hr/>

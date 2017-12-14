@@ -26,7 +26,7 @@ import org.springframework.dao.DataAccessException;
 public interface QuestionBankDAO extends JpaDao<QuestionBank> {
     public Set<QuestionBank> findAll() throws DataAccessException;
     public Set<QuestionBank> findAll(int startResult, int maxRows) throws DataAccessException;
-    public Set<QuestionBank> findBySearch(int startResult, int maxRows,QuestionBank q)	throws DataAccessException ;
+    public Set<QuestionBank> findBySearch(Set<Tags> userTags,int startResult, int maxRows,QuestionBank q)	throws DataAccessException ;
     public QuestionBank findById(Long id) throws DataAccessException;
     public QuestionBank findByOrder(Long surveyDefinitionId, Short pageOrder, Short questionOrder) throws DataAccessException;
     public Long getCount() throws DataAccessException;

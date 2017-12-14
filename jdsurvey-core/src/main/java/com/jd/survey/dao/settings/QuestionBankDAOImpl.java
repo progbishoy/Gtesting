@@ -128,7 +128,7 @@ public class QuestionBankDAOImpl extends AbstractJpaDao<QuestionBank> implements
     @SuppressWarnings("unchecked")
     @Transactional
     //public Set<QuestionBank> findAll(int startResult, int maxRows)	throws DataAccessException {
-    public Set<QuestionBank> findBySearch(int startResult, int maxRows, QuestionBank q)	throws DataAccessException {
+    public Set<QuestionBank> findBySearch(Set<Tags> userTags ,int startResult, int maxRows, QuestionBank q)	throws DataAccessException {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<QuestionBank>questionBankCriteriaQuery=cb.createQuery(QuestionBank.class);
@@ -140,6 +140,16 @@ public class QuestionBankDAOImpl extends AbstractJpaDao<QuestionBank> implements
         {
             Predicate questionTag=cb.equal(rootQBCQ.get("questionTag"),q.getQuestionTag());
             predicates.add(questionTag);
+        }else {
+        	List<Tags> tags=new ArrayList<Tags>();
+        	tags.addAll(userTags);
+       	 	Predicate questionTag=rootQBCQ.get("questionTag").in(userTags);
+       	 	predicates.add(questionTag);
+//        	Iterator iter = userTags.iterator();
+//        	while (iter.hasNext()) {
+//        		 Predicate questionTag=cb.equal(rootQBCQ.get("questionTag"),iter.next());
+//                 predicates.add(questionTag);
+//        	}
         }
         if(!q.gettDifficulty().equals("ANY"))
         {

@@ -61,10 +61,6 @@
 		        </div>
 
 
-                <field:display field="mainCategory" id="s_com.jd.survey.domain.settings.surveydefinition.mainCategory"
-                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
-                <field:display field="technology" id="s_com.jd.survey.domain.settings.surveydefinition.technology"
-                               object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
                 <field:display field="level" id="s_com.jd.survey.domain.settings.surveydefinition.level"
                                object="${surveyDefinition}" cssclass="grid-9-12 alignTop"/>
                 <field:display field="difficultyLevel"

@@ -209,24 +209,7 @@
 					
 					</div>
 
-                <div>
-                    <label for="mainCategory" class="grid-3-12"><spring:message
-                            code="com.jd.survey.domain.settings.surveydefinition.mainCategory_label"/><em
-                            class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
-                    <springform:select path="mainCategory" cssClass="grid-4-12">
-                        <springform:options>
-                        </springform:options>
-                    </springform:select>
-                </div>
-                <div>
-                    <label for="technology" class="grid-3-12"><spring:message
-                            code="com.jd.survey.domain.settings.surveydefinition.technology_label"/><em
-                            class="formee-req">*</em><a class="hastip" title="${qTypeTip}">?</a></label>
-                    <springform:select path="technology" cssClass="grid-4-12">
-                        <springform:options>
-                        </springform:options>
-                    </springform:select>
-                </div>
+    
                 <div>
                     <label for="level" class="grid-3-12"><spring:message
                             code="com.jd.survey.domain.settings.surveydefinition.level_label"/><em
