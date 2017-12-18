@@ -20,6 +20,7 @@ package com.jd.survey.web.settings;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,6 +57,8 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.jd.survey.domain.security.User;
 import com.jd.survey.domain.settings.Invitation;
 import com.jd.survey.domain.settings.SurveyDefinition;
+import com.jd.survey.dto.UserHolder;
+import com.jd.survey.dto.UsersForm;
 import com.jd.survey.service.security.SecurityService;
 import com.jd.survey.service.security.UserService;
 import com.jd.survey.service.settings.SurveySettingsService;
@@ -82,7 +86,8 @@ public class InvitationController {
 	
 	private static final String INVITEE_FULLNAME_PARAMETER_NAME="invitee_fullname_parameter_name";
 	private static final String SURVEY_NAME="survey_name";
-	
+	private static final String PASSWORD="password";
+
 	private static final String INVITE_FILL_SURVEY_LINK_PARAMETER_NAME="invite_fill_survey_link_parameter_name";
 	private static final String INVITE_FILL_SURVEY_LINK_LABEL="invite_fill_survey_link_label";
 
@@ -235,6 +240,12 @@ public class InvitationController {
 				}
 				uiModel.addAttribute("surveyDefinition", surveySettingsService.surveyDefinition_findById(surveyDefinitionId));
 			}
+			//TODO return all userExternal with password and login name 
+			UsersForm users=new UsersForm();
+			
+			users.setUsers(userService.getUsersInternalInfo());
+			
+		uiModel.addAttribute("userForm", users);
 			return "settings/invitations/upload";
 		} 
 		
@@ -257,17 +268,20 @@ public class InvitationController {
 	@SuppressWarnings("unchecked")
 	@Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
 	@RequestMapping(value = "/upload",method = RequestMethod.POST, produces = "text/html")
-	public String sendInvitations(@RequestParam("file") MultipartFile file,
+	public String sendInvitations(
 								@RequestParam("id") Long surveyDefinitionId,
+								@ModelAttribute("userForm")  UsersForm userForm,
 								@RequestParam(value = "_proceed", required = false) String proceed,
 								Principal principal,
 								Model uiModel, HttpServletRequest httpServletRequest) {
+		
 		try {
+
 			short firstNameFieldIndex = 0;
 			short middleNameFieldIndex = 1;
 			short lastNameFieldIndex = 2;
 			short emailNameFieldIndex = 3;
-
+			
 			if (proceed != null){
 				//prepare the base url links
 				String emailSubject = messageSource.getMessage(INVITATION_EMAIL_TITLE, null, LocaleContextHolder.getLocale());
@@ -299,80 +313,71 @@ public class InvitationController {
 		
 				
 				String emailContent;
-				
-				if (!file.isEmpty() && ((file.getContentType().equalsIgnoreCase("application/vnd.ms-excel")) || (file.getContentType().equalsIgnoreCase("text/csv")) || ( file.getContentType().equalsIgnoreCase("text/plain")))) {
-					CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()));
-					String [] nextLine;
-					nextLine = csvReader.readNext(); //skip the first row the continue on with loop
-					
-					while ((nextLine = csvReader.readNext()) != null) {
-						emailContent="";
-						StringWriter sw = new StringWriter();
-						
-						// Prevents IndexOutOfBoundException by skipping line if there are not enough elements in the array nextLine. 
-						if(nextLine.length < 4){
-							//Continues if a blank line is present without setting an error message (if a new line character is present CSVReader will return and array with one empty string at index 0).
-							if(nextLine.length == 1 && nextLine[0].isEmpty()){
-								continue;
-							}
-							uiModel.addAttribute("fileContentError", true);
-							continue;
-						} 
-						//Prevents exception from attempting to send an email with an empty string for an email address.
-						if (nextLine[3].isEmpty()){
-							uiModel.addAttribute("fileContentError", true);
-							continue;
-						}
+
+			     for(UserHolder userInfo:userForm.getUsers()){
+			    	  if(userInfo.getSelected()==null)
+			    		  continue;
 						//creating the Invitation
-						Invitation invitation = new Invitation(nextLine[firstNameFieldIndex].trim(),
-								nextLine[middleNameFieldIndex].trim(),
-								nextLine[lastNameFieldIndex].trim(),
-								nextLine[emailNameFieldIndex].trim(),
+						Invitation invitation = new Invitation(userInfo.getLogin(),
+								" ",
+								" ",
+								userInfo.getEmail().trim(),
 								surveyDefinition);
 						
-						Map model = new HashMap();
+						
+					Map model = new HashMap();
 						//survey name
 						model.put(messageSource.getMessage(SURVEY_NAME, null, LocaleContextHolder.getLocale()).replace("${", "").replace("}", ""), 
 								surveyDefinition.getName());
-						//full name
+						//password
+						model.put(messageSource.getMessage(PASSWORD, null, LocaleContextHolder.getLocale()).replace("${", "").replace("}", ""), 
+								userInfo.getPassword());
+						
+					//full name
 						model.put(messageSource.getMessage(INVITEE_FULLNAME_PARAMETER_NAME, null, LocaleContextHolder.getLocale()).replace("${", "").replace("}", ""), 
-								invitation.getFullName());
+								userInfo.getLogin());
 						//survey link
 						model.put(messageSource.getMessage(INVITE_FILL_SURVEY_LINK_PARAMETER_NAME, null, LocaleContextHolder.getLocale()).replace("${", "").replace("}", ""), 
-								"<a href='" + surveyLink + surveyDefinition.getId() + "?list'>" + messageSource.getMessage(INVITE_FILL_SURVEY_LINK_LABEL, null, LocaleContextHolder.getLocale())  +"</a>");
+							"<a href='" + surveyLink + surveyDefinition.getId() + "?list'>" + messageSource.getMessage(INVITE_FILL_SURVEY_LINK_LABEL, null, LocaleContextHolder.getLocale())  +"</a>");
 						
 						
 					
 						VelocityContext velocityContext = new VelocityContext(model);
+						StringWriter sw =new StringWriter();
 						Velocity.evaluate(velocityContext, sw, "velocity-log" , 
 								 		  surveyDefinition.getEmailInvitationTemplate());
 						emailContent =  sw.toString().trim();
 						
 						if (emailContent.length() > 14
-							&& emailContent.substring(emailContent.length()-14).toUpperCase().equalsIgnoreCase("</BODY></HTML>")) {
+						&& emailContent.substring(emailContent.length()-14).toUpperCase().equalsIgnoreCase("</BODY></HTML>")) {
 							emailContent = emailContent.substring(0,emailContent.length()-14)  +"<img src='" + trackingImageLink + invitation.getUuid() + "'/></BODY></HTML>";
-							emailContent = "<BODY><HTML>" + emailContent;
+						emailContent = "<BODY><HTML>" + emailContent;
 						}
-						else{
-							// template is incorrect or not html do not include tracking white gif
-							emailContent = emailContent + "<img src='" +  trackingImageLink + invitation.getUuid() + "'/></BODY></HTML>";
+					else{
+						// template is incorrect or not html do not include tracking white gif
+						emailContent = emailContent + "<img src='" +  trackingImageLink + invitation.getUuid() + "'/></BODY></HTML>";
 							
 						}
 						
 						
-						surveySettingsService.invitation_send(invitation, emailSubject, emailContent);	
-					}
-					
-					
-					return "redirect:/settings/invitations/list?id=" + encodeUrlPathSegment(surveyDefinitionId.toString(), httpServletRequest);
-				} 
-				else 
-				{
-					uiModel.addAttribute("surveyDefinitions", surveyDefinitions);
-					uiModel.addAttribute("surveyDefinition",surveyDefinition );
-					uiModel.addAttribute("emptyFileError", true);
-					return "settings/invitations/upload";
-				}
+				surveySettingsService.invitation_send(invitation, emailSubject, emailContent);	
+//					}
+//					
+//					
+//					
+				 
+			     }
+                    
+			     return "redirect:/settings/invitations/list?id=" + encodeUrlPathSegment(surveyDefinitionId.toString(), httpServletRequest);
+			
+
+//				else 
+//				{//BISHOY handle Errors in page TODO
+//					uiModel.addAttribute("surveyDefinitions", surveyDefinitions);
+//					uiModel.addAttribute("surveyDefinition",surveyDefinition );
+//					uiModel.addAttribute("emptyFileError", true);
+//					return "settings/invitations/upload";
+//				}
 			}
 			else{
 				return "redirect:/settings/invitations/list?id=" + encodeUrlPathSegment(surveyDefinitionId.toString(), httpServletRequest);
@@ -382,6 +387,7 @@ public class InvitationController {
 			log.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
+		
 	}
 	
 	

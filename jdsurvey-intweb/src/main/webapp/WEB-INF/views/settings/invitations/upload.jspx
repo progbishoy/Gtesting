@@ -6,11 +6,22 @@
 	xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" 
 	xmlns:jsp="http://java.sun.com/JSP/Page" 
 	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:fm="http://www.springframework.org/tags/form"
 	version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     
-   
+   	<script type="text/javascript">
+	$(document).ready(function() {
+
+
+
+		$('#usersTable').DataTable({searching: true,pagingType: 'full_numbers'});
+
+
+	});
+
+	</script>
     
     <div class="right-column">
     	<c:if test="${not empty surveyDefinitions}"> 
@@ -27,7 +38,8 @@
    			
    			
 	   		<spring:url var="form_url" value="/settings/invitations/upload"/>
-	   		<form method="POST" action="${form_url}" enctype="multipart/form-data" class="formee" >
+	   		<fm:form action="${form_url}" modelAttribute="userForm" cssClass="formee" method="post">
+	   	
 		        <div>
 		        	<spring:message code="com.jd.survey.domain.survey_label_short" var="label"/>
    					<label class="grid-4-12" for="id"><spring:message code="entity_select" arguments="${label}"/></label>
@@ -43,34 +55,45 @@
 	  						</c:choose>
 	  					</c:forEach>
 					</select>
+					
+						   					<!-- begin task invitation BISHOY -->
+					<table id="usersTable">
+					<thead>
+						<tr>											
+							<th>LoginName</th>							
+							<th>Email</th>							
+							<th>SendMail</th>
+							<th hidden="true">Password</th>	
+						</tr>
+						</thead>
+						<tbody>
+					<c:forEach items="${userForm.users}" var="user" varStatus="status">
+					
+					<tr>
+							
+					<td>
+					<input name="users[${status.index}].login" value="${user.login}" readonly="readonly"/>				
+					</td>
+					<td>
+					<input name="users[${status.index}].email" value="${user.email}" readonly="readonly" />							
+					</td>
+					<td>
+					<input type="checkbox"  value="${user.id}"  name="users[${status.index}].selected"/>
+					  </td>
+					  					<td>
+					<input name="users[${status.index}].password" value="${user.password}" hidden="true"/>					
+					  </td>
+					</tr>
+				
+					</c:forEach>
+					</tbody>
+					</table>
 		        </div>
 		        
 		        
-	   			<div>
-		        	<spring:message code="ignoreTheFirstRow_message" var="ignoreRow_label" htmlEscape="false"/>
-		        	<spring:message code="false_message" var="false_message" htmlEscape="false"/>
-		        	<spring:message code="true_message" var="true_message" htmlEscape="false"/>
-		        	<label class="grid-4-12"  for="ignoreFirstRow"><c:out value="${ignoreRow_label}"/> :</label>
-		        	<select name="ignoreFirstRow" class="grid-6-12" disabled="true" >
-  						<option value="false" ><c:out value="${false_message}"/></option>
-  						<option value="true" selected="true"><c:out value="${true_message}"/></option>
-  					</select> 
-		        </div>
-
-		        <div>
-		        	<spring:message code="com.jd.survey.domain.settings.invitation_label_plural" var="survDef_label" htmlEscape="false" />
-		        	<spring:message code="to_upload_file_message" arguments="${survDef_label}" var="fileToUpload" htmlEscape="false" /> 
-		        	<spring:message code="error_upload_file" var="file_error" htmlEscape="false" />
-		        	<label class="grid-4-12"  for="file"><c:out value="${fileToUpload}"/></label>
-		        	<input class="grid-6-12"  type="file" name="file" id="file" size="65%"/>
-		        	<c:if test="${emptyFileError}"><span class="validationMsg validationAlign3"><c:out value="${file_error}"/></span></c:if>
-		        </div>
-		     
-					<!-- NOT USED???????????????????????????  -->
-		        <spring:message code="error_during_import" var="error_during_import"/>
-		        <c:if test="${importError}"><span class="validationMsg"><c:out value="${error_during_import}"/></span></c:if>
 	   			
 	   			<div class="grid-9-12 extDivButtons" id="_submit">
+
 					<!-- Normal Button -->
 					<spring:message code="button_upload" var="save_button" htmlEscape="false" />
 					<spring:message code="button_cancel" var="cancel_button" htmlEscape="false" />
@@ -79,7 +102,10 @@
 						<input id="cancel" type="submit" value="${fn:escapeXml(cancel_button)}" class="inputButton right" />
 					</div>
 		        </div>
-	   		</form>
+		        
+
+
+				</fm:form>
 		 
 		</div>
 		</c:if>

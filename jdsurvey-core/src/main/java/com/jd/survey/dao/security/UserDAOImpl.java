@@ -17,20 +17,20 @@ package com.jd.survey.dao.security;
 
 import com.jd.survey.dao.interfaces.security.UserDAO;
 import com.jd.survey.domain.security.User;
+import com.jd.survey.dto.UserHolder;
 import com.jd.survey.service.security.JDUserDetailsService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.skyway.spring.util.dao.AbstractJpaDao;
 
 import org.springframework.dao.DataAccessException;
@@ -238,6 +238,13 @@ public class UserDAOImpl extends AbstractJpaDao<User> implements	UserDAO {
 		return true;
 
 
+	}
+
+	@Override
+	public List<UserHolder> getUsersInternalInfo() {
+		List<UserHolder> users=(List<UserHolder>)entityManager.createQuery("select new com.jd.survey.dto.UserHolder(p.password as password, u.login as login , u.email as email ,u.id)  from User u , UserPassword p where u.id=p.id ").getResultList();
+		return users;
+	
 	}
 
 	

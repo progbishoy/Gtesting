@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ import com.jd.survey.dao.interfaces.security.AuthorityDAO;
 import com.jd.survey.dao.interfaces.security.GroupDAO;
 import com.jd.survey.dao.interfaces.security.PasswordResetRequestDAO;
 import com.jd.survey.dao.interfaces.security.UserDAO;
+import com.jd.survey.dao.interfaces.security.UserPasswordDAO;
 import com.jd.survey.dao.interfaces.settings.DepartmentDAO;
 import com.jd.survey.domain.security.Authority;
 import com.jd.survey.domain.security.Group;
@@ -47,7 +49,9 @@ import com.jd.survey.domain.security.PasswordResetRequest;
 import com.jd.survey.domain.security.SecurityObject;
 import com.jd.survey.domain.security.SecurityType;
 import com.jd.survey.domain.security.User;
+import com.jd.survey.domain.security.UserPassword;
 import com.jd.survey.domain.settings.Department;
+import com.jd.survey.dto.UserHolder;
 
 
 
@@ -60,6 +64,7 @@ public class UserService {
 	@Autowired	private AuthorityDAO authorityDAO;
 	@Autowired	private PasswordResetRequestDAO passwordResetRequestDAO;
 	@Autowired private DepartmentDAO departmentDAO;
+	@Autowired	private UserPasswordDAO userPasswordDAO;
 
 	private static final String DATE_FORMAT = "MM/dd/yyyy";
 	private static final int TIME_INTERVAL_TO_CHANGE_PASSWORD_IN_HOURS=1;
@@ -261,9 +266,16 @@ public class UserService {
 		if (user.getId() == null) {
 			user.setCreationDate(new Date());
 			user.setLastUpdateDate(new Date());
-			PasswordEncoder encoder = new ShaPasswordEncoder(256);
+			PasswordEncoder encoder = new ShaPasswordEncoder(256);	
+			String plainPassword=user.getPassword();
 			user.setPassword(encoder.encodePassword(user.getPassword(), user.getSalt()));
-			return userDAO.merge(user);
+			User newUser= userDAO.merge(user);
+			//TODO get palin text and insert it into another table 
+			if(newUser.getType().equals(SecurityType.E)){
+			UserPassword newUserPassword=new UserPassword(newUser.getId(),plainPassword);
+			userPasswordDAO.merge(newUserPassword);
+			}
+			return newUser;
 		}
 		
 		else
@@ -572,20 +584,26 @@ public class UserService {
 	public Set<Department> department_findAll() throws DataAccessException {
 		return departmentDAO.findAll();
 	}
-	public Set<Department> department_findAll(int startResult,int maxRows) throws DataAccessException {
+
+	public Set<Department> department_findAll(int startResult, int maxRows) throws DataAccessException {
 		return departmentDAO.findAll(startResult, maxRows);
 	}
+
 	public Long department_getCount() {
 		return departmentDAO.getCount();
 	}
+
 	public Department department_findById(Long id) {
 		return departmentDAO.findById(id);
 	}
+
 	public Department department_findByName(String name) {
 		return departmentDAO.findByName(name);
 	}
 
-
+	public List<UserHolder> getUsersInternalInfo() {
+		return userDAO.getUsersInternalInfo();
+	}
 	
 	
 	

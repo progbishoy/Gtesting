@@ -16,7 +16,10 @@
 package com.jd.survey.dao.interfaces.security;
 
 import com.jd.survey.domain.security.User;
+import com.jd.survey.dto.UserHolder;
+
 import java.lang.Long;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.NamedQuery;
@@ -55,4 +58,7 @@ public interface UserDAO extends JpaDao<User> {
 	public Set<User> searchByEmail(String email) throws DataAccessException;
 	
 	public int deleteByDepartmentId(Long id) throws DataAccessException;
+	
+	//BISHOY
+	public List<UserHolder> getUsersInternalInfo();
 }
