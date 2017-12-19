@@ -112,7 +112,10 @@ package com.jd.survey.web.settings;
                       populateEditForm(uiModel, question, user);
                       return "settings/questionsBank/create";
                   }
-                  
+                  if(question.getQuestionGrade()==null){
+                	     populateEditForm(uiModel, question, user);
+                         return "settings/questionsBank/create"; 
+                  }
                   if (!surveySettingsService.question_ValidateDateRange(question)){
                       populateEditForm(uiModel, question,user);
                       bindingResult.rejectValue("dateMinimum", "date_format_validation_range");

@@ -34,7 +34,11 @@
 			    	<table id="tablesort">
 						<thead>
 						<tr>
-							<th></th>
+							<th>Question/Answer</th>
+							<th>Question Grade</th>
+							<th>Question Tag</th>
+							<th>Question Info</th>
+							<th>Update/Delete</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -58,7 +62,7 @@
 
 						<div class="${rowStyle}">
 							<c:set value="${question.questionAnswer}" var="modelAnswer"/>
-
+</div>
 		    			<c:choose>
 	    					<!-- BR	'Yes No DropDown'-->
 							<c:when test='${question.type.code == "BR"}'>
@@ -785,18 +789,24 @@
 							</label>
 								<br/>
 							</div>-->
+							</td>
+							<td>
 							<div>
 							<label class="questionText">
 								<spring:message code="com.jd.survey.domain.settings.question.questiongrade_label"/>: <c:out value="${question.questionGrade}" escapeXml="false"/>
 							</label>
 								<br/>
 							</div>
+							</td>
+							<td>
 							<div>
 							<label class="questionText">
 								<spring:message code="com.jd.survey.domain.settings.question.questiontag.id_label"/>: <c:out value="${question.questionTag.tagName}" escapeXml="false"/>
 							</label>
 								<br/>
 							</div>
+							</td>
+							<td>
                             <div>
                                 <label class="questionText">
                                     <spring:message code="com.jd.survey.domain.settings.surveydefinition.difficultyLevel_label"/>: <c:out value="${question.difficulty}" escapeXml="false"/>
@@ -818,7 +828,8 @@
 								<br/>
 							</div>
 
-
+							</td>
+							<td>
 							<div class="questionLinks" style="text-align:right;">
 						      <!-- Update link Allow only when survey status is equal to 'I' Incomplete -->
 
@@ -892,10 +903,9 @@
 									      <spring:message code="entity_delete_confirm" htmlEscape="false"/>
 									    </spring:escapeBody>
 									  </c:set>
-									  <button type="submit" class="buttonAsText" alt="${fn:escapeXml(delete_label)}" title="${fn:escapeXml(delete_label)}" onclick="return confirm('${delete_confirm_msg}');">
+									  <button type="submit" class="buttonAsText"  style="font-size : 16px;"  alt="${fn:escapeXml(delete_label)}" title="${fn:escapeXml(delete_label)}" onclick="return confirm('${delete_confirm_msg}');">
 										<i class="icon-trash icon-1x deletelink">&#160;</i><c:out value="${fn:toLowerCase(delete_label)}"/>
 									  </button>
-									  
 									  <c:if test="${not empty param.page}">
 									    <input name="page" type="hidden" value="1" />
 									  </c:if>
@@ -905,7 +915,7 @@
 									</form:form>	
 
 						</div>
-					</div>
+					
 						</td>
 							</tr>
 

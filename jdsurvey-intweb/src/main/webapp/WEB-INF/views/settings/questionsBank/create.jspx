@@ -780,8 +780,9 @@
 					<span class="tipPreviewMsg"><c:out value="${question.tip}" escapeXml="false"/> &#160; (Please enter in the following format true/false)</span>
 				</div>
 
-
-				<field:input field="questionGrade" id="c_com.jd.survey.domain.settings.Question.questionGrade" cssclass="grid-2-12" maxlength="10"/>
+           
+				
+				<field:input field="questionGrade" id="c_com.jd.survey.domain.settings.Question.questionGrade" cssclass="grid-2-12" maxlength="10" required="true"/>
 			<field:select path="questionTag.id" field="questionTag.id" id="c_com.jd.survey.domain.settings.Question.questionTag.id" cssclass="grid-2-12" items="${TagsList}" itemValue="id" itemLabel="tagName" required="true"/>
 			<field:input field="otherTag"  id="c_com.jd.survey.domain.settings.Question.otherTag" cssclass="grid-2-12" />
 
