@@ -38,7 +38,8 @@
 							<th>Question Grade</th>
 							<th>Question Tag</th>
 							<th>Question Info</th>
-							<th>Update/Delete</th>
+							<th>Update</th>
+							<th>Delete</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -60,9 +61,9 @@
 							<c:set var="questionNumber" scope="page" value="${question.id}. "/>
 						</c:if>	
 
-						<div class="${rowStyle}">
+						
 							<c:set value="${question.questionAnswer}" var="modelAnswer"/>
-</div>
+
 		    			<c:choose>
 	    					<!-- BR	'Yes No DropDown'-->
 							<c:when test='${question.type.code == "BR"}'>
@@ -830,7 +831,7 @@
 
 							</td>
 							<td>
-							<div class="questionLinks" style="text-align:right;">
+							<div class="questionLinks" >
 						      <!-- Update link Allow only when survey status is equal to 'I' Incomplete -->
 
 					              <spring:url value="/settings/questionsBank/${question.id}" var="update_form_url">
@@ -841,7 +842,7 @@
 					              <spring:message arguments="${typeName}" code="entity_update" var="update_label" htmlEscape="false" />
 					             
 					              <a href="${update_form_url}" class="fancyboxLink fancybox.iframe" target="_blank" >
-					                <i class="icon-edit">&#160;</i><c:out value="${fn:toLowerCase(update_label)}"/>
+					                <i class="icon-edit">&#160;</i><c:out value=""/>
 					              </a>
 
 					           
@@ -855,7 +856,7 @@
 						              <spring:message arguments="${typeName}" code="entity_update" var="update_label" htmlEscape="false" />
 						             
 						              <a href="${update_form_url}" class="fancyboxLink fancybox.iframe" target="_blank" >
-						                <i class="icon-list-ul">&#160;</i><c:out value="${fn:toLowerCase(update_label)}"/>
+						                <i class="icon-list-ul">&#160;</i><c:out value=""/>
 						              </a>
 						          </c:if>
 						          
@@ -870,7 +871,7 @@
 									  <spring:message arguments="${typeName}" code="entity_update" var="update_label" htmlEscape="false" />
 									 
 									  <a href="${update_form_url}" class="fancyboxLink fancybox.iframe" target="_blank" >
-										<i class="icon-list-ul">&#160;</i><c:out value="${fn:toLowerCase(update_label)}"/>
+										<i class="icon-list-ul">&#160;</i><c:out value=""/>
 									  </a>
 						          </c:if>
 						          
@@ -884,13 +885,14 @@
 									  <spring:message arguments="${typeName}" code="entity_update" var="update_label" htmlEscape="false" />
 									 
 									  <a href="${update_form_url}"  class="fancyboxLink fancybox.iframe" target="_blank">
-										<i class="icon-list-ul">&#160;</i><c:out value="${fn:toLowerCase(update_label)}"/>
+										<i class="icon-list-ul">&#160;</i><c:out value=""/>
 									  </a>
 						          </c:if>
 						          
-						          
-						          
-						          
+						     </div>     
+						         </td>
+						         <td> 
+						     	<div class="questionLinks" >     
 				    			<!-- Delete link Allow only when survey surveyStatus is equal to 'I' Incomplete -->
 
 									<spring:url value="/settings/questionsBank/${question.id}" var="delete_form_url" />
@@ -904,7 +906,7 @@
 									    </spring:escapeBody>
 									  </c:set>
 									  <button type="submit" class="buttonAsText"  style="font-size : 16px;"  alt="${fn:escapeXml(delete_label)}" title="${fn:escapeXml(delete_label)}" onclick="return confirm('${delete_confirm_msg}');">
-										<i class="icon-trash icon-1x deletelink">&#160;</i><c:out value="${fn:toLowerCase(delete_label)}"/>
+										<i class="icon-trash icon-1x deletelink">&#160;</i><c:out value=""/>
 									  </button>
 									  <c:if test="${not empty param.page}">
 									    <input name="page" type="hidden" value="1" />
