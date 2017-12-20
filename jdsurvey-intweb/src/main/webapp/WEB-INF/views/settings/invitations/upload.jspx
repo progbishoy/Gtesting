@@ -72,10 +72,16 @@
 					<tr>
 							
 					<td>
-					<input name="users[${status.index}].login" value="${user.login}" readonly="readonly"/>				
+						<label class="questionText" id="users[${status.index}].login">
+								 <c:out value="${user.login}" escapeXml="false"/>
+						</label>
+				<input name="users[${status.index}].login" value="${user.login}" readonly="readonly" hidden="true"/>				
 					</td>
 					<td>
-					<input name="users[${status.index}].email" value="${user.email}" readonly="readonly" />							
+						<label class="questionText" id="users[${status.index}].email">
+								 <c:out value="${user.email}" escapeXml="false"/>
+						</label>
+					<input name="users[${status.index}].email" value="${user.email}" readonly="readonly" hidden="true" />							
 					</td>
 					<td>
 					<input type="checkbox"  value="${user.id}"  name="users[${status.index}].selected"/>
