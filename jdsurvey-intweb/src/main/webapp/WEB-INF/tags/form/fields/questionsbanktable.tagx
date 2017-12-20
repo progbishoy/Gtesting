@@ -869,8 +869,9 @@ function change(idc){
 							</div>
 
 							</td>
+							  <sec:authorize ifAnyGranted="ROLE_ADMIN">
 								  <td> 
-					  <sec:authorize ifAnyGranted="ROLE_ADMIN">
+					
 
 							<div>
                                 <span>
@@ -886,8 +887,9 @@ function change(idc){
 								</span>
 							</div>
 
-						</sec:authorize>
+						
 						         </td>
+						         </sec:authorize>
 							<td>
 							<div class="questionLinks" align="center" >
 						      <!-- Update link Allow only when survey status is equal to 'I' Incomplete -->
