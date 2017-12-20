@@ -5,6 +5,7 @@
 			xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" 
 			xmlns:jsp="http://java.sun.com/JSP/Page" 
 			xmlns:form="http://www.springframework.org/tags/form" 
+			xmlns:sec="http://www.springframework.org/security/tags"
 			version="2.0">
 		
   <jsp:directive.tag import="java.util.ArrayList" />
@@ -12,6 +13,30 @@
 
   <jsp:directive.attribute name="questions" type="java.util.Collection" required="true" rtexprvalue="true" description="The collection to be displayed in the table" />
 
+<script type="text/javascript" >
+function change(idc){
+	var params ={
+		status :$("#"+idc).val(),	 	
+	    id:idc
+		};
+
+	$.post("./status", $.param(params),
+    function(data, status){
+       
+        var value=$("#"+idc).val() ;
+        if(value=='APPROVED'){
+        	  $( "#"+idc+"D" ).text( "Status: "+value);
+        	  $("#"+idc+"D").addClass("rightAnswer");
+          }else {
+        	  $( "#"+idc+"D" ).text( "Status: "+value );
+        	  $("#"+idc+"D").removeClass("rightAnswer");
+        	  
+                }
+      
+    });
+
+}
+</script>
 	<div class="questionLinks" style="text-align:right;">
 		<br/>
 		<spring:url value="/settings/questionsBank/" var="create_url">
@@ -38,6 +63,9 @@
 							<th>Question Grade</th>
 							<th>Question Tag</th>
 							<th>Question Info</th>
+								<sec:authorize ifAnyGranted="ROLE_ADMIN">   
+							<th>Update Status</th>
+							</sec:authorize>
 							<th>Update</th>
 							<th>Delete</th>
 						</tr>
@@ -816,9 +844,20 @@
                             </div>
 
 							<div>
-								<label class="questionText">
+							    
+							    <c:choose>
+							    <c:when test="${question.status eq 'APPROVED'}">
+							    <label class="rightAnswer" id="${question.id}D">
 									<spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/>: <c:out value="${question.status}" escapeXml="false"/>
 								</label>
+							    </c:when>
+							    <c:otherwise>
+							    <label class="questionText" id="${question.id}D">
+									<spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/>: <c:out value="${question.status}" escapeXml="false"/>
+								</label>
+							    </c:otherwise>
+							    </c:choose>
+
 								<br/>
 							</div>
 
@@ -830,8 +869,27 @@
 							</div>
 
 							</td>
+								  <td> 
+					  <sec:authorize ifAnyGranted="ROLE_ADMIN">
+
+							<div>
+                                <span>
+                               	
+								<form:select   id="${question.id}" path="question.status" cssClass="grid-4-12" cssStyle="width:100%" onchange="change(${question.id});">
+
+										<form:options >		
+										</form:options>
+								</form:select>
+								<div align="center">
+								  </div>
+								
+								</span>
+							</div>
+
+						</sec:authorize>
+						         </td>
 							<td>
-							<div class="questionLinks" >
+							<div class="questionLinks" align="center" >
 						      <!-- Update link Allow only when survey status is equal to 'I' Incomplete -->
 
 					              <spring:url value="/settings/questionsBank/${question.id}" var="update_form_url">
@@ -890,9 +948,9 @@
 						          </c:if>
 						          
 						     </div>     
-						         </td>
+						         </td>						       
 						         <td> 
-						     	<div class="questionLinks" >     
+						     	<div class="questionLinks" align="center" >     
 				    			<!-- Delete link Allow only when survey surveyStatus is equal to 'I' Incomplete -->
 
 									<spring:url value="/settings/questionsBank/${question.id}" var="delete_form_url" />

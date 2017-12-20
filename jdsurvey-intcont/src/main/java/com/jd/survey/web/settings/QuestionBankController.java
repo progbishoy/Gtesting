@@ -15,7 +15,8 @@
   */
 package com.jd.survey.web.settings;
 
-  import com.jd.survey.domain.security.User;
+  import com.jd.survey.dao.interfaces.settings.QuestionBankDAO;
+import com.jd.survey.domain.security.User;
   import com.jd.survey.domain.settings.*;
   import com.jd.survey.service.security.SecurityService;
   import com.jd.survey.service.security.UserService;
@@ -29,7 +30,8 @@ package com.jd.survey.web.settings;
   import org.springframework.beans.factory.annotation.Autowired;
   import org.springframework.context.MessageSource;
   import org.springframework.context.i18n.LocaleContextHolder;
-  import org.springframework.security.access.annotation.Secured;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
   import org.springframework.stereotype.Controller;
   import org.springframework.ui.Model;
   import org.springframework.validation.BindingResult;
@@ -289,7 +291,25 @@ package com.jd.survey.web.settings;
 
           return "settings/questionsBank/lookup";
       }
-  
+      @Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
+      @RequestMapping(method = RequestMethod.POST ,value = "/status")
+      public  @ResponseBody String status(@RequestParam("id") Long id,
+    		  				@RequestParam("status") String status,                                   
+                           Model uiModel,
+                           HttpServletRequest httpServletRequest) {
+    	QuestionBank question=  surveySettingsService.question_findById(id);
+    	if(status.equals(QuestionBankStatus.NEW.name())){   		
+        	question.setStatus(QuestionBankStatus.NEW);
+    	}
+    	if(status.equals(QuestionBankStatus.APPROVED.name())){   		
+        	question.setStatus(QuestionBankStatus.APPROVED);
+    	}
+    	if(status.equals(QuestionBankStatus.STOPPED.name())){   		
+        	question.setStatus(QuestionBankStatus.STOPPED);
+    	}
+    	surveySettingsService.question_merge(question);   	          
+          return "done";
+      }
       @Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
       @RequestMapping(method = RequestMethod.PUT, produces = "text/html")
       public String update(@RequestParam(value = "_proceed", required = false) String proceed,
