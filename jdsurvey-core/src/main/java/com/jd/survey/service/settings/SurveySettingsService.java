@@ -342,6 +342,8 @@ public class SurveySettingsService {
 			return surveyDefinitionDAO.merge(dbSurveyDefinition);
 
 
+		}else {
+			surveyDefinition.setDepartment(departmentDAO.findById(surveyDefinition.getDepartment().getId()));
 		}
 		return surveyDefinitionDAO.merge(surveyDefinition);
 
