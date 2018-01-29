@@ -7,8 +7,13 @@
 	xmlns:menu="urn:jsptagdir:/WEB-INF/tags/menu" version="2.0">
 
 <jsp:output omit-xml-declaration="yes" />
-
-		<div id="sidemenudiv">
+		<div id="sidemenudiv" class="main-sidebar">
+		<br/>
+		<div class="box box-danger ">
+		  <div class="box-header with-border">
+              <h3 class="box-title"></h3>
+            </div>
+              <div class="box-body">
 		<tiles:importAttribute name="pagemode"/>	
 		<c:choose>
 	
@@ -144,8 +149,10 @@
 			</c:otherwise>
 			
 		</c:choose>	
+		</div>
+	</div>
+	</div>   
 	
-	</div>      
 </div>
 
     

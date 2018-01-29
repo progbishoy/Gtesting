@@ -21,10 +21,15 @@
 		});
 	</script>
 
-    <div class="right-column">	
-   	<div class="block">
+    <div class="right-column">
+    <br></br>	
+     <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><spring:message code="com.jd.survey.domain.settings.surveydefinition_label_plural" htmlEscape="false"/></h3>
+               </div>
+                <div class="box-body">
    		<spring:message code="date_format" var="date_format"/>
-		<h2><spring:message code="com.jd.survey.domain.settings.surveydefinition_label_plural" htmlEscape="false"/></h2>
+		
 		<spring:url value="/security/departments/?create" var="createDept" htmlEscape="fasle"/>
 		<spring:message code="com.jd.survey.domain.settings.department_label" var="objectname"  htmlEscape="false" />
 	    <c:choose>
@@ -146,6 +151,9 @@
     		 -->
     		
     	</div>
+    		  <div class="box-footer">           
+    		  </div>
+    	   </div>
     </div>	
 </div>	
 

@@ -9,14 +9,19 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <div class="right-column">	
-   		<div class="block">
+    <BR />
+     <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title">Users:</h3>
+               </div>
+                <div class="box-body">
+
    			<c:if test="${not empty hasErrors}">
    				<div class="flash flash-error">
    					<spring:message code="error_user_delete"/>
    				</div>
    			</c:if>
    			<c:if test="${empty hasErrors}">
-	    		<page:list id="pl_com.jd.survey.domain.security.User" items="${users}">
 	        		<table:table data="${users}" id="l_com.jd.survey.domain.security.User" path="../users" create="false" handleTypeField="true">
 	        			<table:column id="c_com.jd.survey.domain.security.User.type" property="type"/>
 						<table:column id="c_com.jd.survey.domain.security.User.login" property="login"/>
@@ -26,10 +31,14 @@
 						<table:column id="c_com.jd.survey.domain.security.User.email" property="email"/>
 						<table:column id="c_com.jd.survey.domain.security.User.enabled" property="enabled" />
 	        		</table:table>
-	    		</page:list>
+	    	
     		</c:if>
+
     	</div>
+    	    		  <div class="box-footer">           
+    		  </div>
     </div>	
+     </div>
 </div>	
 
 

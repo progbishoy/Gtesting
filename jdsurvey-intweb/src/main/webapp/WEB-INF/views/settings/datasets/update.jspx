@@ -9,7 +9,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
-   		<div class="block">
+   		<div class="box-body">
 		    <form:update id="fu_com.jd.survey.domain.settings.Dataset" modelAttribute="dataSet" path="/settings/datasets" versionField="Version" >
 		    	<!-- 
 		    	<field:input field="code" id="c_com.jd.survey.domain.settings.Dataset.code" cssclass="grid-8-12" maxlength="10" required="true"/>

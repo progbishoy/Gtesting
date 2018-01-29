@@ -173,7 +173,11 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyDefinition")
     @JoinTable(name = "survey_tags", joinColumns = {@JoinColumn(name = "survey_Definition_id", referencedColumnName = "id")})
     private List<SurveyTags> surveyTags = new ArrayList<SurveyTags>();
-
+    
+    
+    @Column(name = "examtime")
+    private Integer examtime;
+    
 	public SurveyDefinition(){
 		super();
 
@@ -505,4 +509,13 @@ public class SurveyDefinition extends SortedSetUpdater<SurveyDefinitionPage>
     public void setSurveyTags(List<SurveyTags> surveyTags) {
         this.surveyTags = surveyTags;
     }
+
+	public Integer getExamtime() {
+		return examtime;
+	}
+
+	public void setExamtime(Integer examtime) {
+		this.examtime = examtime;
+	}
+    
 }

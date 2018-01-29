@@ -64,7 +64,12 @@
 		
 			
 			<div class="menublock sidemenu">
-				<h2><c:out value="${usersPlural}" /></h2>
+			 <div class="box box-info box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><c:out value="${usersPlural}" /></h3>
+               </div>
+                <div class="box-info">
+				
 				<ul class="topmenu">
 					<li>
 						<c:url value="/security/users/?icreate" var="url"/>	
@@ -105,9 +110,15 @@
 					-->
 				</ul>
 			</div>
-			
+			 </div>
+			  </div>
 			<div class="menublock sidemenu">
-				<h2><c:out value="${deptPlural}" /></h2>
+				 <div class="box box-info box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><c:out value="${deptPlural}" /></h3>
+               </div>
+                <div class="box-info">
+			
 				<c:url value="/security/departments/?create" var="url"/>	
 				<ul class="topmenu">
 					<li><a href="${url}"><i class="icon-plus"> &#160;</i>
@@ -121,10 +132,15 @@
 					</li>
 				</ul>
 			</div>
-			
+			 </div>
+			  </div>
 			<div class="menublock sidemenu">
-			
-				<h2><c:out value="${groupsPlural}" /></h2>
+				 <div class="box box-info box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><c:out value="${groupsPlural}" /></h3>
+               </div>
+                <div class="box-info">
+
 				<ul class="topmenu">
 					<li>
 						<c:url value="/security/groups/?icreate" var="url"/>
@@ -146,10 +162,17 @@
 					</li>
 					</ul>
 			</div>
-			
+			 </div>
+			  </div>
 			<div class="menublock sidemenu">
+			 <div class="box box-info box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><c:out value="${rolesPlural}" /></h3>
+               </div>
+                <div class="box-info">
+			
 			<c:url value="/security/authorities?page=1&amp;size=${empty param.size ? 10 : param.size}" var="url"/>
-				<h2><c:out value="${rolesPlural}" /></h2>
+			
 				<ul class="topmenu">
 					<c:url value="/security/authorities?page=1&amp;size=${empty param.size ? 10 : param.size}" var="url"/>
 					<li>
@@ -159,7 +182,8 @@
 					</li>
 				</ul>
 			</div>
-			
+			</div>
+			</div>
 			<!-- 
 			<div class="menublock sidemenu">
 			

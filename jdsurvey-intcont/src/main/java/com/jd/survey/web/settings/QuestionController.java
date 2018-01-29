@@ -15,16 +15,33 @@
   */
 package com.jd.survey.web.settings;
 
-  import com.jd.survey.domain.security.User;
-  import com.jd.survey.domain.settings.Question;
-  import com.jd.survey.domain.settings.QuestionOption;
-  import com.jd.survey.domain.settings.SurveyDefinitionPage;
-  import com.jd.survey.service.security.SecurityService;
+  import com.jd.survey.dao.interfaces.settings.QuestionDAO;
+import com.jd.survey.dao.interfaces.settings.QuestionOptionDAO;
+import com.jd.survey.domain.security.User;
+import com.jd.survey.domain.settings.Invitation;
+import com.jd.survey.domain.settings.Question;
+import com.jd.survey.domain.settings.QuestionBank;
+import com.jd.survey.domain.settings.QuestionBankOption;
+import com.jd.survey.domain.settings.QuestionBankStatus;
+import com.jd.survey.domain.settings.QuestionDifficultyLevel;
+import com.jd.survey.domain.settings.QuestionOption;
+import com.jd.survey.domain.settings.QuestionType;
+import com.jd.survey.domain.settings.SurveyDefinition;
+import com.jd.survey.domain.settings.SurveyDefinitionPage;
+import com.jd.survey.domain.settings.SurveyTags;
+import com.jd.survey.domain.settings.Tags;
+import com.jd.survey.dto.QuestionForm;
+import com.jd.survey.dto.QuestionHolder;
+import com.jd.survey.dto.UserHolder;
+import com.jd.survey.dto.UsersForm;
+import com.jd.survey.service.security.SecurityService;
   import com.jd.survey.service.security.UserService;
   import com.jd.survey.service.settings.SurveySettingsService;
   import org.apache.commons.logging.Log;
   import org.apache.commons.logging.LogFactory;
-  import org.owasp.validator.html.AntiSamy;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.owasp.validator.html.AntiSamy;
   import org.owasp.validator.html.CleanResults;
   import org.owasp.validator.html.Policy;
   import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +57,16 @@ package com.jd.survey.web.settings;
 
   import javax.servlet.http.HttpServletRequest;
   import javax.validation.Valid;
-  import java.io.UnsupportedEncodingException;
+
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
   import java.security.Principal;
-  import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
   import java.util.SortedSet;
   import java.util.TreeSet;
 
@@ -65,7 +89,8 @@ public class QuestionController {
 	@Autowired	private SurveySettingsService surveySettingsService;
 	@Autowired	private UserService userService;
 	@Autowired	private SecurityService securityService;
-
+	@Autowired	private QuestionDAO questionDAO;
+	@Autowired	private QuestionOptionDAO questionOptionDAO;
 	@Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
 	@RequestMapping(value = "/{id}", params = "create", produces = "text/html")
 	public String createQuestion(@PathVariable("id") Long surveyDefinitionPageId, 
@@ -76,18 +101,33 @@ public class QuestionController {
 		try {
 			String login = principal.getName();
 			User user = userService.user_findByLogin(login);
-			SurveyDefinitionPage surveyDefinitionPage = surveySettingsService.surveyDefinitionPage_findById(surveyDefinitionPageId); 
+			QuestionForm questionForm=new QuestionForm();
+		//	SurveyDefinitionPage surveyDefinitionPage = surveySettingsService.surveyDefinitionPage_findById(surveyDefinitionPageId); 
+			SurveyDefinition surveyDefinition = surveySettingsService.surveyDefinition_findById(surveyDefinitionPageId);
+			Set<SurveyTags>	 surveyTags =surveySettingsService.getTags(surveyDefinition);
+			List<QuestionHolder> questionHolderlist=new ArrayList<QuestionHolder>();
+			for(SurveyTags surTag:surveyTags) {
+				Set<QuestionHolder> questions= surveySettingsService.findByTag(surTag.getTag());
+				questionHolderlist.addAll(questions);
+
+			}
+			questionForm.setQuestions(questionHolderlist);
+		    // get All question For Tags 
+			 
+			  uiModel.asMap().clear();
+              uiModel.addAttribute("SurveyDefinition",surveyDefinition);
+              uiModel.addAttribute("questionForm",questionForm);
 			//Check if the user is authorized
-			if(!securityService.userIsAuthorizedToManageSurvey(surveyDefinitionPage.getSurveyDefinition().getId(), user) &&
-			   !securityService.userBelongsToDepartment(surveyDefinitionPage.getSurveyDefinition().getDepartment().getId(), user)	) {
+			if(!securityService.userIsAuthorizedToManageSurvey(surveyDefinition.getId(), user) &&
+			   !securityService.userBelongsToDepartment(surveyDefinition.getDepartment().getId(), user)	) {
 				log.warn("Unauthorized access to url path " + httpServletRequest.getPathInfo() + " attempted by user login:" + principal.getName() + "from IP:" + httpServletRequest.getLocalAddr());
 				return "accessDenied";	
 			}
 			//User user = userService.user_findByLogin(principal.getName());
 			//SurveyDefinitionPage surveyDefinitionPage =  surveySettingsService.surveyDefinitionPage_findById(surveyDefinitionPageId);
-			Question question = new Question(surveyDefinitionPage);
-			size = (short) question.getPage().getQuestions().size();
-			populateEditForm(uiModel, question, user);
+		//	Question question = new Question(surveyDefinitionPage);
+		//	size = (short) question.getPage().getQuestions().size();
+		//	populateEditForm(uiModel, question, user);
 
 			return "settings/questions/create";
 		} catch (Exception e) {
@@ -95,7 +135,62 @@ public class QuestionController {
 			throw (new RuntimeException(e));
 		}	
 	}
+		
+	
+	@SuppressWarnings("unchecked")
+	@Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
+	@RequestMapping(value = "/add",method = RequestMethod.POST, produces = "text/html")
+	public String addQuestion(	
+								@RequestParam("id") Long surveyDefinitionId,
+								@ModelAttribute("questionForm")  QuestionForm questionForm,
+								@RequestParam(value = "_proceed", required = false) String proceed,
+								Principal principal,
+								Model uiModel, HttpServletRequest httpServletRequest) {
+		
+		try {
+			/// Add Question to Exam
+			SurveyDefinition surveyDefinition = surveySettingsService.surveyDefinition_findById(surveyDefinitionId);
 
+			for (QuestionHolder qu : questionForm.getQuestions()) {
+				if (qu.getSelected() == null) {
+					continue;
+				} else {
+					QuestionBank questionBank = surveySettingsService.questionBank_findById(Long.valueOf(qu.getSelected()));
+					for (SurveyDefinitionPage page : surveyDefinition.getPages()) {
+						if (page.getTitle().equalsIgnoreCase(questionBank.getQuestionTag().getTagName())) {
+							Question q = new Question(questionBank);
+							q.setOrder(new Short( (short)(page.getQuestions().size()+1)));
+							q.setPage(page);
+							q = questionDAO.merge(q);
+							Set<QuestionBankOption> questionOptionsList = surveySettingsService
+									.questionBankOption_findByQuestionId(questionBank);
+							Short qoorder = 1;
+							for (QuestionBankOption qol : questionOptionsList) {
+								QuestionOption qo = new QuestionOption();
+								qo.setQuestion(q);
+								qo.setOrder(qoorder);
+								qo.setValue(qol.getValue());
+								qo.setText(qol.getText());
+								qo.setRight(qol.isRight());
+								questionOptionDAO.merge(qo);
+								qoorder = (short) (qoorder + 1);
+							}
+
+						}
+					}
+				}
+			}
+
+
+			uiModel.asMap().clear();
+			return "settings/questions/saved";
+		
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new RuntimeException(e);
+		}
+
+	}
 	
 	@Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")

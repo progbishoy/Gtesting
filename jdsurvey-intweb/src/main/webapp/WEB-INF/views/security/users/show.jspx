@@ -12,6 +12,8 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
+     <BR />
+     <div class="box-info">	
 			<spring:message code="${fn:toLowerCase('com.jd.survey.domain.security.User')}_label" var="section_label" htmlEscape="false" />	
 			<section:block title="${section_label}" object="${user}" path="/security/users" create="false" edit="true" delete="false" show_under_line="true">
 				<field:display field="type" id="c_com.jd.survey.domain.security.User.type" object="${user}" isTypeField="true"/>
@@ -23,7 +25,7 @@
 				<field:display field="email" id="s_com.jd.survey.domain.security.User.email" object="${user}"/>
 			</section:block>						
 			
-			
+			<BR />
 			<spring:message code="com.jd.survey.domain.security.group_label_plural" var="section_label" htmlEscape="false" />		
 			<section:block title="${section_label}:"  >	
 				<table:table data="${user.groups}" id="l_com.jd.survey.domain.security.Group" path="/security/groups" parentid="${user.id}" footer="false" create="false" update="false" delete="false" show="false" >
@@ -32,6 +34,7 @@
 				</table:table>
 			</section:block>
 			
+			<BR />
 			<spring:message code="com.jd.survey.domain.security.authority_label_plural" var="section_label" htmlEscape="false" />		
 			<section:block title="${section_label}:" >	
 				<table:table data="${authorities}" id="l_com.jd.survey.domain.security.Authority" path="/security/authorities" footer="false" create="false" update="false" delete="false" show="false">
@@ -40,6 +43,7 @@
 				</table:table>
 			</section:block>
 			
+			<BR />
 			<c:if test="${user.type eq 'I'}">
 				<spring:message code="com.jd.survey.domain.settings.department_label_plural" var="section_label" htmlEscape="false" />		
 				<section:block title="${section_label}:" >	
@@ -66,6 +70,6 @@
 	
 	
 	
-	
+	</div>	
 	</div>	
 </div>

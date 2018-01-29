@@ -86,9 +86,7 @@
 					              <spring:url value="/resources/images/show.png" var="image_url" />
 					              <spring:message code="com.jd.survey.domain.survey_label" var="typeName" htmlEscape="false" />
 					              <spring:message arguments="${typeName}" code="survey_view" var="action_label" htmlEscape="false" />
-					              	<a href="${form_url}" title="${fn:escapeXml(action_label)}: ${survey.id}" class="showIcon">
-				              			<spring:message text="${fn:escapeXml(action_label)}: ${survey.id}" /> 
-				             	 	</a>
+					               <b>Done</b>
 				              </c:if>
 				              <c:if  test="${entry.status ne 'S'}"> <!-- Incomplete or reopened -->
 				                  <spring:url value="/${survey_base_path}/${entry.id}" var="form_url" />

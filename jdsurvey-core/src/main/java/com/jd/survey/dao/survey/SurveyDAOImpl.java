@@ -192,7 +192,7 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " varchar(75),");
 						break;
 					case LONG_TEXT_INPUT: //Long Text Input
-						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " varchar(250),");
+						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " varchar(500),");
 						break;
 					case HUGE_TEXT_INPUT: //Huge Text Input
 						//stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " varchar(2000),");
@@ -224,7 +224,7 @@ public class SurveyDAOImpl extends AbstractJpaDao<Survey> implements	SurveyDAO {
 						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " varchar(75),");
 						break;
 					case SINGLE_CHOICE_RADIO_BUTTONS:
-						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " varchar(5),");
+						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + " varchar(75),");
 						//other Support
 						stringBuilder.append(" p" + page.getOrder()+"q" +question.getOrder() + "text"+ " varchar(255),");
 						break;	

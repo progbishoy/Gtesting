@@ -11,9 +11,10 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     
-    <div class="right-column">	
-   		<div class="block">
-		    <form:update id="fu_com.jd.survey.domain.security.User" modelAttribute="user" path="/security/users" versionField="Version" >
+    <div class="right-column">
+    <BR />	
+   		<div class="box-info">
+		    <form:update id="fu_com.jd.survey.domain.security.User" modelAttribute="user" path="/security/users" versionField="Version"  >
 		    	<field:hidden path="id"/>
 		    	<field:hidden path="type"/>
 		        <field:display field="type" id="c_com.jd.survey.domain.security.User.type" object="${user}" isTypeField="true"/>

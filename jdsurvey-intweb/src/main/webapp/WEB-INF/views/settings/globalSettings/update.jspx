@@ -10,7 +10,7 @@
 	<jsp:directive.page contentType="text/html;charset=UTF-8"/>	
     <jsp:output omit-xml-declaration="yes"/>
     <div class="right-column">
-    	<div class="block">
+    	<div class="box-body">
 		    <form:update id="fu_com.jd.survey.GlobalSettings.passwordEnforcementRegex" modelAttribute="globalSettings" path="/settings/globalSettings" versionField="Version" >
 		        <field:hidden path="id"/>
 				<field:input field="passwordEnforcementRegex" id="c_com.jd.survey.GlobalSettings.passwordEnforcementRegex" cssclass="grid-8-12" maxlength="75" required="true"/>

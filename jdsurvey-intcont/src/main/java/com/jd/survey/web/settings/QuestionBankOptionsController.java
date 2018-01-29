@@ -96,8 +96,7 @@ package com.jd.survey.web.settings;
                           ){
                               hasNoOptions = false;
                               //validate the length
-                              if ( QuestionBankOption .getValue().trim().length() ==0	||
-                                       QuestionBankOption .getValue().trim().length() > 5 ){
+                              if ( QuestionBankOption .getValue().trim().length() ==0	 ){
                                   bindingResult.rejectValue("optionsList2["+ i +"].value", "nullvalue");
                                   isValid= false;
                                   

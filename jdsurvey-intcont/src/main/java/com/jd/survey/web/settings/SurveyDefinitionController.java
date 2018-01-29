@@ -27,7 +27,8 @@ package com.jd.survey.web.settings;
   import com.jd.survey.service.security.SecurityService;
   import com.jd.survey.service.security.UserService;
   import com.jd.survey.service.settings.ApplicationSettingsService;
-  import com.jd.survey.service.settings.SurveySettingsService;
+import com.jd.survey.service.settings.SurveySettingsBankService;
+import com.jd.survey.service.settings.SurveySettingsService;
   import com.jd.survey.service.util.JsonHelperService;
   import org.apache.commons.logging.Log;
   import org.apache.commons.logging.LogFactory;
@@ -79,7 +80,7 @@ public class SurveyDefinitionController {
 	@Autowired	private SurveySettingsService surveySettingsService;
 	@Autowired	private JsonHelperService jsonHelperService;
 	@Autowired	private MessageSource messageSource;
-	
+    @Autowired	private SurveySettingsBankService surveySettingsBankService;
 	/**
 	 * Returns the survey logo image binary  
 	 * @param departmentId
@@ -926,18 +927,18 @@ public class SurveyDefinitionController {
 				if (surveyLink.endsWith("/")) {surveyLink = surveyLink +"private/"+ id + "?list";}	else {surveyLink = surveyLink +"/private/"+ id + "?list";}	
 			}
 			
-			for (SurveyDefinitionPage page: surveyDefinition.getPages()) {
-				for (Question question: page.getQuestions()) {
-                    System.out.println("Glgnh0f " + question.getQuestionText());
-                    System.out.println("Glgnh0f " + question.getQuestionAnswer());
-                    //if (question.getType()== QuestionType.DATASET_DROP_DOWN){
-                    //DataSet dataset = surveySettingsService.dataset_findByName(question.getDataSetCode());
-						//.addAttribute("datasetItems" + "p"+ page.getOrder() + "q"+ question.getOrder(),surveySettingsService.datasetItem_findByDataSetId(dataset.getId(), 0, 10));
-
-					//}
-
-				}
-			}
+//			for (SurveyDefinitionPage page: surveyDefinition.getPages()) {
+//				for (Question question: page.getQuestions()) {
+//                    System.out.println("Glgnh0f " + question.getQuestionText());
+//                    System.out.println("Glgnh0f " + question.getQuestionAnswer());
+//                    //if (question.getType()== QuestionType.DATASET_DROP_DOWN){
+//                    //DataSet dataset = surveySettingsService.dataset_findByName(question.getDataSetCode());
+//						//.addAttribute("datasetItems" + "p"+ page.getOrder() + "q"+ question.getOrder(),surveySettingsService.datasetItem_findByDataSetId(dataset.getId(), 0, 10));
+//
+//					//}
+//
+//				}
+//			}
 			
 			
 			uiModel.addAttribute("surveyLink" , surveyLink);
@@ -1151,7 +1152,7 @@ public class SurveyDefinitionController {
 			if (surveyDefinition.getDepartment() !=null) {
 				surveyDefinition.setDepartment(surveySettingsService.department_findById(surveyDefinition.getDepartment().getId()));
 			}
-			uiModel.addAttribute("surveyTagsList", surveySettingsService.tags_findAll());
+			uiModel.addAttribute("surveyTagsList", surveySettingsBankService.tags_findByDepartments(user));
 			List<SurveyTags> tt0 = new ArrayList<SurveyTags>();
 			SurveyTags tagone = new SurveyTags();
             // @bishoy set general  tag  if n't set as default 

@@ -170,7 +170,7 @@
 							<li id="settings1" class="topmenu"><a href="${url}" class="${settingscss}" ><i class="icon-edit" style="margin-right:-1px;"> &#160;</i><spring:message code="topmenu_settings"/></a>
 								<ul>
 									<li>
-										<c:url var="url" value="/settings/surveyDefinitions?page=1&amp;size=${empty param.size ? 10 : param.size}" />
+										<c:url var="url" value="/settings/surveyDefinitions?page=1&amp;size=${empty param.size ? 20 : param.size}" />
 										<a href="${url}"><span><spring:message code="com.jd.survey.domain.settings.surveydefinition_label_plural"/></span></a>
 									</li>
 									<li>

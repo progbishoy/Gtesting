@@ -12,16 +12,11 @@
     <jsp:output omit-xml-declaration="yes"/>
     <div class="single-column">	
    	<div class="block">
-   	
+   	       
    			<ul class="breadcrumb">
 			    <li class="active"><spring:message code="mySurveys_label"/></li>
 		    </ul>
-		    
-   			<div id="instructions">
-   				<spring:message code="system_administrator" var="system_administrator" />
-				<spring:message code="surveys_menu_instructions" arguments="${system_administrator}"/>
-			</div>		
-   			
+		       			
    			<c:if test="${empty surveyDefinitions}"> 
 				<span class="validationMsg"><spring:message code="nosurveys_message" arguments="${system_administrator}"/></span>
 			</c:if>	

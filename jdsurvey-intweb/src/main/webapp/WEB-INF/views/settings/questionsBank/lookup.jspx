@@ -21,8 +21,17 @@
 
 
 
-			$('#tablesort').DataTable({searching: false,pagingType: 'full_numbers'});
-
+			$('#tablesort').DataTable({
+				  'paging'      : true,
+			      'lengthChange': false,
+			      'searching'   : false,
+			      'ordering'    : true,
+			      'info'        : true,
+			      'autoWidth'   : false
+				
+				
+			});
+			
 			/*
 			 *  This will allow the iframe page to be resized
 			 */
@@ -36,6 +45,12 @@
 		});
 	</script>
 	<div class="right-column">
+	<br></br>
+	 <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title">Search Criteria:</h3>
+               </div>
+                <div class="box-body">
 		<spring:url value="/settings/questionsBank/search" var="form_url">
 
 		</spring:url>
@@ -169,12 +184,14 @@
 				</springform:select>
 
 			</div>
-
-			<div class="extDivButtons">
-				<input class="inputButton" value="Search" name="_proceed" type="submit"/>
-			</div>
-
+           <div class="box-footer">                            
+                <button type="submit" class="btn btn-info pull-left" value="Search" name="_proceed">
+                 <span class="glyphicon glyphicon-search"></span> Search 
+                </button>          
+ </div>
 		</form:form>
+		</div>
+		</div>
 		<table:questionsbanktable questions="${questions}"  />
 		<br/><br/><br/>
 	</div>

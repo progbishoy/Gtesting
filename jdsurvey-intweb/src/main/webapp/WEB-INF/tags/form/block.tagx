@@ -13,7 +13,7 @@ version="2.0">
   <jsp:directive.attribute name="edit" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Include 'update' link into table (default false)" />
   <jsp:directive.attribute name="delete" type="java.lang.Boolean" required="false" rtexprvalue="true" description="Include 'delete' link into table (default true)" />
   <jsp:directive.attribute name="show_under_line" type="java.lang.Boolean" required="false" rtexprvalue="false" description="Shows the line under the title, false by default" />
-  
+  <div class="box-info">
 	
 	<c:if test="${empty create}">
       <c:set var="create" value="false" />
@@ -38,7 +38,8 @@ version="2.0">
     </c:set>
   
 	
-	<div class="block">  
+	<div class="box box-warning">  
+	 <div class="box-header with-border">
 	<c:choose>
 	    <c:when test="${show_under_line}">
 			<h2 class="underlined"><spring:message  text="${title}"  htmlEscape="false"  javaScriptEscape="false"/></h2>
@@ -50,6 +51,8 @@ version="2.0">
 	
 	<c:choose>
 	    <c:when test="${not empty object}">
+	 
+	     
           <div class="linkbuttons">
 			
 		
@@ -87,9 +90,22 @@ version="2.0">
              </c:if>
 			 
 			 
+        
+        
+         
+             
           </div>
+         
 		</c:when>
     </c:choose>
+    </div>
+    <div class="box-body">
+   
 	<jsp:doBody />	
+	  <div class="box-footer">           
+    		  </div>
+	 </div>
+	
 	</div> 
+		</div> 
 </jsp:root>

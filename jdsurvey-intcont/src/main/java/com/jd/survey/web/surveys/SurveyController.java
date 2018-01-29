@@ -35,7 +35,8 @@ package com.jd.survey.web.surveys;
   import org.springframework.web.bind.annotation.RequestMapping;
   import org.springframework.web.bind.annotation.RequestMethod;
   import org.springframework.web.bind.annotation.RequestParam;
-  import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
   import javax.servlet.ServletOutputStream;
   import javax.servlet.http.HttpServletRequest;
@@ -97,7 +98,7 @@ public class SurveyController {
      */
     @Secured({"ROLE_ADMIN", "ROLE_SURVEY_ADMIN"})
     @RequestMapping(value = "{surveyDifinitionId}/{surveyId}/{page_id}/{questionId}/{grade}", params = "addGrade", produces = "text/html")
-    public String updateSurveysGrade(@PathVariable("surveyDifinitionId") Long surveyDifinitionId,
+    public  @ResponseBody String updateSurveysGrade(@PathVariable("surveyDifinitionId") Long surveyDifinitionId,
                                      @PathVariable("surveyId") Long surveyId,
                                      @PathVariable("page_id") Long page_id,
                                      @PathVariable("questionId") Long questionId,
@@ -110,7 +111,7 @@ public class SurveyController {
 
         surveyDAO.updateQuestionGrade(surveyDifinitionId, surveyId, page_id, questionId, grade);
 
-        return showSurvey(surveyId, principal, uiModel, httpServletRequest);
+        return ""+grade;
         //return "surveys/"+surveyId+"?show";
 
     }
@@ -199,7 +200,44 @@ public class SurveyController {
 		}
 	}	
 	
-	
+	@Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN"})
+	@RequestMapping(value="/{id}",params = "total", produces = "text/html")
+	public @ResponseBody String totalScore(@PathVariable("id") Long surveyId,
+							 Principal principal,
+					   		 Model uiModel,
+					   		 HttpServletRequest httpServletRequest) {
+		log.info("showSurvey surveyId=" + surveyId + " no pageOrder");
+		try{
+			
+			//Survey survey =surveyService.Survey_findById(surveyId);
+			User user = userService.user_findByLogin(principal.getName());
+			SurveyEntry surveyEntry= surveyService.surveyEntry_get(surveyId);
+			
+			if(!securityService.userIsAuthorizedToManageSurvey(surveyEntry.getSurveyDefinitionId(), user)) {
+				log.warn("Unauthorized access to url path " + httpServletRequest.getPathInfo() + " attempted by user login:" + principal.getName() + "from IP:" + httpServletRequest.getLocalAddr());
+				return "accessDenied";	
+			}	
+			List<SurveyPage> surveyPages = surveyService.surveyPage_getAll(surveyId,messageSource.getMessage(DATE_FORMAT, null, LocaleContextHolder.getLocale()));
+			int userScore =0;
+			for (SurveyPage surveypage:surveyPages) {
+				for (QuestionAnswer answer :surveypage.getQuestionAnswers()) {
+					int value=0;
+					try {
+						value=	Integer.parseInt(answer.getAnswerGrade());
+					}catch(Exception c) {}
+					userScore=userScore+value;
+				}
+			}
+			uiModel.addAttribute("surveyEntry", surveyEntry);
+			uiModel.addAttribute("surveyPages", surveyPages);
+			return ""+userScore;
+			
+			
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			throw (new RuntimeException(e));
+		}
+	}	
 	
 	
 	/**

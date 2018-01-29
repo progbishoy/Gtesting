@@ -40,26 +40,32 @@ version="2.0">
 	
 	
 	
-		
+	  <div class="box box-warning box-solid">
+	  
 		<!-- Form Buttons -->
 	
     <util:panel id="${id}" title="${title_msg}" openPane="${openPane}">
-	  <h2><spring:message  text="${title_msg}"  htmlEscape="true"  javaScriptEscape="true"/></h2>	
+     <div class="box-header with-border">
+              <h3 class="box-title"><spring:message  text="${title_msg}"  htmlEscape="true"  javaScriptEscape="true"/></h3>
+               </div>
+                <div class="box-body">	
+	
       <spring:url value="${path}" var="form_url" />
       <form:form action="${form_url}" method="PUT" modelAttribute="${modelAttribute}" enctype="${enctype}"  class="formee">
         <form:errors cssClass="errors" delimiter="&lt;p/&gt;" />
         <jsp:doBody />
-
-		<div class="grid-9-12 extDivButtons" id="${fn:escapeXml(id)}_submit">
+     
+		<div class="box-footer" id="${fn:escapeXml(id)}_submit">
 			<!-- Normal Button -->
 			<spring:message code="button_save" var="save_button" htmlEscape="false" />
 			<spring:message code="button_cancel" var="cancel_button" htmlEscape="false" />
-			<div class="grid-9-12">
-				<input id="proceed" type="submit" name="_proceed" value="${fn:escapeXml(save_button)}" class="inputButton right" />
+
+			
+				<button id="proceed" type="submit" name="_proceed" value="${fn:escapeXml(save_button)}" class="btn btn-info pull-left" ><c:out value="${fn:escapeXml(save_button)}"></c:out></button>
 				<c:if test="${showCancelButton}">
-					<input id="cancel" type="submit" value="${fn:escapeXml(cancel_button)}" class="inputButton right" />
+					<button id="cancel" type="submit" value="${fn:escapeXml(cancel_button)}"  class="btn btn-info pull-right"  ><c:out value="${fn:escapeXml(cancel_button)}" ></c:out></button>
 				</c:if>
-			</div>
+	
         </div>
 
         <form:hidden id="_${fn:escapeXml(idField)}_id" path="${fn:escapeXml(idField)}" />
@@ -67,6 +73,10 @@ version="2.0">
           <form:hidden id="_${fn:escapeXml(versionField)}_id" path="${fn:escapeXml(versionField)}" />
         </c:if>
       </form:form>
+       </div>
+    
     </util:panel>
+            
+            </div>
   </c:if>
 </jsp:root>

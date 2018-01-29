@@ -81,7 +81,7 @@
 										<td>
 											<c:choose>
 												<c:when test='${question.type.code == "MC"}'>
-													<form:checkbox path="optionsList2[${loop.index}].right" class="grid-8-12" maxlength="250" />
+													<form:checkbox path="optionsList2[${loop.index}].right"  maxlength="250" />
 												</c:when>
 												<c:otherwise>
 													<script>
@@ -89,7 +89,7 @@
 															$('.singleRadio').not(this).prop('checked', false);
 														});
 													</script>
-													<form:checkbox path="optionsList2[${loop.index}].right" class="grid-8-12 singleRadio" maxlength="20" />
+													<form:checkbox path="optionsList2[${loop.index}].right" class=" singleRadio" maxlength="20" />
 												</c:otherwise>
 											</c:choose>
 										</td>

@@ -11,6 +11,7 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <div class="right-column">
+      <div class="box-body">
     	<spring:message code="com.jd.survey.globalsettings_label_plural" var="section_label" htmlEscape="false" />
 		<section:block title="${section_label}" object="${globalSettings}" path="/settings/globalSettings" create="false" edit="true" delete="false" show_under_line="true">
 			<field:display field="passwordEnforcementRegex" id="s_com.jd.survey.GlobalSettings.passwordEnforcementRegex" object="${globalSettings}" cssclass="grid-9-12 alignTop"/>
@@ -21,5 +22,6 @@
 			<field:display field="invalidContentMessage" id="s_com.jd.survey.GlobalSettings.invalidContentMessage" object="${globalSettings}" cssclass="grid-9-12 alignTop"/>
 			<field:display field="invalidFileSizeMessage" id="s_com.jd.survey.GlobalSettings.invalidFileSizeMessage" object="${globalSettings}" cssclass="grid-9-12 alignTop"/>		
 		</section:block>	
+    </div>	
     </div>	
 </div>

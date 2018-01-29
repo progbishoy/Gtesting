@@ -18,7 +18,9 @@ package com.jd.survey.web.survey;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.Minutes;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
@@ -46,6 +49,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
@@ -157,6 +161,51 @@ public class PrivateSurveyController {
 		}
 	}	
 	
+	@Secured({"ROLE_ADMIN","ROLE_SURVEY_ADMIN", "ROLE_SURVEY_PARTICIPANT"})
+	@RequestMapping(value = "/{id}",produces = "text/html",method = RequestMethod.GET)
+	public @ResponseBody String computeTime(@PathVariable("id") Long surveyId ,Model uiModel,
+					   		  Principal principal,
+					   		  HttpServletRequest httpServletRequest) {
+		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		try{
+			String login = principal.getName();
+			User user = userService.user_findByLogin(login);
+			Survey survey=surveyService.survey_findById(surveyId);
+			Date lastUpdate=survey.getLastUpdateDate();
+			
+			final long ONE_MINUTE_IN_MILLIS=60000;
+			long t=lastUpdate.getTime();
+			
+			Date afterAddingTenMins=new Date(t + (survey.getExamtime().intValue()* ONE_MINUTE_IN_MILLIS));			
+			Date currentDate = new Date();
+			 long diff = afterAddingTenMins.getTime() - currentDate.getTime();
+			  int mindifference = (int) (diff / (60 * 1000) % 60);
+			//int mindifference=	afterAddingTenMins.getMinutes() -currentDate.getMinutes();
+			if(mindifference>0) {
+				mindifference=mindifference<0?0:mindifference;
+				if(survey.getRemaintime().intValue()!=mindifference) {
+				survey.setRemaintime(new Integer(mindifference));
+				surveyService.survey_update(survey);
+				}
+			}else {
+				List<SurveyPage> surveyPages = surveyService.surveyPage_getAll(surveyId,messageSource.getMessage(DATE_FORMAT, null, LocaleContextHolder.getLocale()));
+				uiModel.addAttribute("survey_base_path", "private");
+				uiModel.addAttribute("survey", survey);
+				uiModel.addAttribute("surveyDefinition", surveySettingsService.surveyDefinition_findById(survey.getTypeId()));
+				uiModel.addAttribute("surveyPages", surveyPages);
+				uiModel.addAttribute("order", surveyPages.size() +1);
+				survey.setRemaintime(new Integer(0));
+				surveyService.survey_update(survey);
+				return "0";
+			}
+		
+			  
+			return ""+mindifference;
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			throw (new RuntimeException(e));
+		}
+	}
 	
 	/**
 	 * Shows the survey submissions page if not entries found it will create a new one. if only one entry found will redirect to the survey show page  
@@ -180,12 +229,12 @@ public class PrivateSurveyController {
 				return "accessDenied";	
 				
 			}
-			
+			// get Start time from here  and ExamTime  and remainTime
 			SurveyDefinition surveyDefinition =surveySettingsService.surveyDefinition_findById(surveyDefinitionId);
 			Set<Survey> userSurveyEntries= surveyService.survey_findUserEntriesByTypeIdAndLogin(surveyDefinitionId,login);
 
 			if (userSurveyEntries == null || userSurveyEntries.size() == 0) {
-				//No User entries for this survey, create a new one
+				//No User entries for this survey, create a new one			
 				Survey survey =surveyService.survey_create(surveyDefinitionId,login,httpServletRequest.getRemoteAddr());
 				return "redirect:/private/" + encodeUrlPathSegment(survey.getId().toString(), httpServletRequest) +"/1";
 			} 
@@ -196,7 +245,7 @@ public class PrivateSurveyController {
 					Iterator<Survey> it = userSurveyEntries.iterator();
 					Survey survey =it.next(); // get the first and only element in the set
 					if (survey.getStatus() == SurveyStatus.I || survey.getStatus() == SurveyStatus.R) {
-						//survey is incomplete or reopened
+						//survey is incomplete or reopened // get remaintime from survey
 						return "redirect:/private/" + encodeUrlPathSegment(survey.getId().toString(), httpServletRequest) +"/1";	
 					}
 					else{
@@ -460,7 +509,6 @@ public class PrivateSurveyController {
 			uiModel.addAttribute("survey_base_path", "private");
 			uiModel.addAttribute("survey", surveyPage.getSurvey());
 			uiModel.addAttribute("surveyDefinition", surveySettingsService.surveyDefinition_findById(surveyPage.getSurvey().getTypeId()));
-			
 			uiModel.addAttribute("surveyPage", surveyPage);
 			uiModel.addAttribute("surveyPages", surveyPages);
 			return "surveys/page";

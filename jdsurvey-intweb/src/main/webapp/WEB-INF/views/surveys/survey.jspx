@@ -11,6 +11,19 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <script type="text/javascript">	
+    function addGrade(idc,num,total){
+    	
+    	$.get( idc, function( data ) {
+    		 $( "#"+num ).text( data+"/"+total);
+    		  $("#"+num).addClass("label-danger");
+    		});
+    }
+    function refreshScore(surveyId){
+    	$.get( './'+surveyId+'?total', function( data ) {
+   		 $( "#shit").text(data);
+   		  $("#shit").addClass("label-danger");
+   		});
+    }
 	 $(document).ready(function() {
  		$('label[id^="ratingStarLabel"]').hide("fast");
 		});	
@@ -32,7 +45,8 @@
 	</script>
     
     
-    <div class="right-column">	
+    <div class="right-column">
+    
 		<spring:message code="date_format" var="date_format"/>	
 		<div class="block">
 			<h2 class="underlined">	<c:out value="${surveyEntry.surveyName}"/></h2>
@@ -126,17 +140,17 @@
 						<!-- BR	'Yes No DropDown'-->
 						<c:when test='${questionAnswer.question.type.code == "BR"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq fn:escapeXml(questionAnswer.booleanAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" /></label>
 								<label class="questionText"><spring:message
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
-								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
-										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
+								<label class="questionText"><spring:message 
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out 
+										value="${questionAnswer.answerGrade}"  escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
 										code="com.jd.survey.domain.settings.question.questionuseranswer_label"/>:<c:out
@@ -151,9 +165,9 @@
 						<!-- ST	'Short Text Input'-->
 						<c:when test='${questionAnswer.question.type.code == "ST"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" />
 									<c:if test="${questionAnswer.question.required}">
@@ -164,7 +178,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -180,9 +194,9 @@
 						<!-- LT	'Long Text Input'-->
 						<c:when test='${questionAnswer.question.type.code == "LT"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" />
 									<c:if test="${questionAnswer.question.required}">
@@ -193,7 +207,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -209,9 +223,9 @@
 						<!-- HT	'Huge Text Input'-->
 						<c:when test='${questionAnswer.question.type.code == "HT"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" />
 									<c:if test="${questionAnswer.question.required}">
@@ -222,7 +236,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -238,9 +252,9 @@
 						<!-- IN	'Integer Input'-->
 						<c:when test='${questionAnswer.question.type.code == "IN"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" />
 									<c:if test="${questionAnswer.question.required}">
@@ -251,7 +265,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -267,9 +281,9 @@
 						<!-- CR	'Currency Input'-->
 						<c:when test='${questionAnswer.question.type.code == "CR"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" />
 									<c:if test="${questionAnswer.question.required}">
@@ -280,7 +294,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -296,9 +310,9 @@
 						<!-- NM	'Numeric Input' -->
 						<c:when test='${questionAnswer.question.type.code == "NM"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<label class="questionText"><c:out value="${questionNumber}. "/><c:out value="${questionAnswer.question.questionLabel}" escapeXml="false" />
 									<c:if test="${questionAnswer.question.required}">
@@ -309,7 +323,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -325,9 +339,9 @@
 						<!-- 	DT	'Date Input' -->
 						<c:when test='${questionAnswer.question.type.code == "DT"}'>
 							<div class="${rowStyle}">
-								<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+								<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 								<c:if test="${fn:escapeXml(questionAnswer.question.questionAnswer) eq  fn:escapeXml(questionAnswer.stringAnswerValue)}">
-									<c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+									<c:set var="userAnswerMark" scope="page" value="label label-success"/>
 								</c:if>
 								<spring:message code="date_format" var="date_format" />
 								<spring:message code="date_format_tip" arguments="${date_format}" var="tip" />
@@ -341,7 +355,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -366,7 +380,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 
@@ -379,11 +393,11 @@
                                             <c:set var="userAnswerMark" scope="page"  value=""/>
                                             <c:if test="${option.value eq  questionAnswer.stringAnswerValue and option.right ne 'true'}">
                                                 <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong choice selected)"/>
-                                                <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                             </c:if>
                                             <c:if test="${option.value eq  questionAnswer.stringAnswerValue and option.right eq 'true'}">
                                                 <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
-                                                <c:set var="userAnswerMark" scope="page"  value="rightAnswer"/>
+                                                <c:set var="userAnswerMark" scope="page"  value="label label-success"/>
                                                 <c:set var="answerState" scope="page" value="right"/>
                                             </c:if>
 											<c:if test="${option.value eq  questionAnswer.stringAnswerValue}">
@@ -391,7 +405,7 @@
 			 									</c:if>
 			 									<c:if test="${option.value ne  questionAnswer.stringAnswerValue}">
                                                     <c:if test="${option.right eq 'true'}">
-                                                        <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                        <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                                         <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
                                                     </c:if>
 			 										<option disabled="disabled" value="${option.value}"><c:out value="${option.text}"/>${userAnswerMarkMsg} </option>
@@ -399,10 +413,10 @@
 												</c:forEach>
 									</select>
                                     <c:if test="${answerState eq 'wrong'}">
-                                    <label class="wrongAnswer"> Wrong Answer</label>
+                                    <label class="label-primary"> Wrong Answer</label>
                                     </c:if>
                                     <c:if test="${answerState eq 'right'}">
-                                        <label class="rightAnswer">Right Answer </label>
+                                        <label class="label label-success">Right Answer </label>
                                     </c:if>
 									<span class="tipPreviewMsg"><c:out value="${questionAnswer.question.tip}" escapeXml="false" /></span>
 								</div>
@@ -423,7 +437,7 @@
 											value="${questionAnswer.question.questionAnswer}"
 											escapeXml="false"/></label>
 									<label class="questionText"><spring:message
-											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 											value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 											value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 									<div class="questionAnswer">
@@ -440,11 +454,11 @@
                                                         <c:set var="userAnswerMark" scope="page"  value=""/>
                                                         <c:if test="${answer eq  option.order and option.right ne 'true'}">
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong choice selected)"/>
-                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                                         </c:if>
                                                         <c:if test="${answer eq  option.order and option.right eq 'true'}">
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
-                                                            <c:set var="userAnswerMark" scope="page"  value="rightAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page"  value="label label-success"/>
                                                         </c:if>
                                                         <c:if test="${answer eq  option.order}">
                                                             <label class="${userAnswerMark}" for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}" style="margin-right:4em;display: inline-block;">
@@ -458,7 +472,7 @@
                                                         <c:set var="userAnswerMark" scope="page" value=""/>
                                                         <c:set var="userAnswerMarkMsg" scope="page" value=""/>
                                                         <c:if test="${option.right eq 'true'}">
-                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
                                                         </c:if>
                                                         <label class="${userAnswerMark}" for="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}" style="margin-right:4em;display: inline-block;">
@@ -483,11 +497,11 @@
                                                             <c:set var="userAnswerMark" scope="page"  value=""/>
 															<c:if test="${answer eq  option.order and option.right ne 'true'}">
 																	<c:set var="userAnswerMarkMsg" scope="page" value="(Wrong choice selected)"/>
-																	<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+																	<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 															</c:if>
 															<c:if test="${answer eq  option.order and option.right eq 'true'}">
 																<c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
-																<c:set var="userAnswerMark" scope="page"  value="rightAnswer"/>
+																<c:set var="userAnswerMark" scope="page"  value="label label-success"/>
 															</c:if>
 															<c:if test="${answer eq  option.order}">
 																<input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" checked="true" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}">
@@ -502,7 +516,7 @@
 																	<c:set var="userAnswerMark" scope="page" value=""/>
 																	<c:set var="userAnswerMarkMsg" scope="page" value=""/>
 																	<c:if test="${option.right eq 'true'}">
-																		<c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+																		<c:set var="userAnswerMark" scope="page" value="label-primary"/>
 																		<c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
 																	</c:if>
 																<input type="checkbox" name="questionAnswers[${loop.index}].integerAnswerValuesArray" value="${option.order}" class="checkbox" disabled="true" id="${QuestionAndPageNumb} ${questionNumber} ${optionText} ${loop2.index}">
@@ -536,7 +550,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -573,7 +587,7 @@
 											value="${questionAnswer.question.questionAnswer}"
 											escapeXml="false"/></label>
 									<label class="questionText"><spring:message
-											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 											value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 											value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 									<div class="questionAnswer">
@@ -587,11 +601,11 @@
                                                     <c:set var="userAnswerMarkMsg" scope="page" value=""/>
 													<c:if test="${questionAnswer.stringAnswerValue eq  option.value}">
                                                         <c:if test="${option.right eq 'true'}">
-                                                            <c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label label-success"/>
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
                                                         </c:if>
                                                         <c:if test="${option.right ne 'true'}">
-                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong Answer Selected)"/>
                                                         </c:if>
 														<label class="${userAnswerMark}" style="margin-right:4em;display: inline-block;">
@@ -602,7 +616,7 @@
 													</c:if>
 													<c:if test="${questionAnswer.stringAnswerValue ne  option.value}">
                                                         <c:if test="${option.right eq 'true'}">
-                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
                                                         </c:if>
 														<label class="${userAnswerMark}" style="margin-right:4em;display: inline-block;">
@@ -627,18 +641,18 @@
 
 													<c:if test="${questionAnswer.stringAnswerValue eq  option.value}">
                                                         <c:if test="${option.right eq 'true'}">
-                                                            <c:set var="userAnswerMark" scope="page" value="rightAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label label-success"/>
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Right choice selected)"/>
                                                         </c:if>
                                                         <c:if test="${option.right ne 'true'}">
-                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Wrong Answer Selected)"/>
                                                         </c:if>
 														<label class="${userAnswerMark}"><input type="radio"  value="${option.value}" class="checkbox" checked="true" disabled="true"></input><c:out value="${option.text}"/></label>${userAnswerMarkMsg}<br/>
 													</c:if>
 													<c:if test="${questionAnswer.stringAnswerValue ne  option.value}">
                                                         <c:if test="${option.right eq 'true'}">
-                                                            <c:set var="userAnswerMark" scope="page" value="wrongAnswer"/>
+                                                            <c:set var="userAnswerMark" scope="page" value="label-primary"/>
                                                             <c:set var="userAnswerMarkMsg" scope="page" value="(Model Answer Not Selected)"/>
                                                         </c:if>
 														<label class="${userAnswerMark}"><input type="radio"  value="${option.value}" class="checkbox"  disabled="true"></input><c:out value="${option.text}"/></label>${userAnswerMarkMsg}<br/>
@@ -667,7 +681,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -732,7 +746,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -785,7 +799,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -808,7 +822,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -835,7 +849,7 @@
 											value="${questionAnswer.question.questionAnswer}"
 											escapeXml="false"/></label>
 									<label class="questionText"><spring:message
-											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+											code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 											value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 											value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 									<label class="questionText ${userAnswerMark}"><spring:message
@@ -862,7 +876,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -901,7 +915,7 @@
 										code="com.jd.survey.domain.settings.question.questionanswer_label"/>:<c:out
 										value="${questionAnswer.question.questionAnswer}" escapeXml="false"/></label>
 								<label class="questionText"><spring:message
-										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<c:out
+										code="com.jd.survey.domain.settings.question.questiongrade_label"/>:<label id="${loop.index+1}${questionNumber}"></label><c:out
 										value="${questionAnswer.answerGrade}" escapeXml="false"/>/<c:out
 										value="${questionAnswer.question.questionGrade}" escapeXml="false"/></label>
 								<label class="questionText ${userAnswerMark}"><spring:message
@@ -974,9 +988,7 @@
 						<spring:message code="com.jd.survey.domain.survey_label" var="typeName" htmlEscape="false"/>
 						<spring:message arguments="${typeName}" code="entity_show" var="action_label"
 										htmlEscape="false"/>
-						<a href="${form_url}">					
-							${i}						
-						</a>
+						<BUTTON  type="submit" class="btn btn-info" value="${i}" onclick="addGrade('${form_url}','${loop.index+1}${questionNumber}','${questionAnswer.question.questionGrade}');" style=" margin:2px">${i}</BUTTON>							
 					</c:forEach>
 					<hr/>
 				</c:forEach>
@@ -984,10 +996,12 @@
 
 			</c:forEach>
 			<p> finale score :
-				<c:out value="${userScore}"/>
+				<LABEL id="shit"><c:out value="${userScore}"/></LABEL>
 				/
-				<c:out value="${totalScore}"/>
+				<c:out value="${totalScore}"/>						
+				<BUTTON onclick="refreshScore('${surveyEntry.surveyId}');" class="btn btn-primary" style=" margin:10px">refreshScore</BUTTON>		
 			</p>
+			
 		</div>
 		
 		<div class="block">	

@@ -18,6 +18,8 @@ package com.jd.survey.dao.interfaces.settings;
 import java.util.Set;
 
 import com.jd.survey.domain.settings.*;
+import com.jd.survey.dto.QuestionHolder;
+
 import org.skyway.spring.util.dao.JpaDao;
 import org.springframework.dao.DataAccessException;
 
@@ -32,4 +34,5 @@ public interface QuestionBankDAO extends JpaDao<QuestionBank> {
     public Long getCount() throws DataAccessException;
     public int deleteBySurveyDefinitionPageId(Long id) throws DataAccessException;
     public Set<QuestionBank> findByTagAndDifficultyAndLimit(Tags tag, QuestionDifficultyLevel difficulty,Integer limit) throws DataAccessException;
+    public Set<QuestionHolder> findByTag(Tags tag);
 }

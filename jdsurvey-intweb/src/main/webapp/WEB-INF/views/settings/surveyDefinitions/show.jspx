@@ -27,6 +27,8 @@
 	</script>
 
     <div class="right-column">
+
+    <br/>
     		<spring:message code="${fn:toLowerCase('com.jd.survey.domain.settings.surveydefinition')}_label" var="section_label" htmlEscape="false" />
     		
    			<c:set value="false" var="showEditLinks"/>
@@ -101,6 +103,19 @@
 						</section:page>
 					</div>			
 				</c:forEach>	 
+								<div class="questionLinks" >
+				
+								<spring:url value="/settings/questions/${surveyDefinition.id}" var="create_url">
+									<spring:param name="create" />
+								</spring:url>
+								<spring:url value="/resources/images/add.png" var="create_img_url" />
+			               		<spring:message code="com.jd.survey.domain.settings.question_label_short" var="typeName" htmlEscape="false" />	
+						   		<spring:message arguments="${typeName}" code="entity_add" var="add_message" htmlEscape="false" />
+				              	<a href="${create_url}" class="fancyboxLink fancybox.iframe" target="_blank" >	
+							   		<i class="icon-plus icon-1x">&#160;</i><c:out value="${fn:toLowerCase(add_message)}"/>
+							  	</a>
+							
+			</div>
 			</c:if>
 			
 			<c:if test="${empty surveyDefinition.pages}">

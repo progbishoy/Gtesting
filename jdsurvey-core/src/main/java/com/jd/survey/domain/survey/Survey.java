@@ -123,8 +123,30 @@ public class Survey implements Serializable{
 	
 	@Enumerated(EnumType.STRING)
     private SurveyStatus status = SurveyStatus.I;
+	
+	@Column(name = "examtime")
+	private Integer examtime;
+	
+	@Column(name = "remaintime")
+	private Integer remaintime;
+	
+    public Integer getExamtime() {
+		return examtime;
+	}
 
-    public Survey() {
+	public void setExamtime(Integer examtime) {
+		this.examtime = examtime;
+	}
+
+	public Integer getRemaintime() {
+		return remaintime;
+	}
+
+	public void setRemaintime(Integer remaintime) {
+		this.remaintime = remaintime;
+	}
+
+	public Survey() {
 		super();
 		this.creationDate= new Date();
 		this.lastUpdateDate= new Date();
@@ -145,6 +167,8 @@ public class Survey implements Serializable{
 		this.email= user.getEmail();
 		this.ipAddress = ipAddress;
 		this.status= SurveyStatus.I;
+		this.examtime=surveyDefinition.getExamtime()==null?new  Integer(30):surveyDefinition.getExamtime();
+		this.remaintime= this.examtime;
 	}
     
     public Survey(SurveyDefinition surveyDefinition,String ipAddress) {

@@ -12,7 +12,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
-    
+    <br/>
 		<spring:message code="com.jd.survey.domain.settings.dataset_label" var="section_label" htmlEscape="false" />	
 		<section:block title="${section_label}" object="${dataSet}" path="/settings/datasets" create="false" edit="true" show_under_line="true">
 			<!-- 

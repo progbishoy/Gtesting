@@ -10,6 +10,11 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <script type="text/javascript">	
+   
+    window.location.hash="no-back-button";
+    window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+    window.onhashchange=function(){window.location.hash="no-back-button";}
+
 	 $(document).ready(function() {
  		$('label[id^="ratingStarLabel"]').hide("fast");
 		});	
@@ -607,9 +612,10 @@
 					<div class="grid-6-12 extDivButtons">
 						<spring:message code="submit_button_label"  var="submit_button_label"/>
 						<input name="_submit" class="nextButton right" type="submit" value="${submit_button_label}" />
+						 <c:if test="${survey.remaintime ne 0}">
 						<spring:message code="back_button_label"  htmlEscape="false" var="back_button_label"/>
 						<input class="backButton right" name="_back"  type="submit" value="&#9668; ${back_button_label}"  />
-					
+						</c:if>
 					</div>
 				</form>
 					

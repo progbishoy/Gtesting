@@ -12,6 +12,8 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
+    <BR />
+     <div class="box-info">	
 			<spring:message code="${fn:toLowerCase('com.jd.survey.domain.security.group')}_label" var="section_label" htmlEscape="false" />	
 			<section:block title="${section_label}" object="${group}" path="/security/groups" create="false" show_under_line="true" >
 				<field:display field="name" id="s_com.jd.survey.domain.security.Group.name" object="${group}"/>
@@ -42,6 +44,7 @@
 		
 		
     </div>	
+     </div>	
 </div>
 
 

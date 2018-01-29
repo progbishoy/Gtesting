@@ -14,9 +14,18 @@
    	<script type="text/javascript">
 	$(document).ready(function() {
 
+		$('#usersTable').DataTable({
+			  'paging'      : true,
+		      'lengthChange': false,
+		      'searching'   : false,
+		      'ordering'    : true,
+		      'info'        : true,
+		      'autoWidth'   : false
+			
+			
+		});
 
-
-		$('#usersTable').DataTable({searching: true,pagingType: 'full_numbers'});
+	
 
 
 	});
@@ -24,23 +33,23 @@
 	</script>
     
     <div class="right-column">
+    <BR />
+    	 <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title">Invite Participants:</h3>
+               </div>
+                <div class="box-body">
     	<c:if test="${not empty surveyDefinitions}"> 
-   			<div class="block boxed">
-   				<spring:message code="invite_participants_message" htmlEscape="false"/>
-   				<spring:url var="link_url" value="/settings/invitations/example"/><br/>
-   				<a href="${link_url}" target="_new">
-   				<spring:message code="invite_participants_sample_file_link_message" htmlEscape="false"/>
-   				</a>
-   			</div>
-    	<div class="block">
-   			<h2><spring:message code="leftmenu_invite"/></h2>
+
+    	<div class="box-body">
+   		
    		
    			
    			
 	   		<spring:url var="form_url" value="/settings/invitations/upload"/>
-	   		<fm:form action="${form_url}" modelAttribute="userForm" cssClass="formee" method="post">
+	   		<fm:form action="${form_url}" modelAttribute="userForm"  method="post">
 	   	
-		        <div>
+		          <div class="box-body">			   	
 		        	<spring:message code="com.jd.survey.domain.survey_label_short" var="label"/>
    					<label class="grid-4-12" for="id"><spring:message code="entity_select" arguments="${label}"/></label>
 			        <select name="id" class="grid-6-12">
@@ -56,8 +65,13 @@
 	  					</c:forEach>
 					</select>
 					
-						   					<!-- begin task invitation BISHOY -->
-					<table id="usersTable">
+					</div>
+			  <div class="box box-warning box-solid">
+            <div class="box-header">
+              <h3 class="box-title">Users : </h3>
+            </div>		
+			   <div class="box-body">			   					<!-- begin task invitation BISHOY -->
+					<table id="usersTable" class="table table-bordered table-hover">
 					<thead>
 						<tr>											
 							<th>LoginName</th>							
@@ -95,22 +109,13 @@
 					</tbody>
 					</table>
 		        </div>
+		                   <div class="box-footer">                            
+                <button type="submit" class="btn btn-info pull-left"  value="${fn:escapeXml(save_button)}" name="_proceed">Send</button>   
+                  <button id="cancel" type="submit" class="btn btn-info pull-right"   value="${fn:escapeXml(cancel_button)}" >Cancel</button>            
+ </div>
 		        
-		        
-	   			
-	   			<div class="grid-9-12 extDivButtons" id="_submit">
-
-					<!-- Normal Button -->
-					<spring:message code="button_upload" var="save_button" htmlEscape="false" />
-					<spring:message code="button_cancel" var="cancel_button" htmlEscape="false" />
-					<div class="grid-9-12">
-						<input id="proceed" type="submit" name="_proceed" value="${fn:escapeXml(save_button)}" class="inputButton right" />
-						<input id="cancel" type="submit" value="${fn:escapeXml(cancel_button)}" class="inputButton right" />
-					</div>
-		        </div>
-		        
-
-
+		     </div>	   
+	   					     
 				</fm:form>
 		 
 		</div>
@@ -137,3 +142,6 @@
    		
     	
 </div>
+   </div>
+      </div>
+      

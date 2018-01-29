@@ -29,9 +29,10 @@
 	
 	<div class="subsection formee">
 
-		
+			<div class="box box-info">  
+	 <div class="box-header with-border">
 
-	<h2>
+	<h2 >
 		<spring:message  text="${page_label}"  htmlEscape="true"  javaScriptEscape="true"/> <c:out value=" "/> <spring:message  text="${order}"  htmlEscape="true"  javaScriptEscape="true"/>:
 		<span class="pagename">
 		<spring:message  text="${title}"  htmlEscape="true"  javaScriptEscape="true"/>
@@ -95,8 +96,15 @@
 			</c:if>
 		  
           </div>
-		  <jsp:doBody />	
+		 
 		</c:when>
     </c:choose>
+    </div>
+      <div class="box-body">
+     <jsp:doBody />	
+       <div class="box-footer">           
+    		  </div>
+     </div>
+    </div>
 	</div> 
 </jsp:root>

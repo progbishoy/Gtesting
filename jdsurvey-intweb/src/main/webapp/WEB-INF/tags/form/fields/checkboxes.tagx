@@ -49,10 +49,10 @@ version="2.0">
 							
 							<c:choose>
 							<c:when test="${found}">
-								 <input id="${labelSingular} ${item[itemLabelFieldName]}"  name="${pathOnParentObject}" type="checkbox" value="${item[itemValueFieldName]}" checked="checked" class="checkbox alignTop"/>
+								 <input id="${labelSingular} ${item[itemLabelFieldName]}"  name="${pathOnParentObject}" type="checkbox" value="${item[itemValueFieldName]}" checked="checked" class=" alignTop"/>
 							</c:when>
 							<c:otherwise>
-								<input id="${labelSingular} ${item[itemLabelFieldName]}" name="${pathOnParentObject}" type="checkbox" value="${item[itemValueFieldName]}" class="checkbox alignTop"/>
+								<input id="${labelSingular} ${item[itemLabelFieldName]}" name="${pathOnParentObject}" type="checkbox" value="${item[itemValueFieldName]}" class=" alignTop"/>
 							</c:otherwise>
 							</c:choose>
 							<label for="${labelSingular} ${item[itemLabelFieldName]}" class="lblCheckBox alignTop"><c:out value="${item[itemLabelFieldName]}"/></label><br/>

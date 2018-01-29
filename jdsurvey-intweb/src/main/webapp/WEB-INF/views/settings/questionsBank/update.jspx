@@ -596,7 +596,7 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
 	
-	<div class="block">
+	<div class="box-body">
 	    <form:update id="fu_com.jd.survey.domain.settings.question_header" showCancelButton="false" modelAttribute="question" path="/settings/questionsBank" versionField="Version" >
 					<field:hidden path="type"/>
 					<field:hidden path="direction"/>

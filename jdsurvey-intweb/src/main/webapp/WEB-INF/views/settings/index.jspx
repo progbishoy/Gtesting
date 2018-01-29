@@ -73,8 +73,14 @@
 					-->
 					
 					<div class="menublock sidemenu">
+					<div class="box box-info box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><c:out value="${survDefPlural}" /></h3>
+               </div>
+                <div class="box-info">
+				
 					<c:url value="/settings/surveyDefinitions/0?create" var="url"/>
-						<h2><c:out value="${survDefPlural}" /></h2>
+						
 						<ul class="topmenu">
                             <li>
 								<a href="${url}"><i class="icon-plus"> &#160;</i>
@@ -104,12 +110,19 @@
 							</li>
 						</ul>
 					</div>
+					  </div>
+					    </div>
 					</sec:authorize>
 					
 						
 						
 					<div class="menublock sidemenu">
-					<h2><c:out value="${datasetPlural}" /></h2>
+					<div class="box box-info box-solid">
+					 <div class="box-header with-border">
+              <h3 class="box-title"><c:out value="${datasetPlural}" /></h3>
+               </div>
+                <div class="box-info">
+					
 					<sec:authorize ifAnyGranted="ROLE_ADMIN">
 					<c:url value="/settings/datasets/?create" var="url"/>
 					
@@ -134,7 +147,9 @@
 							
 							
 					</div>
-					
+					  </div>
+					   </div>
+					 
 					
 					<!-- 
 					<div class="menublock">

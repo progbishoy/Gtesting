@@ -18,6 +18,8 @@ package com.jd.survey.dao.settings;
 import com.jd.survey.dao.interfaces.settings.QuestionBankDAO;
 import com.jd.survey.dao.interfaces.settings.QuestionDAO;
 import com.jd.survey.domain.settings.*;
+import com.jd.survey.dto.QuestionHolder;
+import com.jd.survey.dto.UserHolder;
 
 import java.util.*;
 
@@ -117,7 +119,12 @@ public class QuestionBankDAOImpl extends AbstractJpaDao<QuestionBank> implements
         Query query = createNamedQuery("QuestionBank.findByTagAndDifficulty", 0, limit, tag,difficulty);
         return new LinkedHashSet<QuestionBank>(query.getResultList());
     }
-
+    @Transactional
+    public Set<QuestionHolder> findByTag(Tags tag)
+    {	
+        Query query = createNamedQuery("QuestionBank.findByTag",0,0,tag);
+        return new LinkedHashSet<QuestionHolder>(query.getResultList());
+    }
 
 
     public boolean canBeMerged(QuestionBank entity) {

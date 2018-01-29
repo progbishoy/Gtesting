@@ -9,8 +9,13 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <div class="right-column">	
-   	<div class="block">
-    		<page:list id="pl_com.jd.survey.domain.settings.Department" items="${departments}">
+    <BR />
+     <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title">Departments:</h3>
+               </div>
+                <div class="box-body">
+    	
         		<table:table data="${departments}" id="l_com.jd.survey.domain.settings.Department" path="departments" create="false">
             		<table:column id="c_com.jd.survey.domain.settings.Department.name" property="name"/>
             		<table:column id="c_com.jd.survey.domain.settings.Department.description" property="description"/>
@@ -18,8 +23,10 @@
         		<c:if test="${showDeletedFailed}">
 					<div class="flash flash-notice"><spring:message code="department_show_deletion_failure"/></div>
         		</c:if>
-    		</page:list>
     	</div>
+    			  <div class="box-footer">           
+    		  </div>
+    </div>	
     </div>	
 </div>	
 

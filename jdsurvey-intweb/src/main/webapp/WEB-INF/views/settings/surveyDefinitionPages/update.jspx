@@ -8,7 +8,7 @@
 	
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>	
-  		<div class="block">
+  		<div class="box-body">
 	    <form:update id="fu_com.jd.survey.domain.settings.SurveyDefinitionPage" showCancelButton="false" modelAttribute="surveyDefinitionPage" path="/settings/surveyDefinitionPages" versionField="Version" >
 			<field:hidden path="surveyDefinition.id"/>
 			<field:link  field="surveyDefinition.department.name" id="c_com.jd.survey.domain.settings.Department"  path="/settings/departments/${surveyDefinitionPage.surveyDefinition.department.id}" object="${surveyDefinitionPage}" cssclass="grid-8-12"  hiperlink="false"/>

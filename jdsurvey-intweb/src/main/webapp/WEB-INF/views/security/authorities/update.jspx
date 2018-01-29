@@ -9,7 +9,8 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
-   		<div class="block">
+   		    <BR />	
+   		<div class="box-info">
 		    <form:update id="fu_com.jd.survey.domain.security.Authority" modelAttribute="authority" path="/security/authorities" versionField="Version" >
 				<field:hidden path="type"/>
 				<field:display field="type" id="c_com.jd.survey.domain.security.Authority.type" object="${authority}" isTypeField="true"/>

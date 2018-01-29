@@ -14,6 +14,8 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
+       <BR />
+     <div class="box-info">	
 			<spring:message code="${fn:toLowerCase('com.jd.survey.domain.settings.Department')}_label" var="section_label" htmlEscape="false" />	
 			<section:block title="${section_label}" object="${department}" path="/security/departments" create="false" edit="true" show_under_line="true">
 				<field:display field="name" 		id="s_com.jd.survey.domain.settings.Department.name" 		object="${department}"/>
@@ -138,6 +140,6 @@
 		</section:block>
 			
 	
-   		
+   		  </div>	
     </div>	
 </div>

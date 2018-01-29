@@ -106,6 +106,16 @@ public class SurveyService {
 	}
 	
 	/**
+	 * Updates survey attributes 
+	 * @param survey
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public Survey survey_update(Survey survey) {
+			return surveyDAO.merge(survey);
+	}
+	
+	/**
 	  * Delete a survey 
 	  * @param survey
 	  */

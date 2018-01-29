@@ -30,8 +30,14 @@ version="2.0">
 		 </c:set>
 		
 		 <script type="text/javascript">dojo.require("dijit.form.CheckBox");</script>
-		 <div>
-			
+		 <div  class="form-inline">
+			   <label class="alignRight lblSingleCheckbox" for="_${sec_field}_id">
+			 	<c:out value="${fn:escapeXml(label)}" />
+				<c:if test="${not empty required}">
+					<em class="formee-req">*</em>
+				</c:if>        
+			  :<c:if test="${not empty tip}"><a class="hastip" title="${tip}"> ?</a></c:if>
+			</label>
 			<c:choose>
 			<c:when test="${disableFormBinding}">
 				<c:if test="${disabled}">
@@ -46,13 +52,7 @@ version="2.0">
 		    	<form:checkbox id="_${sec_field}_id" path="${sec_field}" class="checkbox ${cssclass}"   disabled="${disabled}"  />
 		    </c:otherwise>
 		   </c:choose>
-		   <label class="alignLeft lblSingleCheckbox" for="_${sec_field}_id">
-			 	<c:out value="${fn:escapeXml(label)}" />
-				<c:if test="${not empty required}">
-					<em class="formee-req">*</em>
-				</c:if>        
-			  :<c:if test="${not empty tip}"><a class="hastip" title="${tip}"> ?</a></c:if>
-			</label>
+		
 		</div>
 	</c:if>
 </jsp:root>

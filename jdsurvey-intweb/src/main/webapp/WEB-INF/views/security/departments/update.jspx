@@ -10,7 +10,8 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
-   		<div class="block">
+   		 <BR />	
+   		<div class="box-info">
 		    <form:update id="fu_com.jd.survey.domain.settings.Department" modelAttribute="department" path="/security/departments" versionField="Version" >
 		        <field:input field="name" id="c_com.jd.survey.domain.settings.Department.name" cssclass="grid-8-12" maxlength="75" required="true"/>
 		        <field:textarea field="description" id="c_com.jd.survey.domain.settings.Department.description" cssclass="grid-8-12"/>

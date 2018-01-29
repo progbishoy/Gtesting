@@ -51,6 +51,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @NamedQueries({
         @NamedQuery(name = "QuestionBank.findAll", query = "select o from QuestionBank o order by o.id desc "),
         @NamedQuery(name = "QuestionBank.findById", query = "select o from QuestionBank o where o.id = ?1"),
+        @NamedQuery(name = "QuestionBank.findByTag", query = "select new com.jd.survey.dto.QuestionHolder(o.questionText,o.questionAnswer,o.questionGrade,o.questionTag,o.status,o.type,o.difficulty,o.id)  from QuestionBank o where o.questionTag=?1 "),
         @NamedQuery(name = "QuestionBank.findByTagAndDifficulty", query = "select o from QuestionBank o where o.questionTag=?1 and o.difficulty = ?2 and o.status='APPROVED' order by rand()")
 })
 public class QuestionBank extends SortedSetUpdater<QuestionBankOption> implements Comparable <QuestionBank>,  Serializable, SortedSetUpdater.InrementableCompartator {

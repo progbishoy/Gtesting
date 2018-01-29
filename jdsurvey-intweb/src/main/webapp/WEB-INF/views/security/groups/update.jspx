@@ -13,7 +13,8 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
-   		<div class="block">
+   	 <BR />	
+   		<div class="box-info">
 			<form:update id="fc_com.jd.survey.domain.security.Group" modelAttribute="group" path="/security/groups" render="${empty dependencies}" >
 				<field:hidden path="type"/>
 				<field:display field="type" id="c_com.jd.survey.domain.security.Group.type" object="${group}" isTypeField="true"/>

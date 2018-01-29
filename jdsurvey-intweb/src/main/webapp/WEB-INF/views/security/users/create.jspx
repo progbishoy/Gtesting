@@ -11,7 +11,7 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <div class="right-column">	
-   		<div class="block">
+   		<div class="box-body">
 			<form:create id="fc_com.jd.survey.domain.security.User" modelAttribute="user" path="/security/users" render="${empty dependencies}"  >
 				<field:hidden path="id"/>
 				<field:hidden path="type"/>

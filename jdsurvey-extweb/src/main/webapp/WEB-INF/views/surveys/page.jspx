@@ -10,7 +10,18 @@
     <jsp:output omit-xml-declaration="yes"/>
     
     <script type="text/javascript">
-			
+    
+    window.location.hash="no-back-button";
+    window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+    window.onhashchange=function(){window.location.hash="no-back-button";}
+    if (typeof document.onselectstart!="undefined") {
+    	  document.onselectstart=new Function ("return false");
+    	}
+    	else{
+    	  document.onmousedown=new Function ("return false");
+    	  document.onmouseup=new Function ("return true");
+    	}
+   	 document.addEventListener('contextmenu', event => event.preventDefault());
 	 $(document).ready(function() {
 	 	//Hide Star labels
 	 	$('label[id^="ratingStarLabel"]').hide("fast");
@@ -54,10 +65,43 @@
 		 	
 	});	
 
+	 function changeSncro(){
+		 var surveyId='${surveyPage.survey.id}';
+		 
+		  $.get("/surveys/private/"+surveyId, function(data, status){
+			$("#timer").text(data);
+		
+			if(data==0){
+				var path='${survey_base_path}';
+				window.location.replace("../submit/"+surveyId);
+			}
+		        
+		    });
+			
+		}
+	 
+	
+
+
+	
+
+	
 </script> 	
+    <c:if test="${surveyPage.survey.examtime ne 0}">
+     <script>  
+     var something='${surveyPage.survey.examtime}';
+
     
+     var logout=something*1000;
+
+	 setInterval(changeSncro, 30000 );
+     </script>
+  	
+    </c:if>
     <div id="main-content">	
-    			
+	   
+
+	
     	<c:if test="${surveyDefinition.hasLogo}">					
     	<div class="block">
     		<spring:url value="/${survey_base_path}/logo/${surveyPage.survey.typeId}" var="logoUrl"/>
@@ -68,6 +112,7 @@
 		<div class="block">
 			<h2>
 				<c:out value="${surveyPage.title}"/>	
+				  <div style="background-color:#419D78;color:#EFD0CA;font-size:20px;text-align:center;">Time left = <span id="timer"><c:out value="${ surveyPage.survey.remaintime}"></c:out></span></div>
 			</h2>
 			<div id="instructions">
 				<span  class="grid-12-12 alignTop">
@@ -930,7 +975,7 @@
 						<div class="extDivButtons">
 							
 							<spring:message code="proceed_button_label" htmlEscape="false" var="proceed_button_label"/>
-							<input class="nextButton right" name="_proceed"  type="submit" value="${proceed_button_label} &#9658;" />
+							<input class="nextButton right" name="_proceed"  type="submit" value="${proceed_button_label} &#9658;" id="my"/>
 						
 							<c:if test="${surveyPage.order ne 1}">
 							<spring:message code="back_button_label"  htmlEscape="false" var="back_button_label"/>

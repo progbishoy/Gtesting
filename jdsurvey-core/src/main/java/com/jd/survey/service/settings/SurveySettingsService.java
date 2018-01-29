@@ -21,7 +21,8 @@ package com.jd.survey.service.settings;
   import com.jd.survey.dao.interfaces.survey.SurveyDAO;
   import com.jd.survey.domain.security.User;
   import com.jd.survey.domain.settings.*;
-  import com.jd.survey.service.email.MailService;
+import com.jd.survey.dto.QuestionHolder;
+import com.jd.survey.service.email.MailService;
   import org.apache.commons.logging.Log;
   import org.apache.commons.logging.LogFactory;
   import org.apache.velocity.VelocityContext;
@@ -348,12 +349,15 @@ public class SurveySettingsService {
 		return surveyDefinitionDAO.merge(surveyDefinition);
 
 	}
-
+	public Set<SurveyTags> getTags(SurveyDefinition surveyDefinition) {
+		return surveyTagsDAO.findBySurveyId(surveyDefinition);
+	}
 	@Transactional(readOnly = false)
 	public SurveyDefinition generateQuestionsFromTags(SurveyDefinition surveyDefinition) {
 		//Glgnh0fGen
 		Set<QuestionBank> selectedQuestionsPerTag = new TreeSet<QuestionBank>();
 		Short porder = 1;
+		 int durationTotal=0;
 		for (SurveyTags tag : surveyTagsDAO.findBySurveyId(surveyDefinition)) {
 			if (!(tag.getEasy() == 0)) {
 				selectedQuestionsPerTag.addAll(findByTagAndDifficultyAndLimit(tag.getTag(), QuestionDifficultyLevel.EASY, tag.getEasy()));
@@ -365,16 +369,18 @@ public class SurveySettingsService {
 				selectedQuestionsPerTag.addAll(findByTagAndDifficultyAndLimit(tag.getTag(), QuestionDifficultyLevel.HIGH, tag.getHard()));
 			}
 
-
+			// count time BISHOY and insert it oki
 			SurveyDefinitionPage page = new SurveyDefinitionPage();
 			page.setSurveyDefinition(surveyDefinition);
 			page.setTitle(tag.getTag().getTagName());
 			page.setOrder(porder);
 			page.setInstructions("");
 			page = surveyDefinitionPageDAO.merge(page);
-
+           
 			Short qorder = 1;
 			for (QuestionBank qb : selectedQuestionsPerTag) {
+				int questionduration=qb.getDuration()==null?5:qb.getDuration().intValue();
+				durationTotal=durationTotal+	questionduration;
 				Question q = new Question(qb);
 				q.setOrder(new Short(qorder));
 				q.setPage(page);
@@ -396,8 +402,8 @@ public class SurveySettingsService {
 			porder = (short) (porder + 1);
 			selectedQuestionsPerTag.clear();
 		}
-
-
+// insert totalduration and surveyId link or alert table surveydefinition and insert grandtotal time ;
+                  surveyDefinition.setExamtime(new Integer(durationTotal));
 		return surveyDefinitionDAO.merge(surveyDefinition);
 	}
 
@@ -1585,5 +1591,9 @@ public class SurveySettingsService {
 		return questionBankDAO.findByTagAndDifficultyAndLimit(tag, difficulty, limit);
 	}
 
+	@Transactional(readOnly = false)
+	public Set<QuestionHolder> findByTag(Tags tag) {
+		return questionBankDAO.findByTag(tag);
+	}
 
 }

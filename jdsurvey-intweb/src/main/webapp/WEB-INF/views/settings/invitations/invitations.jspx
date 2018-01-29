@@ -14,8 +14,13 @@
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <div class="right-column">	
-   	<div class="block">
-   		<h2><spring:message code="com.jd.survey.domain.survey_label_plural"/></h2>
+    <BR />
+     <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><spring:message code="com.jd.survey.domain.survey_label_plural"/></h3>
+               </div>
+                <div class="box-body">
+
    		
 		<c:if test="${empty surveyDefinitions}"> 
 			<div class="flash flash-notice"><spring:message code="no_published_surveys_message"/></div>
@@ -23,8 +28,8 @@
 	
 		<c:if test="${!empty surveyDefinitions}">
 		<spring:url var="form_url" value="/settings/invitations/list"/>
-   		<form:form action="${form_url}" method="GET" modelAttribute="surveyPage" class="formee">
-   			<div>
+   		<form:form action="${form_url}" method="GET" modelAttribute="surveyPage" >
+   			<div class="box-body">
    				<spring:message code="com.jd.survey.domain.survey_label_short" var="label"/>
    				<label class="grid-2-12"><spring:message code="entity_select" arguments="${label}"/></label>
 				<select name="id" class="grid-6-12">
@@ -41,15 +46,18 @@
 				</select>
 				<spring:message code="button_showentries" htmlEscape="false" var="button_show_label"/>
 				<c:out value=" "/>
-				<input class="nextButton" name=""  type="submit" value="${button_show_label}" />
+				<button class="btn btn-info" name=""  type="submit" value="${button_show_label}" ><c:out value="${button_show_label}"></c:out> </button>
 			</div>	
     	</form:form>	
     	</c:if>
     </div>
-    
+      </div>  
    	 <c:if test="${!empty surveyDefinition}">
-    	<div class="block">
-	   		<h2><spring:message code="com.jd.survey.domain.settings.invitation_label_plural"/>:</h2>
+   	    <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><spring:message code="com.jd.survey.domain.settings.invitation_label_plural"/>:</h3>
+               </div>
+                <div class="box-body">
 	   		<div>
 	   			<label class="grid-4-12"><spring:message code="com.jd.survey.domain.settings.invitation.totalsent_label"/>:</label>
 	   			<span>
@@ -67,11 +75,14 @@
    				</c:if>
 	   		</div>
 	   	</div>
+    </div>	
     	
-    	
-    	<div class="block">
+    	   	    <div class="box box-warning box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><spring:message code="survey_invitations_message" arguments="${surveyDefinition.name}" htmlEscape="false"  />:</h3>
+               </div>
+                <div class="box-body">
     		<spring:message code="date_format" var="date_format"/>
-   			<h2><spring:message code="survey_invitations_message" arguments="${surveyDefinition.name}" htmlEscape="false"  /></h2>
    			<c:if test="${empty invitations}"> 
 				<span class="notFoundMessage"><spring:message code="noinvitations_message"/></span>
 			</c:if>	
@@ -118,6 +129,7 @@
    			
     		</c:if>	
     	</div>
+    	  </div>
    	</c:if> 
     	
     </div>	

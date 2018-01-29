@@ -26,11 +26,20 @@ function change(idc){
         var value=$("#"+idc).val() ;
         if(value=='APPROVED'){
         	  $( "#"+idc+"D" ).text( "Status: "+value);
-        	  $("#"+idc+"D").addClass("rightAnswer");
+        	  $("#"+idc+"D").removeClass(" label label-danger");
+        	  $("#"+idc+"D").addClass("label label-success");
+        	 
           }else {
+        	  if(value=='STOPPED'){
+        		  $( "#"+idc+"D" ).text( "Status: "+value );
+        		  $("#"+idc+"D").removeClass("label label-success");
+            	  $("#"+idc+"D").addClass("label label-danger");
+            	 
+        	  }else {
         	  $( "#"+idc+"D" ).text( "Status: "+value );
-        	  $("#"+idc+"D").removeClass("rightAnswer");
-        	  
+        	  $("#"+idc+"D").removeClass("label label-success");
+        	  $("#"+idc+"D").removeClass(" label label-danger");
+        	  }
                 }
       
     });
@@ -56,7 +65,12 @@ function change(idc){
         <div class="flash flash-notice"><spring:message code="page.noquestion_message"/></div>
     </c:if>
 <util:paginationTens maxPages="${maxPages}" page="${param.page}" size="${param.size}" idFieldName="id" idFieldValue="${id}"/>-->
-			    	<table id="tablesort">
+     <div class="box box-warning box-solid">
+            <div class="box-header">
+              <h3 class="box-title">Result : </h3>
+            </div>
+               <div class="box-body">
+			    	<table id="tablesort" class="table table-bordered table-hover">
 						<thead>
 						<tr>
 							<th>Question/Answer</th>
@@ -101,10 +115,10 @@ function change(idc){
 										<c:choose>
 											<c:when test="${modelAnswer}=='true'">
 												<option value="false"><label>No</label></option>
-												<option value="true" selected="selected" ><label class="rightAnswer">Yes</label></option>
+												<option value="true" selected="selected" ><label class="label label-primary">Yes</label></option>
 											</c:when>
 											<c:otherwise>
-												<option value="false" selected="selected" ><label class="rightAnswer">No</label></option>
+												<option value="false" selected="selected" ><label class="label label-primary">No</label></option>
 												<option value="true" ><label>Yes</label></option>
 											</c:otherwise>
 										</c:choose>
@@ -231,7 +245,7 @@ function change(idc){
 										<c:forEach items="${question.options}" var="option" varStatus="loop2">
 											<c:choose>
 												<c:when test="${option.right}">
-		  										<option value="${option.value}" class="rightAnswer" selected="selected"><c:out value="${option.text}"/></option>
+		  										<option value="${option.value}" class="label label-primary" selected="selected"><c:out value="${option.text}"/></option>
 												</c:when>
 												<c:otherwise >
 													<option value="${option.value}"><c:out value="${option.text}"/></option>
@@ -265,7 +279,7 @@ function change(idc){
 												<c:forEach items="${question.options}" var="option" varStatus="loop">
 													<c:choose>
 													<c:when test="${option.right}">
-													<label class="rightAnswer" style="margin-right:4em;display: inline-block;"><input type="checkbox" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label>
+													<label class="label label-primary" style="margin-right:4em;display: inline-block;"><input type="checkbox" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label>
 													</c:when>
 														<c:otherwise>
 															<label style="margin-right:4em;display: inline-block;"><input type="checkbox" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label>
@@ -281,7 +295,7 @@ function change(idc){
 											<c:forEach items="${question.options}" var="option" varStatus="loop2">
 												<c:choose>
 												<c:when test="${option.right}">
-												<input type="checkbox" name="question" value="option.value" class="checkbox"><label class="rightAnswer"><c:out value="${option.text}"/></label></input> <br/>
+												<input type="checkbox" name="question" value="option.value" class="checkbox"><label class="label label-primary"><c:out value="${option.text}"/></label></input> <br/>
 												</c:when>
 												<c:otherwise>
 													<input type="checkbox" name="question" value="option.value" class="checkbox"><label><c:out value="${option.text}"/></label></input> <br/>
@@ -342,7 +356,7 @@ function change(idc){
 												<c:forEach items="${question.options}" var="option" varStatus="loop2">
 													<c:choose>
 													<c:when test="${option.right}">
-													<label class="rightAnswer" style="margin-right:4em;display: inline-block;"><input type="radio" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label>
+													<label class="label label-primary" style="margin-right:4em;display: inline-block;"><input type="radio" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label>
 													</c:when>
 													<c:otherwise>
 														<label style="margin-right:4em;display: inline-block;"><input type="radio" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label>
@@ -359,7 +373,7 @@ function change(idc){
 											<c:forEach items="${question.options}" var="option" varStatus="loop2">
 												<c:choose>
 												<c:when test="${option.right}">
-												<label class="rightAnswer"><input type="radio" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label><br/>
+												<label class="label label-primary"><input type="radio" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label><br/>
 												</c:when>
 												<c:otherwise>
 													<label><input type="radio" name="question" value="option.value" class="checkbox"></input><c:out value="${option.text}"/></label><br/>
@@ -847,7 +861,12 @@ function change(idc){
 							    
 							    <c:choose>
 							    <c:when test="${question.status eq 'APPROVED'}">
-							    <label class="rightAnswer" id="${question.id}D">
+							    <label class="label label-success" id="${question.id}D">
+									<spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/>: <c:out value="${question.status}" escapeXml="false"/>
+								</label>
+							    </c:when>
+							    <c:when test="${question.status eq 'STOPPED'}">
+							    <label class="label label-danger" id="${question.id}D">
 									<spring:message code="com.jd.survey.domain.settings.surveydefinition.status_label"/>: <c:out value="${question.status}" escapeXml="false"/>
 								</label>
 							    </c:when>
@@ -984,6 +1003,8 @@ function change(idc){
 				</c:forEach>
 						</tbody>
 		</table>
+		</div>
+		  </div>
 				<div class="questionLinks" style="text-align:right;">
 
 								<spring:url value="/settings/questionsBank/" var="create_url">

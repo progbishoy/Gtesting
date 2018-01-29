@@ -22,7 +22,12 @@
 	
 	
     <div class="right-column">
-   	<div class="block">
+     <BR />
+     <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><spring:message code="com.jd.survey.domain.survey_label_plural"/></h3>
+               </div>
+                <div class="box-body">
    		<spring:message code="com.jd.survey.domain.survey_label_plural" var="labelPlural"/>
    		<!--<h2><c:out value="${labelPlural}"/>:</h2> -->
    		
@@ -34,7 +39,7 @@
 	
 		<c:if test="${!empty surveyDefinitions}">
 		<spring:url var="form_url" value="/surveys/list"/>
-   		<form:form action="${form_url}" method="GET" modelAttribute="surveyPage" class="formee">
+   		<form:form action="${form_url}" method="GET" modelAttribute="surveyPage" >
    			<div>
    				<spring:message code="com.jd.survey.domain.survey_label_short" var="label"/>
    				<label for="${labelPlural}" class="grid-2-12"><spring:message code="entity_select" arguments="${label}"/></label>
@@ -52,17 +57,20 @@
 				</select>
 				<spring:message code="button_showentries" htmlEscape="false" var="button_show_label"/>
 				<c:out value=" "/>
-				<input class="nextButton" name=""  type="submit" value="${button_show_label}" />
+				<button class="btn btn-info" name=""  type="submit" value="${button_show_label}" ><c:out value="${button_show_label}"></c:out></button>
 			</div>	
     	</form:form>	
     	</c:if>
     </div>
-    
+     </div>
     
     <c:if test="${!empty surveyDefinition}">
     	
-    	<div class="block">
-	   		<h2 class="underlined"><spring:message code="com.jd.survey.domain.settings.surveystatistic_label_plural"/></h2>
+      	    <div class="box box-primary box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><spring:message code="com.jd.survey.domain.settings.surveystatistic_label_plural"/>:</h3>
+               </div>
+                <div class="box-body">
 	   		<div>
 	   			<label class="grid-2-12"><spring:message code="com.jd.survey.domain.survey.surveystatistic.icompletedcount_label"/></label>
 	   			<span>
@@ -81,11 +89,14 @@
 	   			<span><fmt:formatNumber type="number"  value="${surveyStatistic.totalCount}"/></span>
 	   		</div>
 	   	</div>
+    	</div>
     	
-    	
-    	<div class="block">
+    	    <div class="box box-warning box-solid">
+	   <div class="box-header with-border">
+              <h3 class="box-title"><spring:message code="survey_entries_message" arguments="${surveyDefinition.name}" htmlEscape="false"  />:</h3>
+               </div>
+                <div class="box-body">
     		<spring:message code="date_format" var="date_format"/>
-   			<h2 class="underlined"><spring:message code="survey_entries_message" arguments="${surveyDefinition.name}" htmlEscape="false"  /></h2>
    			<c:if test="${empty surveyEntries}"> 
 				<span class="notFoundMessage"><spring:message code="nosurveys_message"/></span>
 			</c:if>	
@@ -160,6 +171,9 @@
    			
    			
     		</c:if>	
+    	</div>
+    		  <div class="box-footer">           
+    		  </div>
     	</div>
    	</c:if> 
     	
